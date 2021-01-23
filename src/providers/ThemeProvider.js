@@ -7,8 +7,8 @@ const darkBackground = '#3A3B3C';
 const lightBackground = '#fff';
 const darkTextcolor = '#fff';
 const lightTextcolor = '#000';
-const darkHeaderBackground = '#00aff0';
-const lightHeaderBackground = '#D44638';
+const darkHeaderBackground = '#878683';
+const lightHeaderBackground = '#6200EE';
 
 export const ThemeContext = React.createContext({
   darkmode: false,

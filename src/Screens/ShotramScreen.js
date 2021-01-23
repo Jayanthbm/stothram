@@ -4,24 +4,15 @@ import {
   View,
   Text,
   BackHandler,
-  TouchableWithoutFeedback,
   Pressable,
   Switch,
   ImageBackground,
   TextInput,
+  FlatList,
+  Animated,
 } from 'react-native';
-import {
-  Container,
-  Header,
-  Left,
-  Body,
-  Right,
-  Title,
-  Content,
-  List,
-  ListItem,
-} from 'native-base';
-import Icon from 'react-native-vector-icons/AntDesign';
+import {Container, Header, Left, Body, Right, Title} from 'native-base';
+import HIcon from 'react-native-vector-icons/Ionicons';
 import {FlatGrid} from 'react-native-super-grid';
 import Admob from '../Components/Admob';
 import * as Adhelper from '../Constants/AdUnits';
@@ -176,42 +167,72 @@ const ShotramScreen = ({navigation}) => {
   function Item({title, goto, displayTitle}) {
     let image = require('../Assets/Images/god.webp');
     return (
-      <TouchableWithoutFeedback
+      <Pressable
         onPress={() => {
           navigation.navigate(goto);
         }}>
-        <View
-          style={{
-            justifyContent: 'flex-end',
-            borderRadius: 5,
-            padding: 10,
-            height: 150,
-            borderColor: 'grey',
-          }}>
-          <ImageBackground
-            source={image}
-            style={{
-              flex: 1,
-              resizeMode: 'cover',
-              justifyContent: 'center',
-              borderColor: textColor,
-              borderWidth: 1,
-            }}
-          />
-          <Text
-            style={{
-              fontSize: 20,
-              color: textColor,
-              fontWeight: '600',
-              textAlign: 'center',
-            }}>
-            {displayTitle ? displayTitle : title}
-          </Text>
-        </View>
-      </TouchableWithoutFeedback>
+        {({pressed}) => (
+          <React.Fragment>
+            <ImageBackground
+              source={image}
+              style={{
+                flex: 1,
+                resizeMode: 'cover',
+                justifyContent: 'center',
+                borderColor: textColor,
+                borderWidth: 1,
+                height: 100,
+              }}
+            />
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 20,
+                color: pressed ? headerBackground : textColor,
+                fontWeight: '600',
+                textAlign: 'center',
+              }}>
+              {displayTitle ? displayTitle : title}
+            </Text>
+          </React.Fragment>
+        )}
+      </Pressable>
     );
   }
 
+  const LItem = ({title, goto}) => (
+    <Pressable
+      onPress={() => {
+        navigation.navigate(goto);
+      }}>
+      {({pressed}) => (
+        <Animated.View style={{height: 40}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: '98%',
+              borderBottomColor: darkmode ? headerBackground : '#eee',
+              borderBottomWidth: 2,
+              marginLeft: 20,
+              backgroundColor: pressed ? headerBackground : backgroundColor,
+            }}>
+            <Text
+              style={{
+                fontSize: 20,
+                color: pressed ? '#fff' : textColor,
+                marginBottom: 5,
+              }}>
+              {title}
+            </Text>
+          </View>
+        </Animated.View>
+      )}
+    </Pressable>
+  );
+  const renderItem = ({item}) => (
+    <LItem title={item.displayTitle} goto={item.goto} />
+  );
   useEffect(() => {
     const backAction = () => {
       navigation.navigate('HomeScreen');
@@ -246,20 +267,48 @@ const ShotramScreen = ({navigation}) => {
             <Pressable
               onPress={() => {
                 navigation.navigate('HomeScreen');
-              }}>
-              <Icon
-                name={'left'}
-                style={{
-                  color: '#fff',
-                  fontSize: 25,
-                }}
-              />
+              }}
+              style={{marginLeft: 10}}>
+              {({pressed}) => (
+                <HIcon
+                  name={
+                    pressed
+                      ? 'chevron-back-circle-sharp'
+                      : 'chevron-back-circle-outline'
+                  }
+                  style={{
+                    color: '#fff',
+                    fontSize: 30,
+                  }}
+                />
+              )}
             </Pressable>
           </Left>
           <Body>
-            <Title> Stothram</Title>
+            <Title style={{color: darkmode ? '#fff' : '#bebebe'}}>
+              Stothram
+            </Title>
           </Body>
           <Right>
+            <Pressable onPress={toggleViewType}>
+              {({pressed}) => (
+                <HIcon
+                  name={
+                    viewType === 'card'
+                      ? pressed
+                        ? 'list-circle-sharp'
+                        : 'list-circle-outline'
+                      : pressed
+                      ? 'card-sharp'
+                      : 'card-outline'
+                  }
+                  style={{
+                    color: '#fff',
+                    fontSize: 25,
+                  }}
+                />
+              )}
+            </Pressable>
             {darkSwitch && (
               <Switch
                 value={darkmode}
@@ -294,27 +343,7 @@ const ShotramScreen = ({navigation}) => {
             searchFilterFunction(text);
           }}
         />
-        <Pressable onPress={toggleViewType}>
-          <View
-            style={{
-              alignContent: 'flex-end',
-              flexDirection: 'row-reverse',
-              alignItems: 'baseline',
-              marginTop: 20,
-            }}>
-            <Icon
-              name={viewType === 'card' ? 'database' : 'layout'}
-              style={{
-                color: textColor,
-                fontSize: 25,
-                marginRight: 10,
-              }}
-            />
-            <Text style={{color: textColor, fontSize: 20, marginEnd: 5}}>
-              Change View to
-            </Text>
-          </View>
-        </Pressable>
+
         <React.Fragment>
           {viewType === 'card' ? (
             <React.Fragment>
@@ -338,28 +367,15 @@ const ShotramScreen = ({navigation}) => {
               )}
             </React.Fragment>
           ) : (
-            <Content>
-              <List>
-                {dataarray &&
-                  dataarray != null &&
-                  dataarray.map((item, index) => (
-                    <ListItem
-                      icon
-                      onPress={() => {
-                        navigation.navigate(item.goto);
-                      }}
-                      key={item.id}>
-                      <Left />
-                      <Body>
-                        <Text style={{color: textColor, fontSize: 20}}>
-                          {item.displayTitle}
-                        </Text>
-                      </Body>
-                      <Right />
-                    </ListItem>
-                  ))}
-              </List>
-            </Content>
+            <React.Fragment>
+              {dataarray && (
+                <FlatList
+                  data={dataarray}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.title}
+                />
+              )}
+            </React.Fragment>
           )}
         </React.Fragment>
 

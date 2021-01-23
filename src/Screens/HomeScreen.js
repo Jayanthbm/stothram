@@ -1,24 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
-import {
-  View,
-  Text,
-  BackHandler,
-  Alert,
-  TouchableWithoutFeedback,
-  Pressable,
-  Switch,
-} from 'react-native';
-import {
-  Container,
-  Header,
-  Left,
-  Body,
-  Right,
-  Title,
-  Content,
-} from 'native-base';
+import {View, Text, BackHandler, Alert, Pressable, Switch} from 'react-native';
+import {Container, Header, Left, Body, Right, Title} from 'native-base';
 import Icon from 'react-native-vector-icons/AntDesign';
+import HIcon from 'react-native-vector-icons/Ionicons';
 import {FlatGrid} from 'react-native-super-grid';
 import Admob from '../Components/Admob';
 import * as Adhelper from '../Constants/AdUnits';
@@ -38,55 +23,59 @@ const HomeScreen = ({navigation}) => {
       id: 1,
       title: 'Stothram',
       goto: 'ShotramScreen',
-      code: '#1abc9c',
-      text: '#fff',
+      darkBackground: '#878683',
+      lightBackground: '#1abc9c',
       icon: 'database',
     },
     {
       id: 2,
       title: 'Bhajanas',
       goto: 'BhajaneScreen',
-      code: '#3498db',
-      text: '#fff',
+      darkBackground: '#878683',
+      lightBackground: '#3498db',
       icon: 'profile',
     },
   ];
 
-  function Item({title, goto, code, text, icon}) {
+  function Item({data}) {
     return (
-      <TouchableWithoutFeedback
+      <Pressable
         onPress={() => {
-          navigation.navigate(goto);
+          navigation.navigate(data.goto);
         }}>
-        <View
-          style={{
-            backgroundColor: code,
-            justifyContent: 'flex-end',
-            borderRadius: 10,
-            padding: 10,
-            height: 150,
-          }}>
-          <Icon
-            name={icon}
+        {({pressed}) => (
+          <View
             style={{
-              marginEnd: 6,
-              color: '#fff',
-              fontSize: 80,
-              fontWeight: '600',
-              textAlign: 'center',
-            }}
-          />
-          <Text
-            style={{
-              fontSize: 20,
-              color: text,
-              fontWeight: '600',
-              textAlign: 'center',
+              backgroundColor: darkmode
+                ? data.darkBackground
+                : data.lightBackground,
+              justifyContent: 'flex-end',
+              borderRadius: 5,
+              padding: 10,
+              height: 150,
             }}>
-            {title}
-          </Text>
-        </View>
-      </TouchableWithoutFeedback>
+            <Icon
+              name={data.icon}
+              style={{
+                marginEnd: 6,
+                color: pressed ? '#000' : '#fff',
+                fontSize: 80,
+                fontWeight: '600',
+                textAlign: 'center',
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                color: pressed ? '#000' : '#fff',
+                fontWeight: '600',
+                textAlign: 'center',
+              }}>
+              {data.title}
+            </Text>
+          </View>
+        )}
+      </Pressable>
     );
   }
 
@@ -111,58 +100,56 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <Container style={{backgroundColor: backgroundColor}}>
-      <View style={{flex: 1, backgroundColor: backgroundColor}}>
-        <Header style={{backgroundColor: headerBackground}}>
-          <Left />
-          <Body>
-            <Title> Choose One</Title>
-          </Body>
-          <Right>
-            <Pressable
-              onPress={() => {
-                navigation.navigate('SettingsScreen');
-              }}>
-              <Icon
-                name={'setting'}
+      <Header style={{backgroundColor: headerBackground}}>
+        <Left />
+        <Body>
+          <Title style={{color: darkmode ? '#fff' : '#bebebe'}}>
+            Choose One
+          </Title>
+        </Body>
+        <Right>
+          <Pressable
+            onPress={() => {
+              navigation.navigate('SettingsScreen');
+            }}>
+            {({pressed}) => (
+              <HIcon
+                name={pressed ? 'settings-sharp' : 'settings-outline'}
                 style={{
                   color: '#fff',
                   fontSize: 25,
                 }}
               />
-            </Pressable>
-            {darkSwitch && (
-              <Switch
-                value={darkmode}
-                onValueChange={toggleDarkMode}
-                trackColor={{false: '#ccc', true: '#81b0ff'}}
-                thumbColor={darkmode ? '#D5E650' : '#f4f3f4'}
-                style={{marginLeft: 10}}
-              />
             )}
-          </Right>
-        </Header>
-
-        <View style={{marginTop: 20}}>
-          {dataarray && dataarray != null && (
-            <FlatGrid
-              itemDimension={130}
-              data={dataarray}
-              spacing={15}
-              renderItem={({item}) => (
-                <Item
-                  title={item.title}
-                  goto={item.goto}
-                  code={item.code}
-                  text={item.text}
-                  icon={item.icon}
-                />
-              )}
+          </Pressable>
+          {darkSwitch && (
+            <Switch
+              value={darkmode}
+              onValueChange={toggleDarkMode}
+              trackColor={{false: '#ccc', true: '#81b0ff'}}
+              thumbColor={darkmode ? '#D5E650' : '#f4f3f4'}
+              style={{marginLeft: 10}}
             />
           )}
-        </View>
-        <Content />
-        <Admob type={'banner'} unitId={Adhelper.GenerateId()} />
+        </Right>
+      </Header>
+      <View
+        style={{
+          alignItems: 'center',
+          flex: 1,
+          justifyContent: 'center',
+          marginTop: 50,
+        }}>
+        {dataarray && dataarray != null && (
+          <FlatGrid
+            itemDimension={130}
+            data={dataarray}
+            spacing={15}
+            renderItem={({item}) => <Item data={item} />}
+          />
+        )}
       </View>
+      <Admob type={'banner'} unitId={Adhelper.GenerateId()} />
     </Container>
   );
 };

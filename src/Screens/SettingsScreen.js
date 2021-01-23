@@ -16,6 +16,7 @@ import {
   Thumbnail,
 } from 'native-base';
 import Icon from 'react-native-vector-icons/AntDesign';
+import HIcon from 'react-native-vector-icons/Ionicons';
 
 import Admob from '../Components/Admob';
 import * as Adhelper from '../Constants/AdUnits';
@@ -56,18 +57,27 @@ const SettingsScreen = ({navigation}) => {
             <Pressable
               onPress={() => {
                 navigation.navigate('HomeScreen');
-              }}>
-              <Icon
-                name={'left'}
-                style={{
-                  color: '#fff',
-                  fontSize: 25,
-                }}
-              />
+              }}
+              style={{marginLeft: 10}}>
+              {({pressed}) => (
+                <HIcon
+                  name={
+                    pressed
+                      ? 'chevron-back-circle-sharp'
+                      : 'chevron-back-circle-outline'
+                  }
+                  style={{
+                    color: '#fff',
+                    fontSize: 30,
+                  }}
+                />
+              )}
             </Pressable>
           </Left>
           <Body>
-            <Title> Settings </Title>
+            <Title style={{color: darkmode ? '#fff' : '#bebebe'}}>
+              Settings
+            </Title>
           </Body>
           <Right />
         </Header>
