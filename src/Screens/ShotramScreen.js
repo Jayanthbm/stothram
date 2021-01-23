@@ -20,7 +20,6 @@ import {
   Content,
   List,
   ListItem,
-  Button,
 } from 'native-base';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {FlatGrid} from 'react-native-super-grid';
@@ -243,7 +242,20 @@ const ShotramScreen = ({navigation}) => {
     <Container style={{backgroundColor: backgroundColor}}>
       <View style={{flex: 1, backgroundColor: backgroundColor}}>
         <Header style={{backgroundColor: headerBackground}}>
-          <Left />
+          <Left>
+            <Pressable
+              onPress={() => {
+                navigation.navigate('HomeScreen');
+              }}>
+              <Icon
+                name={'left'}
+                style={{
+                  color: '#fff',
+                  fontSize: 25,
+                }}
+              />
+            </Pressable>
+          </Left>
           <Body>
             <Title> Stothram</Title>
           </Body>
@@ -328,22 +340,24 @@ const ShotramScreen = ({navigation}) => {
           ) : (
             <Content>
               <List>
-                {dataarray.map((item, index) => (
-                  <ListItem
-                    icon
-                    onPress={() => {
-                      navigation.navigate(item.goto);
-                    }}
-                    key={item.id}>
-                    <Left />
-                    <Body>
-                      <Text style={{color: textColor, fontSize: 20}}>
-                        {item.displayTitle}
-                      </Text>
-                    </Body>
-                    <Right />
-                  </ListItem>
-                ))}
+                {dataarray &&
+                  dataarray != null &&
+                  dataarray.map((item, index) => (
+                    <ListItem
+                      icon
+                      onPress={() => {
+                        navigation.navigate(item.goto);
+                      }}
+                      key={item.id}>
+                      <Left />
+                      <Body>
+                        <Text style={{color: textColor, fontSize: 20}}>
+                          {item.displayTitle}
+                        </Text>
+                      </Body>
+                      <Right />
+                    </ListItem>
+                  ))}
               </List>
             </Content>
           )}
