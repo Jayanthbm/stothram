@@ -1,22 +1,47 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, Text, BackHandler, TextInput, ImageBackground, TouchableWithoutFeedback } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import { FlatGrid } from 'react-native-super-grid';
-import Header from '../Components/Header';
+import React, {useEffect, useContext, useState} from 'react';
+import {
+  View,
+  Text,
+  BackHandler,
+  TouchableWithoutFeedback,
+  Pressable,
+  Switch,
+  ImageBackground,
+  TextInput,
+} from 'react-native';
+import {
+  Container,
+  Header,
+  Left,
+  Body,
+  Right,
+  Title,
+  Content,
+  List,
+  ListItem,
+  Button,
+} from 'native-base';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {FlatGrid} from 'react-native-super-grid';
 import Admob from '../Components/Admob';
 import * as Adhelper from '../Constants/AdUnits';
-const ShotramScreen = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-  const [searchvalue, onChangeText] = useState('');
 
+import {ThemeContext} from '../providers/ThemeProvider';
+
+const ShotramScreen = ({navigation}) => {
+  const [searchvalue, onChangeText] = useState('');
   const [dataarray, setDataarray] = useState(null);
+  const {
+    darkmode,
+    toggleDarkMode,
+    darkSwitch,
+    backgroundColor,
+    textColor,
+    headerBackground,
+    viewType,
+    toggleViewType,
+  } = useContext(ThemeContext);
 
   const setDefaultData = () => {
     setDataarray([
@@ -148,48 +173,62 @@ const ShotramScreen = ({ navigation }) => {
       },
     ]);
   };
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) {
-      // saving error
-    }
-  };
 
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
+  function Item({title, goto, displayTitle}) {
+    let image = require('../Assets/Images/god.webp');
+    return (
+      <TouchableWithoutFeedback
+        onPress={() => {
+          navigation.navigate(goto);
+        }}>
+        <View
+          style={{
+            justifyContent: 'flex-end',
+            borderRadius: 5,
+            padding: 10,
+            height: 150,
+            borderColor: 'grey',
+          }}>
+          <ImageBackground
+            source={image}
+            style={{
+              flex: 1,
+              resizeMode: 'cover',
+              justifyContent: 'center',
+              borderColor: textColor,
+              borderWidth: 1,
+            }}
+          />
+          <Text
+            style={{
+              fontSize: 20,
+              color: textColor,
+              fontWeight: '600',
+              textAlign: 'center',
+            }}>
+            {displayTitle ? displayTitle : title}
+          </Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
 
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('HomeScreen');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    setDefaultData();
+    return () => backHandler.remove();
+  }, [navigation]);
 
-  const searchFilterFunction = text => {
+  const searchFilterFunction = (text) => {
     if (text) {
-      const newData = dataarray.filter(item => {
+      const newData = dataarray.filter((item) => {
         const itemData = item.title.toUpperCase();
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
@@ -199,75 +238,27 @@ const ShotramScreen = ({ navigation }) => {
       setDefaultData();
     }
   };
-  function Item({ title, goto, displayTitle }) {
-    let image = require('../Assets/Images/god.webp');
-    return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          navigation.navigate(goto);
-        }}>
-        <View style={{
-          justifyContent: 'flex-end',
-          borderRadius: 5,
-          padding: 10,
-          height: 150,
-          borderColor: 'grey',
-        }}>
-          <ImageBackground
-            source={image}
-            style={{
-              flex: 1,
-              resizeMode: 'cover',
-              justifyContent: 'center',
-              borderColor: textColor,
-              borderWidth: 1,
-            }} />
-          <Text style={{
-            fontSize: 20,
-            color: textColor,
-            fontWeight: '600',
-            textAlign: 'center',
-          }
-          }>{displayTitle ? displayTitle : title}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  }
-
-  useEffect(() => {
-    getData();
-    setDefaultData();
-    const backAction = () => {
-      navigation.navigate('HomeScreen');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
 
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <Header
-        title="Stothram"
-        darkmode={darkmode}
-      />
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
+    <Container style={{backgroundColor: backgroundColor}}>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <Header style={{backgroundColor: headerBackground}}>
+          <Left />
+          <Body>
+            <Title> Stothram</Title>
+          </Body>
+          <Right>
+            {darkSwitch && (
+              <Switch
+                value={darkmode}
+                onValueChange={toggleDarkMode}
+                trackColor={{false: '#ccc', true: '#81b0ff'}}
+                thumbColor={darkmode ? '#D5E650' : '#f4f3f4'}
+                style={{marginLeft: 10}}
+              />
+            )}
+          </Right>
+        </Header>
         <TextInput
           placeholder="Search"
           placeholderTextColor={textColor}
@@ -286,36 +277,81 @@ const ShotramScreen = ({ navigation }) => {
           autoCapitalize={'none'}
           autoCompleteType={'off'}
           autoCorrect={false}
-          onChangeText={text => {
+          onChangeText={(text) => {
             onChangeText(text);
             searchFilterFunction(text);
           }}
         />
-        {dataarray && dataarray != null && (
-          <FlatGrid
-            itemDimension={130}
-            data={dataarray}
+        <Pressable onPress={toggleViewType}>
+          <View
             style={{
-              marginTop: 10,
-              flex: 1,
-            }}
-            spacing={10}
-            renderItem={({ item }) => (
-              <Item
-                title={item.title}
-                goto={item.goto}
-                displayTitle={item.displayTitle}
-              />
-            )}
-          />
-        )}
-      </React.Fragment>
-      <Admob
-        type={'banner'}
-        unitId={Adhelper.GenerateId()}
-      />
-    </View>
+              alignContent: 'flex-end',
+              flexDirection: 'row-reverse',
+              alignItems: 'baseline',
+              marginTop: 20,
+            }}>
+            <Icon
+              name={viewType === 'card' ? 'database' : 'layout'}
+              style={{
+                color: textColor,
+                fontSize: 25,
+                marginRight: 10,
+              }}
+            />
+            <Text style={{color: textColor, fontSize: 20, marginEnd: 5}}>
+              Change View to
+            </Text>
+          </View>
+        </Pressable>
+        <React.Fragment>
+          {viewType === 'card' ? (
+            <React.Fragment>
+              {dataarray && dataarray != null && (
+                <FlatGrid
+                  itemDimension={130}
+                  data={dataarray}
+                  style={{
+                    marginTop: 10,
+                    flex: 1,
+                  }}
+                  spacing={10}
+                  renderItem={({item}) => (
+                    <Item
+                      title={item.title}
+                      goto={item.goto}
+                      displayTitle={item.displayTitle}
+                    />
+                  )}
+                />
+              )}
+            </React.Fragment>
+          ) : (
+            <Content>
+              <List>
+                {dataarray.map((item, index) => (
+                  <ListItem
+                    icon
+                    onPress={() => {
+                      navigation.navigate(item.goto);
+                    }}
+                    key={item.id}>
+                    <Left />
+                    <Body>
+                      <Text style={{color: textColor, fontSize: 20}}>
+                        {item.displayTitle}
+                      </Text>
+                    </Body>
+                    <Right />
+                  </ListItem>
+                ))}
+              </List>
+            </Content>
+          )}
+        </React.Fragment>
 
+        <Admob type={'banner'} unitId={Adhelper.GenerateId()} />
+      </View>
+    </Container>
   );
 };
 export default ShotramScreen;

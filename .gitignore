@@ -62,16 +62,6 @@ buck-out/
 
 __tests__
 .vscode
-android/
-ios/
-.buckconfig
-.eslintrc.js
-.flowconfig
-.prettierrc.js
-.watchmanconfig
-babel.config.js
-metro.config.js
 jys
 firebase.json
 yarn.lock
-.gitattributes

@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Icon from 'react-native-vector-icons/Feather';
+import {Root} from 'native-base';
+import {ThemeProvider} from './src/providers/ThemeProvider';
 
+import SplashScreen from './src/Screens/SplashScreen';
 import HomeScreen from './src/Screens/HomeScreen';
 import ShotramScreen from './src/Screens/ShotramScreen';
 import BhajaneScreen from './src/Screens/BhajaneScreen';
@@ -42,29 +43,9 @@ import DheeraMaruthi from './src/Bhajanes/DheeraMaruthi';
 import KodandaRama from './src/Bhajanes/KodandaRama';
 import SriramChandirane from './src/Bhajanes/SriramChandirane';
 const switchNavigator = createSwitchNavigator({
-  HomeScreen: createBottomTabNavigator({
-    HomeScreen: {
-      screen: HomeScreen,
-      navigationOptions: {
-        tabBarLabel: 'Home',
-        tabBarIcon: () => (
-          <Icon name="home" size={20} />
-        ),
-      },
-    },
-    Settings: {
-      screen: SettingsScreen,
-      navigationOptions: {
-        tabBarLabel: 'Settings',
-        tabBarIcon: () => (
-          <Icon
-            name="settings"
-            size={20}
-          />
-        ),
-      },
-    },
-  }),
+  SplashScreen:SplashScreen,
+  HomeScreen:HomeScreen,
+  SettingsScreen:SettingsScreen,
   ShotramScreen: ShotramScreen,
   BhajaneScreen: BhajaneScreen,
   //Shotras
@@ -98,9 +79,18 @@ const switchNavigator = createSwitchNavigator({
   SreenivasaNeenePaliso: SreenivasaNeenePaliso,
   DheeraMaruthi: DheeraMaruthi,
   KodandaRama: KodandaRama,
-  SriramChandirane: SriramChandirane
+  SriramChandirane: SriramChandirane,
 });
 
-const App = createAppContainer(switchNavigator);
+const AppContainer = createAppContainer(switchNavigator);
 
+const App = () =>{
+  return (
+    <Root>
+      <ThemeProvider>
+        <AppContainer />
+      </ThemeProvider>
+    </Root>
+  );
+};
 export default App;
