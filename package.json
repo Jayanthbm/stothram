@@ -20,12 +20,10 @@
     "react-native": "0.63.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-reanimated": "^1.9.0",
-    "react-native-restart": "^0.0.17",
     "react-native-screens": "^2.9.0",
     "react-native-super-grid": "^4.0.2",
     "react-native-vector-icons": "^7.0.0",
-    "react-navigation": "^4.4.0",
-    "react-navigation-tabs": "^2.9.0"
+    "react-navigation": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
