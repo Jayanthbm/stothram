@@ -1,41 +1,23 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
-import {View, Text, BackHandler, Alert, Pressable, Switch} from 'react-native';
-import {Container, Header, Left, Body, Right, Title} from 'native-base';
+import {View, Text, BackHandler, Alert, Pressable} from 'react-native';
+import {Container} from 'native-base';
+
 import Icon from 'react-native-vector-icons/AntDesign';
-import HIcon from 'react-native-vector-icons/Ionicons';
+
 import {FlatGrid} from 'react-native-super-grid';
+import {Appbar} from 'react-native-paper';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import DarkToggle from '../Components/DarkToggle';
+
+import {HOME_SCREEN_DATA} from '../Constants/data';
 
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const HomeScreen = ({navigation}) => {
-  const {
-    darkmode,
-    toggleDarkMode,
-    darkSwitch,
-    backgroundColor,
-    headerBackground,
-  } = useContext(ThemeContext);
-  let dataarray = [
-    {
-      id: 1,
-      title: 'Stothram',
-      goto: 'ShotramScreen',
-      darkBackground: '#878683',
-      lightBackground: '#1abc9c',
-      icon: 'database',
-    },
-    {
-      id: 2,
-      title: 'Bhajanas',
-      goto: 'BhajaneScreen',
-      darkBackground: '#878683',
-      lightBackground: '#3498db',
-      icon: 'profile',
-    },
-  ];
+  const {darkmode, backgroundColor, headerBackground} = useContext(
+    ThemeContext,
+  );
 
   function Item({data}) {
     return (
@@ -100,39 +82,18 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <Container style={{backgroundColor: backgroundColor}}>
-      <Header style={{backgroundColor: headerBackground}}>
-        <Left />
-        <Body>
-          <Title style={{color: darkmode ? '#fff' : '#bebebe'}}>
-            Choose One
-          </Title>
-        </Body>
-        <Right>
-          <Pressable
-            onPress={() => {
-              navigation.navigate('SettingsScreen');
-            }}>
-            {({pressed}) => (
-              <HIcon
-                name={pressed ? 'settings-sharp' : 'settings-outline'}
-                style={{
-                  color: '#fff',
-                  fontSize: 25,
-                }}
-              />
-            )}
-          </Pressable>
-          {darkSwitch && (
-            <Switch
-              value={darkmode}
-              onValueChange={toggleDarkMode}
-              trackColor={{false: '#ccc', true: '#81b0ff'}}
-              thumbColor={darkmode ? '#D5E650' : '#f4f3f4'}
-              style={{marginLeft: 10}}
-            />
-          )}
-        </Right>
-      </Header>
+      <Appbar.Header
+        style={{backgroundColor: headerBackground, height: 50}}
+        dark={true}>
+        <Appbar.Content title="Choose One" />
+        <Appbar.Action
+          icon={'cog-outline'}
+          onPress={() => {
+            navigation.navigate('SettingsScreen');
+          }}
+        />
+        <DarkToggle />
+      </Appbar.Header>
       <View
         style={{
           alignItems: 'center',
@@ -140,16 +101,16 @@ const HomeScreen = ({navigation}) => {
           justifyContent: 'center',
           marginTop: 50,
         }}>
-        {dataarray && dataarray != null && (
+        {HOME_SCREEN_DATA && HOME_SCREEN_DATA != null && (
           <FlatGrid
             itemDimension={130}
-            data={dataarray}
+            data={HOME_SCREEN_DATA}
             spacing={15}
             renderItem={({item}) => <Item data={item} />}
           />
         )}
       </View>
-      <Admob type={'banner'} unitId={Adhelper.GenerateId()} />
+      <Admob />
     </Container>
   );
 };

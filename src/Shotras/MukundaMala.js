@@ -1,107 +1,44 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, BackHandler, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import Slider from '@react-native-community/slider';
-import Header from '../Components/Header';
+import React, {useEffect, useContext} from 'react';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Container} from 'native-base';
+
 import St from '../Components/St';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import HeaderComponent from '../Components/HeaderComponent';
+import SliderComponent from '../Components/SliderComponent';
+import {ThemeContext} from '../providers/ThemeProvider';
 
-const MukundaMala = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-
-  const [font, setFont] = useState(24);
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) { }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) { }
-  };
+const MukundaMala = ({navigation}) => {
+  const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
   useEffect(() => {
-    getData();
     const backAction = () => {
       navigation.navigate('ShotramScreen');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+      backAction,
     );
     return () => backHandler.remove();
-
-  }, []);
+  }, [navigation]);
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
-        <Header
-          title="ಮುಕುಂದಮಾಲಾ ಸ್ತೋತ್ರಂ"
-          darkmode={darkmode}
-        />
-        <Slider
-          value={font}
-          onValueChange={value => setFont(value)}
-          minimumValue={15}
-          maximumValue={50}
-          style={{
-            marginStart: 15,
-            marginEnd: 15,
+    <Container>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('ShotramScreen');
           }}
+          title={'ಮುಕುಂದಮಾಲಾ ಸ್ತೋತ್ರಂ'}
         />
+        <SliderComponent />
         <ScrollView>
           <View
             style={{
               marginLeft: 7,
               marginRight: 1,
-            }}
-          >
+            }}>
             <St
               color={textColor}
               fontSize={font}
@@ -308,7 +245,9 @@ const MukundaMala = ({ navigation }) => {
               line1={'ಶತ್ರುಚ್ಛೇದೈಕಮಂತ್ರಂ ಸಕಲಮುಪನಿಷದ್ವಾಕ್ಯಸಂಪೂಜ್ಯಮಂತ್ರಂ'}
               line2={'ಸಂಸಾರೋತ್ತಾರಮಂತ್ರಂ ಸಮುಚಿತತಮಸಃ ಸಂಘನಿರ್ಯಾಣಮಂತ್ರಮ್ |'}
               line3={'ಸರ್ವೈಶ್ವರ್ಯೈಕಮಂತ್ರಂ ವ್ಯಸನಭುಜಗಸಂದಷ್ಟಸಂತ್ರಾಣಮಂತ್ರಂ'}
-              line4={'ಜಿಹ್ವೇ ಶ್ರೀಕೃಷ್ಣಮಂತ್ರಂ ಜಪ ಜಪ ಸತತಂ ಜನ್ಮಸಾಫಲ್ಯಮಂತ್ರಮ್ || ೨೩ ||'}
+              line4={
+                'ಜಿಹ್ವೇ ಶ್ರೀಕೃಷ್ಣಮಂತ್ರಂ ಜಪ ಜಪ ಸತತಂ ಜನ್ಮಸಾಫಲ್ಯಮಂತ್ರಮ್ || ೨೩ ||'
+              }
             />
 
             <St
@@ -317,7 +256,9 @@ const MukundaMala = ({ navigation }) => {
               line1={'ವ್ಯಾಮೋಹ ಪ್ರಶಮೌಷದಂ ಮುನಿಮನೋವೃತ್ತಿ ಪ್ರವೃತ್ತ್ಯೌಷಧಂ'}
               line2={'ದೈತ್ಯೇಂದ್ರಾರ್ತಿಕರೌಷಧಂ ತ್ರಿಭುವನೀ ಸಂಜೀವನೈ ಕೌಷಧಮ್ |'}
               line3={'ಭಕ್ತಾತ್ಯನ್ತಹಿತೌಷಧಂ ಭವಭಯಪ್ರಧ್ವಂಸನೈ ಕೌಷಧಂ'}
-              line4={'ಶ್ರೇಯಃಪ್ರಾಪ್ತಿಕರೌಷಧಂ ಪಿಬ ಮನಃ ಶ್ರೀಕೃಷ್ಣದಿವ್ಯೌಷಧಮ್ || ೨೪ ||'}
+              line4={
+                'ಶ್ರೇಯಃಪ್ರಾಪ್ತಿಕರೌಷಧಂ ಪಿಬ ಮನಃ ಶ್ರೀಕೃಷ್ಣದಿವ್ಯೌಷಧಮ್ || ೨೪ ||'
+              }
             />
 
             <St
@@ -337,7 +278,6 @@ const MukundaMala = ({ navigation }) => {
               line3={'ಹಾ ನಃ ಪೂರ್ವಂ ವಾಕ್ಪ್ರವೃತ್ತಾ ನ ತಸ್ಮಿನ್'}
               line4={'ತೇನ ಪ್ರಾಪ್ತಂ ಗರ್ಭವಾಸಾದಿದುಃಖಮ್ || ೨೬ ||'}
             />
-
 
             <St
               color={textColor}
@@ -399,7 +339,9 @@ const MukundaMala = ({ navigation }) => {
               line1={'ಕೃಷ್ಣೋ ರಕ್ಷತು ನೋ ಜಗತ್ತ್ರಯಗುರುಃ ಕೃಷ್ಣಂ ನಮಸ್ಯಾಮ್ಯಹಂ'}
               line2={'ಕೃಷ್ಣೇ ನಾಮರಶತ್ರವೋ ವಿನಿಹತಾಃ ಕೃಷ್ಣಾಯ ತುಭ್ಯಂ ನಮಃ |'}
               line3={'ಕೃಷ್ಣಾದೇವ ಸಮುತ್ಥಿತಂ ಜಗದಿದಂ ಕೃಷ್ಣಸ್ಯ ದಾಸೋಽಸ್ಮ್ಯಹಂ'}
-              line4={'ಕೃಷ್ಣೇ ತಿಷ್ಠತಿ ಸರ್ವಮೇತದಖಿಲಂ ಹೇ ಕೃಷ್ಣ ರಕ್ಷಸ್ವ ಮಾಮ್ || ೩೩ ||'}
+              line4={
+                'ಕೃಷ್ಣೇ ತಿಷ್ಠತಿ ಸರ್ವಮೇತದಖಿಲಂ ಹೇ ಕೃಷ್ಣ ರಕ್ಷಸ್ವ ಮಾಮ್ || ೩೩ ||'
+              }
             />
 
             <St
@@ -475,18 +417,12 @@ const MukundaMala = ({ navigation }) => {
               fontSize={font}
               line1={'ಇತಿ ಮುಕುಂದಮಾಲಾ ಸಂಪೂರ್ಣಾ ||'}
             />
-
           </View>
         </ScrollView>
-        <Admob
-          type={'banner'}
-          unitId={Adhelper.GenerateId()}
-        />
-      </React.Fragment>
-    </View>
-
+        <Admob />
+      </View>
+    </Container>
   );
 };
-
 
 export default MukundaMala;

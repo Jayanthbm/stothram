@@ -20,6 +20,8 @@ export const ThemeContext = React.createContext({
   headerBackground: lightHeaderBackground,
   viewType: 'card',
   toggleViewType: () => {},
+  font: 24,
+  updateFont: () => {},
 });
 
 export const ThemeProvider = ({children}) => {
@@ -31,6 +33,8 @@ export const ThemeProvider = ({children}) => {
     lightHeaderBackground,
   );
   const [viewType, setViewType] = useState('card');
+  const [font, setFont] = useState(24);
+
   useEffect(() => {
     function init() {
       AsyncStorage.getItem('@darkmode').then((r) => {
@@ -75,9 +79,18 @@ export const ThemeProvider = ({children}) => {
           setDarkSwitch(false);
         }
       });
+      AsyncStorage.getItem('@fontSize').then((r) => {
+        if (r) {
+          let f = parseInt(r, 10);
+          setFont(f);
+        } else {
+          AsyncStorage.setItem('@fontSize', 24);
+          setFont(24);
+        }
+      });
     }
     init();
-  }, [darkmode, darkSwitch]);
+  }, [darkmode, darkSwitch, font]);
   return (
     <ThemeContext.Provider
       value={{
@@ -131,6 +144,11 @@ export const ThemeProvider = ({children}) => {
           } else {
             setViewType('card');
           }
+        },
+        font,
+        updateFont: (size) => {
+          AsyncStorage.setItem('@fontSize', size.toString());
+          setFont(size);
         },
       }}>
       {children}

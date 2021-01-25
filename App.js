@@ -2,6 +2,7 @@
 import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import {Root} from 'native-base';
+import {Provider as PaperProvider} from 'react-native-paper';
 import {ThemeProvider} from './src/providers/ThemeProvider';
 
 import SplashScreen from './src/Screens/SplashScreen';
@@ -87,9 +88,11 @@ const AppContainer = createAppContainer(switchNavigator);
 const App = () =>{
   return (
     <Root>
-      <ThemeProvider>
-        <AppContainer />
-      </ThemeProvider>
+      <PaperProvider>
+        <ThemeProvider>
+          <AppContainer />
+        </ThemeProvider>
+      </PaperProvider>
     </Root>
   );
 };

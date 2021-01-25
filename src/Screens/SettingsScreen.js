@@ -1,26 +1,20 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
-import {View, BackHandler, Pressable, Switch} from 'react-native';
-
+import {View, BackHandler, Switch} from 'react-native';
 import {
   Container,
-  Header,
   Left,
   Body,
-  Right,
-  Title,
   Content,
   ListItem,
-  List,
   Text,
   Thumbnail,
 } from 'native-base';
 import Icon from 'react-native-vector-icons/AntDesign';
-import HIcon from 'react-native-vector-icons/Ionicons';
 
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
-
+import HeaderComponent from '../Components/HeaderComponent';
+import {TouchableRipple, List} from 'react-native-paper';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const jayanth = require('../Assets/Images/jayanth.webp');
@@ -33,7 +27,6 @@ const SettingsScreen = ({navigation}) => {
     darkSwitch,
     backgroundColor,
     textColor,
-    headerBackground,
     toggleDarkSwitch,
   } = useContext(ThemeContext);
 
@@ -49,100 +42,80 @@ const SettingsScreen = ({navigation}) => {
     return () => backHandler.remove();
   }, [navigation]);
 
+  const SLISTHEADER = (props) => {
+    return (
+      <List.Item
+        title={props.title}
+        titleStyle={{color: textColor}}
+        left={(_props) => (
+          <List.Icon {...props} icon={props.icon} color={textColor} />
+        )}
+      />
+    );
+  };
+
+  const SLISTITEM = (props) => {
+    return (
+      <TouchableRipple
+        onPress={props.toggle}
+        rippleColor="rgba(0, 0, 0, .32)"
+        centered={true}>
+        <List.Item
+          title={props.title}
+          description={props.subtitle}
+          titleStyle={{color: textColor}}
+          descriptionStyle={{color: textColor}}
+          right={(_props) => (
+            <Switch
+              value={props.state}
+              onValueChange={props.toggle}
+              trackColor={{false: '#ccc', true: '#81b0ff'}}
+              thumbColor={props.state ? '#5098E6' : '#f4f3f4'}
+            />
+          )}
+        />
+      </TouchableRipple>
+    );
+  };
+
+  const SCL = (props) => {
+    return (
+      <ListItem avatar>
+        <Left>
+          <Thumbnail source={props.image} />
+        </Left>
+        <Body>
+          <Text style={{color: textColor}}>{props.title}</Text>
+        </Body>
+      </ListItem>
+    );
+  };
   return (
     <Container>
       <View style={{flex: 1, backgroundColor: backgroundColor}}>
-        <Header style={{backgroundColor: headerBackground}}>
-          <Left>
-            <Pressable
-              onPress={() => {
-                navigation.navigate('HomeScreen');
-              }}
-              style={{marginLeft: 10}}>
-              {({pressed}) => (
-                <HIcon
-                  name={
-                    pressed
-                      ? 'chevron-back-circle-sharp'
-                      : 'chevron-back-circle-outline'
-                  }
-                  style={{
-                    color: '#fff',
-                    fontSize: 30,
-                  }}
-                />
-              )}
-            </Pressable>
-          </Left>
-          <Body>
-            <Title style={{color: darkmode ? '#fff' : '#bebebe'}}>
-              Settings
-            </Title>
-          </Body>
-          <Right />
-        </Header>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('HomeScreen');
+          }}
+          title={'Settings'}
+        />
         <Content>
-          <List>
-            <ListItem itemDivider style={{backgroundColor: backgroundColor}}>
-              <Text style={{color: textColor, fontSize: 25}}>
-                {' '}
-                General Settings
-              </Text>
-            </ListItem>
-            <ListItem avatar onPress={toggleDarkMode}>
-              <Left />
-              <Body>
-                <Text style={{color: textColor}}>Dark theme</Text>
-                <Text note style={{color: textColor}}>
-                  Reduce glare and improve night viewing
-                </Text>
-              </Body>
-              <Right>
-                <Switch
-                  value={darkmode}
-                  onValueChange={toggleDarkMode}
-                  trackColor={{false: '#ccc', true: '#81b0ff'}}
-                  thumbColor={darkmode ? '#5098E6' : '#f4f3f4'}
-                />
-              </Right>
-            </ListItem>
-            <ListItem avatar onPress={toggleDarkSwitch}>
-              <Left />
-              <Body>
-                <Text style={{color: textColor}}>Toggle in Every Page</Text>
-                <Text note style={{color: textColor}}>
-                  Show toggle dark mode switch in every page
-                </Text>
-              </Body>
-              <Right>
-                <Switch
-                  value={darkSwitch}
-                  onValueChange={toggleDarkSwitch}
-                  trackColor={{false: '#ccc', true: '#81b0ff'}}
-                  thumbColor={darkmode ? '#5098E6' : '#f4f3f4'}
-                />
-              </Right>
-            </ListItem>
-            <ListItem itemDivider style={{backgroundColor: backgroundColor}}>
-              <Text style={{color: textColor, fontSize: 25}}> Created By</Text>
-            </ListItem>
-            <ListItem avatar>
-              <Left>
-                <Thumbnail source={jayanth} />
-              </Left>
-              <Body>
-                <Text style={{color: textColor}}>Jayanthbharadwaj M</Text>
-              </Body>
-            </ListItem>
-            <ListItem avatar>
-              <Left>
-                <Thumbnail source={yoga} />
-              </Left>
-              <Body>
-                <Text style={{color: textColor}}>Yoga</Text>
-              </Body>
-            </ListItem>
-          </List>
+          <SLISTHEADER title={'General Settings'} icon={'cogs'} />
+          <SLISTITEM
+            toggle={toggleDarkMode}
+            title={'Dark theme'}
+            subtitle={'Reduce glare and improve night viewing'}
+            state={darkmode}
+          />
+          <SLISTITEM
+            toggle={toggleDarkSwitch}
+            title={'Toggle in Every Page'}
+            subtitle={'Show toggle dark mode switch in every page'}
+            state={darkSwitch}
+          />
+          <SLISTHEADER title={'Created By'} icon={'information'} />
+          <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
+          <SCL image={yoga} title={'Yoga'} />
         </Content>
         <View
           style={{flexDirection: 'row', alignSelf: 'center', marginBottom: 4}}>
@@ -156,7 +129,7 @@ const SettingsScreen = ({navigation}) => {
           />
           <Text style={{color: textColor, fontSize: 20}}> In India</Text>
         </View>
-        <Admob type={'banner'} unitId={Adhelper.GenerateId()} />
+        <Admob />
       </View>
     </Container>
   );

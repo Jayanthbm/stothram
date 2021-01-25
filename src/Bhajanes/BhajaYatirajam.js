@@ -1,110 +1,44 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, BackHandler, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import Slider from '@react-native-community/slider';
-import Header from '../Components/Header';
+import React, {useEffect, useContext} from 'react';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Container} from 'native-base';
+
 import St from '../Components/St';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import HeaderComponent from '../Components/HeaderComponent';
+import SliderComponent from '../Components/SliderComponent';
+import {ThemeContext} from '../providers/ThemeProvider';
 
-const BhajaYatirajam = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-
-  const [font, setFont] = useState(24);
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) { }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
+const BhajaYatirajam = ({navigation}) => {
+  const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
   useEffect(() => {
-    getData();
     const backAction = () => {
       navigation.navigate('BhajaneScreen');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+      backAction,
     );
-
     return () => backHandler.remove();
-
-  }, []);
+  }, [navigation]);
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
-        <Header
-          title="ಭಜ ಯತಿರಾಜಂ"
-          darkmode={darkmode}
-        />
-        <Slider
-          value={font}
-          onValueChange={value => setFont(value)}
-          minimumValue={15}
-          maximumValue={50}
-          style={{
-            marginStart: 15,
-            marginEnd: 15,
+    <Container>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('BhajaneScreen');
           }}
+          title={'ಭಜ ಯತಿರಾಜಂ'}
         />
+        <SliderComponent />
         <ScrollView>
           <View
             style={{
               marginLeft: 7,
               marginRight: 1,
-            }}
-          >
+            }}>
             <St
               color={textColor}
               fontSize={font}
@@ -158,7 +92,9 @@ const BhajaYatirajam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಯಾವಾನಬಲೋ ಜರಯಾ ದೇಹಃ ತಾವಾನ್ ಪ್ರಬಲೋ ವಿಷಯೇ ಮೋಹಃ ।'}
-              line2={'ವಚಸಿ ವಿರಕ್ತಿಃ ಶ್ರುತಿಪರಿವಾಹಃ ಮನಸಿ ಹಿತಸ್ತ್ವಪರೋಽಪಿ ವಿವಾಹಃ ॥ ೭॥'}
+              line2={
+                'ವಚಸಿ ವಿರಕ್ತಿಃ ಶ್ರುತಿಪರಿವಾಹಃ ಮನಸಿ ಹಿತಸ್ತ್ವಪರೋಽಪಿ ವಿವಾಹಃ ॥ ೭॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
@@ -207,7 +143,9 @@ const BhajaYatirajam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಭಜಸಿ ವೃಥಾ ವಿಷಯೇಷು ದುರಾಶಾಂ ವಿವಿಧವಿಚಿತ್ರಮನೋರಥಪಾಶಾಮ್ ।'}
-              line2={'ಕಿಯದಪಿ ಲಭಸೇ ನ ಹಿ ತತ್ರೈಕಂ ಕಿನ್ತು ವ್ರಜಸಿ ಮಹಾನ್ತಂ ಶೋಕಮ್ ॥ ೧೪॥'}
+              line2={
+                'ಕಿಯದಪಿ ಲಭಸೇ ನ ಹಿ ತತ್ರೈಕಂ ಕಿನ್ತು ವ್ರಜಸಿ ಮಹಾನ್ತಂ ಶೋಕಮ್ ॥ ೧೪॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
@@ -221,21 +159,27 @@ const BhajaYatirajam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಕಶ್ಚನ ಲೋಕೇ ಕರಪುಟಪಾತ್ರಃ ಪಾತುಂ ಸುತಮಾಶ್ರಿತಮಠಸತ್ರಃ ।'}
-              line2={'ತಸ್ಮಿನ್ವೃದ್ಧೇ ತಂ ಸಕಲತ್ರಃ ಶಪತಿ ಹಿ ರಣ್ಡಾಸುತ ಇತಿ ಪುತ್ರಃ ॥ ೧೫॥'}
+              line2={
+                'ತಸ್ಮಿನ್ವೃದ್ಧೇ ತಂ ಸಕಲತ್ರಃ ಶಪತಿ ಹಿ ರಣ್ಡಾಸುತ ಇತಿ ಪುತ್ರಃ ॥ ೧೫॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
               color={textColor}
               fontSize={font}
               line1={'ಪಾಪಹತೋ ವಾ ಪುಣ್ಯಯುತೋ ವಾ ಸುರನರತಿರ್ಯಗ್ಜಾತಿಗತೋ ವಾ ।'}
-              line2={'ರಾಮಾನುಜಪದತೀರ್ಥಾನ್ಮುಕ್ತಿಂ ವಿನ್ದತಿ ವಿನ್ದತಿ ವಿನ್ದತ್ಯೇವ ॥ ೧೭॥'}
+              line2={
+                'ರಾಮಾನುಜಪದತೀರ್ಥಾನ್ಮುಕ್ತಿಂ ವಿನ್ದತಿ ವಿನ್ದತಿ ವಿನ್ದತ್ಯೇವ ॥ ೧೭॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
               color={textColor}
               fontSize={font}
               line1={'ಗುಣಗುಣಿನೋರ್ಭೇದಃ ಕಿಲ ನಿತ್ಯಃ ಚಿದಚಿದ್ದ್ವಯಪರಭೇದಃ ಸತ್ಯಃ ।'}
-              line2={'ತದ್ದ್ವಯದೇಹೋ ಹರಿರಿತಿ ತತ್ತ್ವಂ ಪಶ್ಯ ವಿಶಿಷ್ಟಾದ್ವೈತಂ ತತ್ತ್ವಂ ॥ ೧೮॥'}
+              line2={
+                'ತದ್ದ್ವಯದೇಹೋ ಹರಿರಿತಿ ತತ್ತ್ವಂ ಪಶ್ಯ ವಿಶಿಷ್ಟಾದ್ವೈತಂ ತತ್ತ್ವಂ ॥ ೧೮॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
@@ -305,7 +249,9 @@ const BhajaYatirajam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಶ್ರುತಿಶಿರಸಾಮತ್ಯನ್ತವಿದೂಷ್ಯಂ ಸೂತ್ರಾನಭಿಮತಮತಿವೈದುಷ್ಯಮ್ ।'}
-              line2={'ಪ್ರಥಮಮ್ ಮಙ್ಗಲಮನೃತವಿಶೇಷ್ಯಂ ಪ್ರಲಪಸಿ ಕಿಂ ಪ್ರಾಕೃತಕೃತಭಾಷ್ಯಂ ॥ ೨೮॥'}
+              line2={
+                'ಪ್ರಥಮಮ್ ಮಙ್ಗಲಮನೃತವಿಶೇಷ್ಯಂ ಪ್ರಲಪಸಿ ಕಿಂ ಪ್ರಾಕೃತಕೃತಭಾಷ್ಯಂ ॥ ೨೮॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
@@ -319,7 +265,9 @@ const BhajaYatirajam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಕಾನ್ತಿಮತೀಸುಕುಮಾರಕುಮಾರಂ ಕೇಶವಯಜ್ವಕಿಶೋರಮುದಾರಮ್ । '}
-              line2={'ಯಜ್ವ ಪಾಠಭೇದ ಸಿಂಹ ರಾಮಾನುಜಮಹಿರಾಡವತಾರಂ ಮೂಕಾನ್ಧಾನಪಿ ಮೋಕ್ಷಯಿತಾರಮ್ ॥ ೩೦॥'}
+              line2={
+                'ಯಜ್ವ ಪಾಠಭೇದ ಸಿಂಹ ರಾಮಾನುಜಮಹಿರಾಡವತಾರಂ ಮೂಕಾನ್ಧಾನಪಿ ಮೋಕ್ಷಯಿತಾರಮ್ ॥ ೩೦॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
             <St
@@ -361,20 +309,18 @@ const BhajaYatirajam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಭಗವದ್ರಾಮಾನುಜಷಟ್ತ್ರಿಂಶಃ ಸಾಲಗ್ರಾಮಗುರೂತ್ತಮವಂಶ್ಯಃ ।'}
-              line2={'ಕೌಣ್ಡಿನ್ಯಃ ಕವಿರಾಹ ಪವಿತ್ರಂ ರಙ್ಗಾರ್ಯೋ ಯತಿರಾಜಸ್ತೋತ್ರಮ್ ॥ ೩೬॥'}
+              line2={
+                'ಕೌಣ್ಡಿನ್ಯಃ ಕವಿರಾಹ ಪವಿತ್ರಂ ರಙ್ಗಾರ್ಯೋ ಯತಿರಾಜಸ್ತೋತ್ರಮ್ ॥ ೩೬॥'
+              }
               line3={'ಭಜ ಯತಿರಾಜಂ ॥।'}
             />
           </View>
         </ScrollView>
-        <Admob
-          type={'banner'}
-          unitId={Adhelper.GenerateId()}
-        />
-      </React.Fragment>
-    </View>
 
+        <Admob />
+      </View>
+    </Container>
   );
 };
-
 
 export default BhajaYatirajam;

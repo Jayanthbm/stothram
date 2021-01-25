@@ -1,238 +1,23 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext, useState} from 'react';
-import {
-  View,
-  Text,
-  BackHandler,
-  Pressable,
-  Switch,
-  ImageBackground,
-  TextInput,
-  FlatList,
-  Animated,
-} from 'react-native';
-import {Container, Header, Left, Body, Right, Title} from 'native-base';
-import HIcon from 'react-native-vector-icons/Ionicons';
-import {FlatGrid} from 'react-native-super-grid';
+import {View, BackHandler, TextInput} from 'react-native';
+import {Container} from 'native-base';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
-
+import HeaderComponent from '../Components/HeaderComponent';
+import CardList from '../Components/CardList';
+import InlineList from '../Components/InlineList';
+import {SHOTRAM_SCREEN_DATA} from '../Constants/data';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const ShotramScreen = ({navigation}) => {
   const [searchvalue, onChangeText] = useState('');
-  const [dataarray, setDataarray] = useState(null);
-  const {
-    darkmode,
-    toggleDarkMode,
-    darkSwitch,
-    backgroundColor,
-    textColor,
-    headerBackground,
-    viewType,
-    toggleViewType,
-  } = useContext(ThemeContext);
+  const [dataarray, setDataarray] = useState(SHOTRAM_SCREEN_DATA);
+  const {backgroundColor, textColor, viewType} = useContext(ThemeContext);
 
   const setDefaultData = () => {
-    setDataarray([
-      {
-        id: 1,
-        title: 'Dashavatara',
-        goto: 'Dashavatara',
-        displayTitle: 'ದಶಾವತಾರ ಸ್ತೋತ್ರಂ',
-      },
-      {
-        id: 2,
-        title: 'GodaStuti',
-        goto: 'GodaSthuti',
-        displayTitle: 'ಗೋದಾ ಸ್ತುತಿಃ',
-      },
-      {
-        id: 3,
-        title: 'GopalaVimshathi',
-        goto: 'GopalaVimshathi',
-        displayTitle: 'ಗೋಪಾಲ ವಿಂಶತಿ',
-      },
-      {
-        id: 4,
-        title: 'Hayagriva',
-        displayTitle: 'ಹಯಗ್ರೀವ ಸ್ತೋತ್ರಂ',
-        goto: 'Hayagriva',
-      },
-      {
-        id: 5,
-        title: 'MukundaMala',
-        displayTitle: 'ಮುಕುಂದಮಾಲಾ',
-        goto: 'MukundaMala',
-      },
-      {
-        id: 6,
-        title: 'RaghuveeraGadya',
-        displayTitle: ' ಶ್ರೀ ರಘುವೀರ ಗದ್ಯಂ',
-        goto: 'RaghuveeraGadya',
-      },
-      {
-        id: 7,
-        title: 'Sudarshanastaka',
-        displayTitle: 'ಶ್ರೀ ಸುದರ್ಶನ ಅಷ್ಟಕಂ',
-        goto: 'Sudarshanastaka',
-      },
-      {
-        id: 8,
-        title: 'Tiruppavai',
-        displayTitle: 'ತಿರುಪ್ಪಾವೈ',
-        goto: 'Tiruppavai',
-      },
-      {
-        id: 9,
-        title: 'GarudaDandakam',
-        displayTitle: 'ಶ್ರೀ ಗರುಡ ದಂಡಕಂ',
-        goto: 'GarudaDandakam',
-      },
-      {
-        id: 10,
-        title: 'VishnuSahasranamam',
-        displayTitle: 'ವಿಷ್ಣು ಸಹಸ್ರ ನಾಮ',
-        goto: 'VishnuSahasranamam',
-      },
-      {
-        id: 11,
-        title: 'Jitante',
-        displayTitle: 'ಜಿತಂತೇ ಸ್ತೋತ್ರಂ',
-        goto: 'Jitante',
-      },
-      {
-        id: 12,
-        title: 'Nyasadashaka',
-        displayTitle: 'ಶ್ರೀ ನ್ಯಾಸದಶಕಂ',
-        goto: 'Nyasadashaka',
-      },
-      {
-        id: 13,
-        title: 'Amaladipiran',
-        displayTitle: 'ಅಮಲನಾದಿಪಿರಾನ್',
-        goto: 'Amaladipiran',
-      },
-      {
-        id: 14,
-        title: 'KanninunShiruttamb',
-        displayTitle: 'ಕಣ್ಣಿನುಣ್ ಶಿರುತ್ತಾಮ್ಬು',
-        goto: 'KanninunShiruttamb',
-      },
-      {
-        id: 15,
-        title: 'ChaturShloki',
-        displayTitle: 'ಚತುಶ್ಲೋಕೀ',
-        goto: 'ChaturShloki',
-      },
-      {
-        id: 16,
-        title: 'Tirupalland',
-        displayTitle: 'ತಿರುಪ್ಪಲ್ಲಾಂಡು',
-        goto: 'Tirupalland',
-      },
-      {
-        id: 17,
-        title: 'Tirupalliyucchi',
-        displayTitle: 'ತಿರುಪ್ಪಳ್ಳಿಯೆಳುಚ್ಚಿ',
-        goto: 'Tirupalliyucchi',
-      },
-      {
-        id: 18,
-        title: 'Shatumurai',
-        displayTitle: 'ಶಾತ್ತುಮರೈ',
-        goto: 'Shatumurai',
-      },
-      {
-        id: 19,
-        title: 'ShatumuraiValitirunam',
-        displayTitle: 'ಶಾತ್ತುಮರೈ & ವಾಳಿತ್ತಿರುನಾಮಮ್',
-        goto: 'ShatumuraiValitirunam',
-      },
-      {
-        id: 20,
-        title: 'DeshikaMangalam',
-        displayTitle: 'ಶ್ರೀ ದೇಶಿಕಮಂಗಳಂ',
-        goto: 'DeshikaMangalam',
-      },
-      {
-        id: 21,
-        title: 'SriStuti',
-        displayTitle: 'ಶ್ರೀಸ್ತುತಿಃ',
-        goto: 'SriStuti',
-      },
-    ]);
+    setDataarray(SHOTRAM_SCREEN_DATA);
   };
 
-  function Item({title, goto, displayTitle}) {
-    let image = require('../Assets/Images/god.webp');
-    return (
-      <Pressable
-        onPress={() => {
-          navigation.navigate(goto);
-        }}>
-        {({pressed}) => (
-          <React.Fragment>
-            <ImageBackground
-              source={image}
-              style={{
-                flex: 1,
-                resizeMode: 'cover',
-                justifyContent: 'center',
-                borderColor: textColor,
-                borderWidth: 1,
-                height: 100,
-              }}
-            />
-            <Text
-              numberOfLines={1}
-              style={{
-                fontSize: 20,
-                color: pressed ? headerBackground : textColor,
-                fontWeight: '600',
-                textAlign: 'center',
-              }}>
-              {displayTitle ? displayTitle : title}
-            </Text>
-          </React.Fragment>
-        )}
-      </Pressable>
-    );
-  }
-
-  const LItem = ({title, goto}) => (
-    <Pressable
-      onPress={() => {
-        navigation.navigate(goto);
-      }}>
-      {({pressed}) => (
-        <Animated.View style={{height: 40}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              width: '98%',
-              borderBottomColor: darkmode ? headerBackground : '#eee',
-              borderBottomWidth: 2,
-              marginLeft: 20,
-              backgroundColor: pressed ? headerBackground : backgroundColor,
-            }}>
-            <Text
-              style={{
-                fontSize: 20,
-                color: pressed ? '#fff' : textColor,
-                marginBottom: 5,
-              }}>
-              {title}
-            </Text>
-          </View>
-        </Animated.View>
-      )}
-    </Pressable>
-  );
-  const renderItem = ({item}) => (
-    <LItem title={item.displayTitle} goto={item.goto} />
-  );
   useEffect(() => {
     const backAction = () => {
       navigation.navigate('HomeScreen');
@@ -242,7 +27,6 @@ const ShotramScreen = ({navigation}) => {
       'hardwareBackPress',
       backAction,
     );
-    setDefaultData();
     return () => backHandler.remove();
   }, [navigation]);
 
@@ -262,64 +46,13 @@ const ShotramScreen = ({navigation}) => {
   return (
     <Container style={{backgroundColor: backgroundColor}}>
       <View style={{flex: 1, backgroundColor: backgroundColor}}>
-        <Header style={{backgroundColor: headerBackground}}>
-          <Left>
-            <Pressable
-              onPress={() => {
-                navigation.navigate('HomeScreen');
-              }}
-              style={{marginLeft: 10}}>
-              {({pressed}) => (
-                <HIcon
-                  name={
-                    pressed
-                      ? 'chevron-back-circle-sharp'
-                      : 'chevron-back-circle-outline'
-                  }
-                  style={{
-                    color: '#fff',
-                    fontSize: 30,
-                  }}
-                />
-              )}
-            </Pressable>
-          </Left>
-          <Body>
-            <Title style={{color: darkmode ? '#fff' : '#bebebe'}}>
-              Stothram
-            </Title>
-          </Body>
-          <Right>
-            <Pressable onPress={toggleViewType}>
-              {({pressed}) => (
-                <HIcon
-                  name={
-                    viewType === 'card'
-                      ? pressed
-                        ? 'list-circle-sharp'
-                        : 'list-circle-outline'
-                      : pressed
-                      ? 'card-sharp'
-                      : 'card-outline'
-                  }
-                  style={{
-                    color: '#fff',
-                    fontSize: 25,
-                  }}
-                />
-              )}
-            </Pressable>
-            {darkSwitch && (
-              <Switch
-                value={darkmode}
-                onValueChange={toggleDarkMode}
-                trackColor={{false: '#ccc', true: '#81b0ff'}}
-                thumbColor={darkmode ? '#D5E650' : '#f4f3f4'}
-                style={{marginLeft: 10}}
-              />
-            )}
-          </Right>
-        </Header>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('HomeScreen');
+          }}
+          title={'Stothram'}
+          viewType={true}
+        />
         <TextInput
           placeholder="Search"
           placeholderTextColor={textColor}
@@ -346,40 +79,13 @@ const ShotramScreen = ({navigation}) => {
 
         <React.Fragment>
           {viewType === 'card' ? (
-            <React.Fragment>
-              {dataarray && dataarray != null && (
-                <FlatGrid
-                  itemDimension={130}
-                  data={dataarray}
-                  style={{
-                    marginTop: 10,
-                    flex: 1,
-                  }}
-                  spacing={10}
-                  renderItem={({item}) => (
-                    <Item
-                      title={item.title}
-                      goto={item.goto}
-                      displayTitle={item.displayTitle}
-                    />
-                  )}
-                />
-              )}
-            </React.Fragment>
+            <CardList nav={navigation} data={dataarray} />
           ) : (
-            <React.Fragment>
-              {dataarray && (
-                <FlatList
-                  data={dataarray}
-                  renderItem={renderItem}
-                  keyExtractor={(item) => item.title}
-                />
-              )}
-            </React.Fragment>
+            <InlineList nav={navigation} data={dataarray} />
           )}
         </React.Fragment>
 
-        <Admob type={'banner'} unitId={Adhelper.GenerateId()} />
+        <Admob />
       </View>
     </Container>
   );

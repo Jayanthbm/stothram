@@ -1,109 +1,44 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, BackHandler, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import Slider from '@react-native-community/slider';
-import Header from '../Components/Header';
+import React, {useEffect, useContext} from 'react';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Container} from 'native-base';
+
 import St from '../Components/St';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import HeaderComponent from '../Components/HeaderComponent';
+import SliderComponent from '../Components/SliderComponent';
+import {ThemeContext} from '../providers/ThemeProvider';
 
-const VishnuSahasranamam = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-
-  const [font, setFont] = useState(24);
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) { }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) { }
-  };
+const VishnuSahasranamam = ({navigation}) => {
+  const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
   useEffect(() => {
-    getData();
     const backAction = () => {
       navigation.navigate('ShotramScreen');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+      backAction,
     );
-
     return () => backHandler.remove();
-
-  }, []);
+  }, [navigation]);
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
-        <Header
-          title="ಶ್ರೀ ವಿಷ್ಣು ಸಹಸ್ರ ನಾಮ ಸ್ತೋತ್ರಮ್"
-          darkmode={darkmode}
-        />
-        <Slider
-          value={font}
-          onValueChange={value => setFont(value)}
-          minimumValue={15}
-          maximumValue={50}
-          style={{
-            marginStart: 15,
-            marginEnd: 15,
-            height: 20,
+    <Container>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('ShotramScreen');
           }}
+          title={'ಶ್ರೀ ವಿಷ್ಣು ಸಹಸ್ರ ನಾಮ ಸ್ತೋತ್ರಮ್'}
         />
+        <SliderComponent />
         <ScrollView>
           <View
             style={{
               marginLeft: 7,
               marginRight: 1,
-            }}
-          >
+            }}>
             <St
               color={textColor}
               fontSize={font}
@@ -116,11 +51,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line1={'ಯಸ್ಯದ್ವಿರದವಕ್ತ್ರಾದ್ಯಾಃ ಪಾರಿಷದ್ಯಾಃ ಪರಃ ಶತಮ್ |'}
               line2={'ಪವಿಘ್ನಂ ನಿಘ್ನಂತಿ ಸತತಂ ವಿಷ್ವಕ್ಸೇನಂ ತಮಾಶ್ರಯೇ ‖ 2 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಪೂರ್ವ ಪೀಠಿಕಾ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಪೂರ್ವ ಪೀಠಿಕಾ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -161,11 +92,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line1={'ಶ್ರುತ್ವಾ ಧರ್ಮಾ ನಶೇಷೇಣ ಪಾವನಾನಿ ಚ ಸರ್ವಶಃ |'}
               line2={'ಯುಧಿಷ್ಠಿರಃ ಶಾಂತನವಂ ಪುನರೇವಾಭ್ಯ ಭಾಷತ ‖ 7 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಯುಧಿಷ್ಠಿರ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಯುಧಿಷ್ಠಿರ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -178,11 +105,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line1={'ಕೋ ಧರ್ಮಃ ಸರ್ವಧರ್ಮಾಣಾಂ ಭವತಃ ಪರಮೋ ಮತಃ |'}
               line2={'ಕಿಂ ಜಪನ್ಮುಚ್ಯತೇ ಜಂತುರ್ಜನ್ಮಸಂಸಾರ ಬಂಧನಾತ್ ‖ 9 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಶ್ರೀ ಭೀಷ್ಮ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಶ್ರೀ ಭೀಷ್ಮ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -261,11 +184,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line1={'ವಿಷ್ಣುಂ ಜಿಷ್ಣುಂ ಮಹಾವಿಷ್ಣುಂ ಪ್ರಭವಿಷ್ಣುಂ ಮಹೇಶ್ವರಂ ‖'}
               line2={'ಅನೇಕರೂಪ ದೈತ್ಯಾಂತಂ ನಮಾಮಿ ಪುರುಷೋತ್ತಮಮ್ ‖ 22 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಪೂರ್ವನ್ಯಾಸಃ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಪೂರ್ವನ್ಯಾಸಃ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -283,13 +202,11 @@ const VishnuSahasranamam = ({ navigation }) => {
               line12={'ಆನಂದಂ ಪರಬ್ರಹ್ಮೇತಿ ಯೋನಿಃ |'}
               line13={'ಋತುಸ್ಸುದರ್ಶನಃ ಕಾಲ ಇತಿ ದಿಗ್ಬಂಧಃ ‖'}
               line14={'ಶ್ರೀವಿಶ್ವರೂಪ ಇತಿ ಧ್ಯಾನಂ |'}
-              line15={'ಶ್ರೀ ಮಹಾವಿಷ್ಣು ಪ್ರೀತ್ಯರ್ಥೇ ಸಹಸ್ರನಾಮ ಜಪೇ ಪಾರಾಯಣೇ ವಿನಿಯೋಗಃ |'}
+              line15={
+                'ಶ್ರೀ ಮಹಾವಿಷ್ಣು ಪ್ರೀತ್ಯರ್ಥೇ ಸಹಸ್ರನಾಮ ಜಪೇ ಪಾರಾಯಣೇ ವಿನಿಯೋಗಃ |'
+              }
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಕರನ್ಯಾಸಃ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಕರನ್ಯಾಸಃ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -300,11 +217,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line5={'ನಿಮಿಷೋಽನಿಮಿಷಃ ಸ್ರಗ್ವೀತಿ ಕನಿಷ್ಠಿಕಾಭ್ಯಾಂ ನಮಃ'}
               line6={'ರಥಾಂಗಪಾಣಿ ರಕ್ಷೋಭ್ಯ ಇತಿ ಕರತಲ ಕರಪೃಷ್ಠಾಭ್ಯಾಂ ನಮಃ'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಅಂಗನ್ಯಾಸಃ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಅಂಗನ್ಯಾಸಃ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -316,11 +229,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line6={'ಶಾಂಗಧನ್ವಾ ಗದಾಧರ ಇತಿ ವೀರ್ಯಾಯ ಅಸ್ತ್ರಾಯಫಟ್'}
               line7={'ಋತುಃ ಸುದರ್ಶನಃ ಕಾಲ ಇತಿ ದಿಗ್ಭಂಧಃ'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಧ್ಯಾನಮ್'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಧ್ಯಾನಮ್'} />
             <St
               color={textColor}
               fontSize={font}
@@ -335,7 +244,9 @@ const VishnuSahasranamam = ({ navigation }) => {
               line1={'ಭೂಃ ಪಾದೌ ಯಸ್ಯ ನಾಭಿರ್ವಿಯದಸುರನಿಲಶ್ಚಂದ್ರ ಸೂರ್ಯೌ ಚ ನೇತ್ರೇ'}
               line2={'ಕರ್ಣಾವಾಶಾಃ ಶಿರೋದ್ಯೌರ್ಮುಖಮಪಿ ದಹನೋ ಯಸ್ಯ ವಾಸ್ತೇಯಮಬ್ಧಿಃ |'}
               line3={'ಅಂತಃಸ್ಥಂ ಯಸ್ಯ ವಿಶ್ವಂ ಸುರ ನರಖಗಗೋಭೋಗಿಗಂಧರ್ವದೈತ್ಯೈಃ'}
-              line4={'ಚಿತ್ರಂ ರಂ ರಮ್ಯತೇ ತಂ ತ್ರಿಭುವನ ವಪುಶಂ ವಿಷ್ಣುಮೀಶಂ ನಮಾಮಿ ‖ 2 ‖'}
+              line4={
+                'ಚಿತ್ರಂ ರಂ ರಮ್ಯತೇ ತಂ ತ್ರಿಭುವನ ವಪುಶಂ ವಿಷ್ಣುಮೀಶಂ ನಮಾಮಿ ‖ 2 ‖'
+              }
             />
             <St
               color={textColor}
@@ -384,11 +295,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line1={'ಚಂದ್ರಾನನಂ ಚತುರ್ಬಾಹುಂ ಶ್ರೀವತ್ಸಾಂಕಿತ ವಕ್ಷಸಮ್'}
               line2={'ರುಕ್ಮಿಣೀ ಸತ್ಯಭಾಮಾಭ್ಯಾಂ ಸಹಿತಂ ಕೃಷ್ಣಮಾಶ್ರಯೇ ‖ 8 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಪಂಚಪೂಜ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಪಂಚಪೂಜ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -400,16 +307,8 @@ const VishnuSahasranamam = ({ navigation }) => {
               line6={'ಸಂ - ಸರ್ವಾತ್ಮನೇ ಸರ್ವೋಪಚಾರ ಪೂಜಾ ನಮಸ್ಕಾರಾನ್ '}
               line7={'ಸಮರ್ಪಯಾಮಿ'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಸ್ತೋತ್ರಮ್'}
-            />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಹರಿಃ ಓಮ್'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಸ್ತೋತ್ರಮ್'} />
+            <St color={textColor} fontSize={font} line1={'ಹರಿಃ ಓಮ್'} />
             <St
               color={textColor}
               fontSize={font}
@@ -589,7 +488,9 @@ const VishnuSahasranamam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಓಜಸ್ತೇಜೋದ್ಯುತಿಧರಃ ಪ್ರಕಾಶಾತ್ಮಾ ಪ್ರತಾಪನಃ |'}
-              line2={'ಋದ್ದಃ ಸ್ಪಷ್ಟಾಕ್ಷರೋ ಮಂತ್ರಶ್ಚಂದ್ರಾಂಶುರ್ಭಾಸ್ಕರದ್ಯುತಿಃ ‖ 30 ‖'}
+              line2={
+                'ಋದ್ದಃ ಸ್ಪಷ್ಟಾಕ್ಷರೋ ಮಂತ್ರಶ್ಚಂದ್ರಾಂಶುರ್ಭಾಸ್ಕರದ್ಯುತಿಃ ‖ 30 ‖'
+              }
             />
 
             <St
@@ -837,7 +738,9 @@ const VishnuSahasranamam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಬ್ರಹ್ಮಣ್ಯೋ ಬ್ರಹ್ಮಕೃದ್ ಬ್ರಹ್ಮಾ ಬ್ರಹ್ಮ ಬ್ರಹ್ಮವಿವರ್ಧನಃ |'}
-              line2={'ಬ್ರಹ್ಮವಿದ್ ಬ್ರಾಹ್ಮಣೋ ಬ್ರಹ್ಮೀ ಬ್ರಹ್ಮಜ್ಞೋ ಬ್ರಾಹ್ಮಣಪ್ರಿಯಃ ‖ 71 ‖'}
+              line2={
+                'ಬ್ರಹ್ಮವಿದ್ ಬ್ರಾಹ್ಮಣೋ ಬ್ರಹ್ಮೀ ಬ್ರಹ್ಮಜ್ಞೋ ಬ್ರಾಹ್ಮಣಪ್ರಿಯಃ ‖ 71 ‖'
+              }
             />
             <St
               color={textColor}
@@ -987,7 +890,9 @@ const VishnuSahasranamam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಸನಾತ್ಸನಾತನತಮಃ ಕಪಿಲಃ ಕಪಿರವ್ಯಯಃ |'}
-              line2={'ಸ್ವಸ್ತಿದಃ ಸ್ವಸ್ತಿಕೃತ್ಸ್ವಸ್ತಿಃ ಸ್ವಸ್ತಿಭುಕ್ ಸ್ವಸ್ತಿದಕ್ಷಿಣಃ ‖ 96 ‖'}
+              line2={
+                'ಸ್ವಸ್ತಿದಃ ಸ್ವಸ್ತಿಕೃತ್ಸ್ವಸ್ತಿಃ ಸ್ವಸ್ತಿಭುಕ್ ಸ್ವಸ್ತಿದಕ್ಷಿಣಃ ‖ 96 ‖'
+              }
             />
             <St
               color={textColor}
@@ -1071,16 +976,8 @@ const VishnuSahasranamam = ({ navigation }) => {
               fontSize={font}
               line1={'ಶ್ರೀ ವಾಸುದೇವೋಽಭಿರಕ್ಷತು ಓಂ ನಮ ಇತಿ |'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಉತ್ತರ ಪೀಠಿಕಾ'}
-            />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಫಲಶ್ರುತಿಃ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಉತ್ತರ ಪೀಠಿಕಾ'} />
+            <St color={textColor} fontSize={font} line1={'ಫಲಶ್ರುತಿಃ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -1103,7 +1000,9 @@ const VishnuSahasranamam = ({ navigation }) => {
               color={textColor}
               fontSize={font}
               line1={'ಧರ್ಮಾರ್ಥೀ ಪ್ರಾಪ್ನುಯಾದ್ಧರ್ಮಮರ್ಥಾರ್ಥೀ ಚಾರ್ಥಮಾಪ್ನುಯಾತ್ |'}
-              line2={'ಕಾಮಾನವಾಪ್ನುಯಾತ್ ಕಾಮೀ ಪ್ರಜಾರ್ಥೀ ಪ್ರಾಪ್ನುಯಾತ್ಪ್ರಜಾಮ್| ‖ 4 ‖'}
+              line2={
+                'ಕಾಮಾನವಾಪ್ನುಯಾತ್ ಕಾಮೀ ಪ್ರಜಾರ್ಥೀ ಪ್ರಾಪ್ನುಯಾತ್ಪ್ರಜಾಮ್| ‖ 4 ‖'
+              }
             />
             <St
               color={textColor}
@@ -1219,22 +1118,14 @@ const VishnuSahasranamam = ({ navigation }) => {
               fontSize={font}
               line1={'ನ ತೇ ಯಾಂತಿ ಪರಾಭವಂ ಓಂ ನಮ ಇತಿ |'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಅರ್ಜುನ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಅರ್ಜುನ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
               line1={'ಪದ್ಮಪತ್ರ ವಿಶಾಲಾಕ್ಷ ಪದ್ಮನಾಭ ಸುರೋತ್ತಮ |'}
               line2={'ಭಕ್ತಾನಾ ಮನುರಕ್ತಾನಾಂ ತ್ರಾತಾ ಭವ ಜನಾರ್ದನ ‖ 23 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಶ್ರೀಭಗವಾನುವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಶ್ರೀಭಗವಾನುವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -1246,11 +1137,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               fontSize={font}
               line1={'ಸ್ತುತ ಏವ ನ ಸಂಶಯ ಓಂ ನಮ ಇತಿ |'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ವ್ಯಾಸ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ವ್ಯಾಸ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -1262,11 +1149,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               fontSize={font}
               line1={'ಶ್ರೀವಾಸುದೇವ ನಮೋಸ್ತುತ ಓಂ ನಮ ಇತಿ |'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಪಾರ್ವತ್ಯುವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಪಾರ್ವತ್ಯುವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -1274,11 +1157,7 @@ const VishnuSahasranamam = ({ navigation }) => {
               line2={'ಪಠ್ಯತೇ ಪಂಡಿತೈರ್ನಿತ್ಯಂ ಶ್ರೋತುಮಿಚ್ಛಾಮ್ಯಹಂ ಪ್ರಭೋ ‖ 26 ‖'}
             />
 
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಈಶ್ವರ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಈಶ್ವರ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -1290,39 +1169,29 @@ const VishnuSahasranamam = ({ navigation }) => {
               fontSize={font}
               line1={'ಶ್ರೀರಾಮ ನಾಮ ವರಾನನ ಓಂ ನಮ ಇತಿ |'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಬ್ರಹ್ಮೋವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಬ್ರಹ್ಮೋವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
               line1={'ನಮೋಽಸ್ತ್ವನಂತಾಯ ಸಹಸ್ರಮೂರ್ತಯೇ '}
               line2={'ಸಹಸ್ರಪಾದಾಕ್ಷಿಶಿರೋರುಬಾಹವೇ |'}
-              line3={'ಸಹಸ್ರನಾಮ್ನೇ ಪುರುಷಾಯ ಶಾಶ್ವತೇ ಸಹಸ್ರಕೋಟೀ ಯುಗಧಾರಿಣೇ ನಮಃ ‖ 28 ‖'}
+              line3={
+                'ಸಹಸ್ರನಾಮ್ನೇ ಪುರುಷಾಯ ಶಾಶ್ವತೇ ಸಹಸ್ರಕೋಟೀ ಯುಗಧಾರಿಣೇ ನಮಃ ‖ 28 ‖'
+              }
             />
             <St
               color={textColor}
               fontSize={font}
               line1={'ಶ್ರೀ ಸಹಸ್ರಕೋಟೀ ಯುಗಧಾರಿಣೇ ನಮ ಓಂ ನಮ ಇತಿ |'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಸಂಜಯ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಸಂಜಯ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
               line1={'ಯತ್ರ ಯೋಗೇಶ್ವರಃ ಕೃಷ್ಣೋ ಯತ್ರ ಪಾರ್ಥೋ ಧನುರ್ಧರಃ |'}
               line2={'ತತ್ರ ಶ್ರೀರ್ವಿಜಯೋ ಭೂತಿರ್ಧ್ರುವಾ ನೀತಿರ್ಮತಿರ್ಮಮ ‖ 29 ‖'}
             />
-            <St
-              color={textColor}
-              fontSize={font}
-              line1={'ಶ್ರೀ ಭಗವಾನ್ ಉವಾಚ'}
-            />
+            <St color={textColor} fontSize={font} line1={'ಶ್ರೀ ಭಗವಾನ್ ಉವಾಚ'} />
             <St
               color={textColor}
               fontSize={font}
@@ -1338,24 +1207,27 @@ const VishnuSahasranamam = ({ navigation }) => {
             <St
               color={textColor}
               fontSize={font}
-              line1={'ಆರ್ತಾಃ ವಿಷಣ್ಣಾಃ ಶಿಥಿಲಾಶ್ಚ ಭೀತಾಃ ಘೋರೇಷು ಚ ವ್ಯಾಧಿಷು ವರ್ತಮಾನಾಃ |'}
-              line2={'ಸಂಕೀರ್ತ್ಯ ನಾರಾಯಣಶಬ್ದಮಾತ್ರಂ ವಿಮುಕ್ತದುಃಖಾಃ ಸುಖಿನೋ ಭವಂತಿ ‖ 32 ‖'}
+              line1={
+                'ಆರ್ತಾಃ ವಿಷಣ್ಣಾಃ ಶಿಥಿಲಾಶ್ಚ ಭೀತಾಃ ಘೋರೇಷು ಚ ವ್ಯಾಧಿಷು ವರ್ತಮಾನಾಃ |'
+              }
+              line2={
+                'ಸಂಕೀರ್ತ್ಯ ನಾರಾಯಣಶಬ್ದಮಾತ್ರಂ ವಿಮುಕ್ತದುಃಖಾಃ ಸುಖಿನೋ ಭವಂತಿ ‖ 32 ‖'
+              }
             />
             <St
               color={textColor}
               fontSize={font}
-              line1={'ಕಾಯೇನ ವಾಚಾ ಮನಸೇಂದ್ರಿಯೈರ್ವಾ ಬುದ್ಧ್ಯಾತ್ಮನಾ ವಾ ಪ್ರಕೃತೇಃ ಸ್ವಭಾವಾತ್ |'}
+              line1={
+                'ಕಾಯೇನ ವಾಚಾ ಮನಸೇಂದ್ರಿಯೈರ್ವಾ ಬುದ್ಧ್ಯಾತ್ಮನಾ ವಾ ಪ್ರಕೃತೇಃ ಸ್ವಭಾವಾತ್ |'
+              }
               line2={'ಕರೋಮಿ ಯದ್ಯತ್ಸಕಲಂ ಪರಸ್ಮೈ ನಾರಾಯಣಾಯೇತಿ ಸಮರ್ಪಯಾಮಿ ‖ 33 ‖'}
             />
           </View>
         </ScrollView>
-        <Admob
-          type={'banner'}
-          unitId={Adhelper.GenerateId()}
-        />
-      </React.Fragment>
-    </View>
 
+        <Admob />
+      </View>
+    </Container>
   );
 };
 

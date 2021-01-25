@@ -19,6 +19,7 @@
     "react": "16.13.1",
     "react-native": "0.63.0",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-paper": "^4.7.1",
     "react-native-reanimated": "^1.9.0",
     "react-native-screens": "^2.9.0",
     "react-native-super-grid": "^4.0.2",

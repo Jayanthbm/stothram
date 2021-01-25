@@ -1,108 +1,44 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, BackHandler, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import Slider from '@react-native-community/slider';
-import Header from '../Components/Header';
+import React, {useEffect, useContext} from 'react';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Container} from 'native-base';
+
 import St from '../Components/St';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import HeaderComponent from '../Components/HeaderComponent';
+import SliderComponent from '../Components/SliderComponent';
+import {ThemeContext} from '../providers/ThemeProvider';
 
-const Tiruppavai = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-
-  const [font, setFont] = useState(24);
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) { }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) { }
-  };
+const Tiruppavai = ({navigation}) => {
+  const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
   useEffect(() => {
-    getData();
     const backAction = () => {
       navigation.navigate('ShotramScreen');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+      backAction,
     );
-
     return () => backHandler.remove();
-
-  }, []);
+  }, [navigation]);
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
-        <Header
-          title="ತಿರುಪ್ಪಾವೈ"
-          darkmode={darkmode}
-        />
-        <Slider
-          value={font}
-          onValueChange={value => setFont(value)}
-          minimumValue={15}
-          maximumValue={50}
-          style={{
-            marginStart: 15,
-            marginEnd: 15,
+    <Container>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('ShotramScreen');
           }}
+          title={'ತಿರುಪ್ಪಾವೈ'}
         />
+        <SliderComponent />
         <ScrollView>
           <View
             style={{
               marginLeft: 7,
               marginRight: 1,
-            }}
-          >
+            }}>
             <St
               color={textColor}
               fontSize={font}
@@ -150,7 +86,8 @@ const Tiruppavai = ({ navigation }) => {
               line6={'ಶೆಯ್ಯಾದನ ಶೆಯ್ಯೋಮ್ ತೀಕ್ಕುಱಳೈ ಚೆನ್‍ಱೋದೋಮ್,'}
               line7={'ಐಯಮುಮ್ ಪಿಚ್ಚೈಯುಮ್ ಆನ್ದನೈಯುಮ್ ಕೈ ಕಾಟ್ಟಿ,'}
               line8={'ಉಯ್ಯುಮಾಱು ಎಣ್ಣಿ ಉಗನ್ದು ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೨ ||'}
-            /><St
+            />
+            <St
               color={textColor}
               fontSize={font}
               line1={'ಓಙ್ಗಿ ಉಲಗಳನ್ದ ಉತ್ತಮನ್ ಪೇರ್ ಪಾಡಿ,'}
@@ -172,7 +109,9 @@ const Tiruppavai = ({ navigation }) => {
               line5={'ಆಳಿ* ಪೋಲ್ ಮಿನ್ನಿ ವಲಮ್ಬುರಿ ಪೋಲ್ ನಿನ್‍ಱು ಅದಿರ‍್ನ್ದು,'}
               line6={'ತಾಳಾ*ದೇ ಶಾರ‍್ಙ್ಗಮ್ ಉದೈತ್ತ ಶರಮಳೈ* ಪೋಲ್,'}
               line7={'ವಾಳ* ಉಲಗಿನಿಲ್ ಪೆಯ್‍ದಿಡಾಯ್,'}
-              line8={'ನಾಙ್ಗಳುಮ್ ಮಾರ್ಗಳಿ* ನೀರಾಡ ಮಗಿಳ್*ನ್ದು ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೪ ||'}
+              line8={
+                'ನಾಙ್ಗಳುಮ್ ಮಾರ್ಗಳಿ* ನೀರಾಡ ಮಗಿಳ್*ನ್ದು ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೪ ||'
+              }
             />
             <St
               color={textColor}
@@ -400,7 +339,9 @@ const Tiruppavai = ({ navigation }) => {
               line5={'ಪೋದರುಮಾ ಪೋಲೇ ನೀ ಪೂವೈಪ್ ಪೂವಣ್ಣಾ,'}
               line6={'ಉನ್ ಕೋಯಿಲ್ ನಿನ್‍ಱು ಇಙ್ಗನೇ ಪೋನ್ದರುಳಿ,'}
               line7={'ಕೋಪ್ಪುಡೈಯ ಶೀರಿಯ ಶಿಙ್ಗಾಶನತ್ತು ಇರುನ್ದು,'}
-              line8={'ಯಾಮ್ ವನ್ದ ಕಾರಿಯಮ್ ಆರಾಯ್‍ನ್ದು ಅರುಳ್ ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೨೩ ||'}
+              line8={
+                'ಯಾಮ್ ವನ್ದ ಕಾರಿಯಮ್ ಆರಾಯ್‍ನ್ದು ಅರುಳ್ ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೨೩ ||'
+              }
             />
             <St
               color={textColor}
@@ -424,7 +365,9 @@ const Tiruppavai = ({ navigation }) => {
               line5={'ನೆರುಪ್ಪೆನ್ನ ನಿನ್‍ಱ ನೆಡುಮಾಲೇ,'}
               line6={'ಉನ್ನೈ ಅರುತ್ತಿತ್ತು ವನ್ದೋಮ್ ಪಱೈ ತರುದಿಯಾಗಿಲ್,'}
               line7={'ತಿರುತ್ತಕ್ಕ ಶೆಲ್ವಮುಮ್ ಶೇವಕಮುಮ್ ಯಾಮ್ಪಾಡಿ,'}
-              line8={'ವರುತ್ತಮುಮ್ ತೀರ‍್ನ್ದು ಮಗಿಳ್*ನ್ದು ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೨೫ ||'}
+              line8={
+                'ವರುತ್ತಮುಮ್ ತೀರ‍್ನ್ದು ಮಗಿಳ್*ನ್ದು ಏಲ್ ಓರ್ ಎಮ್ಬಾವಾಯ್ || ೨೫ ||'
+              }
             />
             <St
               color={textColor}
@@ -481,24 +424,21 @@ const Tiruppavai = ({ navigation }) => {
               line1={'ವಙ್ಗಕ್ ಕಡಲ್ ಕಡೈನ್ದ ಮಾದವನೈ ಕೇಶವನೈ,'}
               line2={'ತಿಙ್ಗಳ್ ತಿರುಮುಗತ್ತುಶ್ ಶೆಯಿಳೈ*ಯಾರ್ ಶೆನ್‍ಱಿಱೈಞ್ಜಿ,'}
               line3={'ಅಙ್ಗಪ್ ಪಱೈ ಕೊಣ್ಡವಾಱ್ಱೈ,'}
-              line4={'ಅಣಿಪುದುವೈ ಪೈಙ್ಗಮಲತ್ ತಣ್‍ತೆರಿಯಲ್ ಪಟ್ಟರ್ ಬಿರಾನ್ ಕೋದೈ ಶೊನ್ನ,'}
+              line4={
+                'ಅಣಿಪುದುವೈ ಪೈಙ್ಗಮಲತ್ ತಣ್‍ತೆರಿಯಲ್ ಪಟ್ಟರ್ ಬಿರಾನ್ ಕೋದೈ ಶೊನ್ನ,'
+              }
               line5={'ಶಙ್ಗತ್ ತಮಿಳ್* ಮಾಲೈ ಮುಪ್ಪದುಮ್ ತಪ್ಪಾಮೇ,'}
               line6={'ಇಙ್ಗಿಪ್ ಪರಿಶುಱೈಪ್ಪಾರ್ ಈರಿರಣ್ಡು ಮಾಲ್ ವರೈತ್ ತೋಳ್,'}
               line7={'ಶೆಙ್ಗನ್ ತಿರುಮುಗತ್ತುಚ್ ಚೆಲ್ವತ್ ತಿರುಮಾಲಾಲ್,'}
               line8={'ಎಙ್ಗುಂ ತಿರುವರುಳ್ ಪೆಱ್ಱು ಇನ್ಬುಱುವರ್ ಎಮ್ಬಾವಾಯ್ || ೩೦ ||'}
             />
-
           </View>
         </ScrollView>
-        <Admob
-          type={'banner'}
-          unitId={Adhelper.GenerateId()}
-        />
-      </React.Fragment>
-    </View>
 
+        <Admob />
+      </View>
+    </Container>
   );
 };
-
 
 export default Tiruppavai;

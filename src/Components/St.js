@@ -1,7 +1,6 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { View, Text } from 'react-native';
+import {View, Text} from 'react-native';
 
 const St = (props) => {
   return (
@@ -10,8 +9,7 @@ const St = (props) => {
         style={{
           marginEnd: 5,
           marginStart: 3,
-        }}
-      >
+        }}>
         <Text
           style={{
             color: props.color,

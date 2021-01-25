@@ -1,114 +1,52 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, BackHandler, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import Slider from '@react-native-community/slider';
-import Header from '../Components/Header';
+import React, {useEffect, useContext} from 'react';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Container} from 'native-base';
+
 import St from '../Components/St';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import HeaderComponent from '../Components/HeaderComponent';
+import SliderComponent from '../Components/SliderComponent';
+import {ThemeContext} from '../providers/ThemeProvider';
 
-const Sudarshanastaka = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-
-  const [font, setFont] = useState(24);
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) { }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) { }
-  };
+const Sudarshanastaka = ({navigation}) => {
+  const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
   useEffect(() => {
-    getData();
     const backAction = () => {
       navigation.navigate('ShotramScreen');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+      backAction,
     );
-
     return () => backHandler.remove();
-
-  }, []);
+  }, [navigation]);
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
-        <Header
-          title="ಶ್ರೀ ಸುದರ್ಶನ ಅಷ್ಟಕಂ"
-          darkmode={darkmode}
-        />
-        <Slider
-          value={font}
-          onValueChange={value => setFont(value)}
-          minimumValue={15}
-          maximumValue={50}
-          style={{
-            marginStart: 15,
-            marginEnd: 15,
+    <Container>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('ShotramScreen');
           }}
+          title={'ಶ್ರೀ ಸುದರ್ಶನ ಅಷ್ಟಕಂ'}
         />
+        <SliderComponent />
         <ScrollView>
           <View
             style={{
               marginLeft: 7,
               marginRight: 1,
-            }}
-          >
+            }}>
             <St
               color={textColor}
               fontSize={font}
               line1={'ಪ್ರತಿಭಟಶ್ರೇಣಿ ಭೀಷಣ, ವರಗುಣಸ್ತೋಮ ಭೂಷಣ'}
               line2={'ಜನಿಭಯಸ್ಥಾನ ತಾರಣ, ಜಗದವಸ್ಥಾನ ಕಾರಣ'}
-              line3={'ನಿಖಿಲದುಷ್ಕರ್ಮ ಕರ್ಶನ, ನಿಗಮಸದ್ಧರ್ಮ ದರ್ಶನನಂತೈಸ್ತ್ರಯ್ಯಂತೈರನುವಿಹಿತ ಹೇಷಾಹಲಹಲಂ'}
+              line3={
+                'ನಿಖಿಲದುಷ್ಕರ್ಮ ಕರ್ಶನ, ನಿಗಮಸದ್ಧರ್ಮ ದರ್ಶನನಂತೈಸ್ತ್ರಯ್ಯಂತೈರನುವಿಹಿತ ಹೇಷಾಹಲಹಲಂ'
+              }
               line4={'ಜಯ ಜಯ ಶ್ರೀ ಸುದರ್ಶನ, ಜಯ ಜಯ ಶ್ರೀ ಸುದರ್ಶನ || ೧ ||'}
             />
             <St
@@ -182,15 +120,10 @@ const Sudarshanastaka = ({ navigation }) => {
             />
           </View>
         </ScrollView>
-        <Admob
-          type={'banner'}
-          unitId={Adhelper.GenerateId()}
-        />
-      </React.Fragment>
-    </View>
-
+        <Admob />
+      </View>
+    </Container>
   );
 };
-
 
 export default Sudarshanastaka;

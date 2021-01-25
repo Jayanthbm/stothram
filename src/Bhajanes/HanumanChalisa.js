@@ -1,115 +1,46 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { View, Switch, BackHandler, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import Slider from '@react-native-community/slider';
-import Header from '../Components/Header';
-import SubHeader from '../Components/SubHeader';
+import React, {useEffect, useContext} from 'react';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Container} from 'native-base';
+
 import St from '../Components/St';
 import Admob from '../Components/Admob';
-import * as Adhelper from '../Constants/AdUnits';
+import HeaderComponent from '../Components/HeaderComponent';
+import SliderComponent from '../Components/SliderComponent';
+import SubHeader from '../Components/SubHeader';
+import {ThemeContext} from '../providers/ThemeProvider';
 
-const HanumanChalisa = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(null);
-  const [darkmode, setDarkMode] = useState(null);
-  const [showToggle, setShowToggle] = useState(null);
-  const backgroundColor = darkmode ? '#000' : '#fff';
-  const textColor = darkmode ? '#fff' : '#000';
-
-  const [font, setFont] = useState(24);
-  const storeData = async (value) => {
-    try {
-      let v = value ? 'true' : 'false';
-      await AsyncStorage.setItem('@darkmode', v);
-    } catch (e) {
-      // saving error
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@darkmode');
-      if (value !== null) {
-        if (value === 'true') {
-          setDarkMode(true);
-          setIsEnabled(true);
-        }
-        if (value === 'false') {
-          setDarkMode(false);
-          setIsEnabled(false);
-        }
-      }
-      const dmt = await AsyncStorage.getItem('@darkmodetoggle');
-      if (dmt !== null) {
-        if (dmt === 'true') {
-          setShowToggle(true);
-        }
-        if (dmt === 'false') {
-          setShowToggle(false);
-        }
-      } else {
-        setShowToggle(true);
-      }
-    } catch (e) { }
-  };
+const HanumanChalisa = ({navigation}) => {
+  const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
   useEffect(() => {
-    getData();
     const backAction = () => {
       navigation.navigate('BhajaneScreen');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction
+      backAction,
     );
-
     return () => backHandler.remove();
-
-  }, []);
+  }, [navigation]);
   return (
-    <View style={{ backgroundColor: backgroundColor, flex: 1 }} >
-      <React.Fragment>
-        {showToggle && showToggle === true && (
-          <Switch
-            style={{
-              marginTop: '3%',
-            }}
-            value={isEnabled}
-            onValueChange={() => {
-              setIsEnabled(!isEnabled);
-              storeData(!darkmode);
-              setDarkMode(!darkmode);
-            }}
-          />
-        )}
-        <Header
-          title="ಹನುಮಾನ್ ಚಾಲಿಸಾ"
-          darkmode={darkmode}
-        />
-        <Slider
-          value={font}
-          onValueChange={value => setFont(value)}
-          minimumValue={15}
-          maximumValue={50}
-          style={{
-            marginStart: 15,
-            marginEnd: 15,
+    <Container>
+      <View style={{flex: 1, backgroundColor: backgroundColor}}>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('BhajaneScreen');
           }}
+          title={'ಹನುಮಾನ್ ಚಾಲಿಸಾ'}
         />
+        <SliderComponent />
         <ScrollView>
           <View
             style={{
               marginLeft: 7,
               marginRight: 1,
-            }}
-          >
-            <SubHeader
-              title="ದೋಹಾ"
-              darkmode={darkmode}
-            />
+            }}>
+            <SubHeader title="ದೋಹಾ" />
             <St
               color={textColor}
               fontSize={font}
@@ -118,10 +49,7 @@ const HanumanChalisa = ({ navigation }) => {
               line3={'ಬುದ್ಧಿಹೀನ ತನುಜಾನಿಕೈ ಸುಮಿರೌ ಪವನ ಕುಮಾರ |'}
               line4={'ಬಲ ಬುದ್ಧಿ ವಿದ್ಯಾ ದೇಹು ಮೋಹಿ ಹರಹು ಕಲೇಶ ವಿಕಾರ್ ||'}
             />
-            <SubHeader
-              title="ಚೌಪಾಈ"
-              darkmode={darkmode}
-            />
+            <SubHeader title="ಚೌಪಾಈ" />
             <St
               color={textColor}
               fontSize={font}
@@ -307,7 +235,8 @@ const HanumanChalisa = ({ navigation }) => {
               fontSize={font}
               line1={'ಅಷ್ಠಸಿದ್ಧಿ ನವ ನಿಧಿ ಕೇ ದಾತಾ |'}
               line2={'ಅಸ ವರ ದೀನ್ಹ ಜಾನಕೀ ಮಾತಾ || 31 ||'}
-            /><St
+            />
+            <St
               color={textColor}
               fontSize={font}
               line1={'ರಾಮ ರಸಾಯನ ತುಮ್ಹಾರೇ ಪಾಸಾ |'}
@@ -363,15 +292,11 @@ const HanumanChalisa = ({ navigation }) => {
             />
           </View>
         </ScrollView>
-        <Admob
-          type={'banner'}
-          unitId={Adhelper.GenerateId()}
-        />
-      </React.Fragment >
-    </View >
 
+        <Admob />
+      </View>
+    </Container>
   );
 };
-
 
 export default HanumanChalisa;
