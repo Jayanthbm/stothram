@@ -10,20 +10,18 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.11.0",
-    "@react-native-community/slider": "^3.0.0",
-    "@react-native-firebase/admob": "^7.3.2",
-    "@react-native-firebase/app": "^8.2.0",
-    "lottie-react-native": "^3.5.0",
-    "native-base": "^2.15.2",
+    "@react-native-async-storage/async-storage": "^1.13.3",
+    "@react-native-community/slider": "^3.0.3",
+    "@react-native-firebase/admob": "^10.5.1",
+    "@react-native-firebase/app": "^10.5.0",
     "react": "16.13.1",
     "react-native": "0.63.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-paper": "^4.7.1",
     "react-native-reanimated": "^1.9.0",
     "react-native-screens": "^2.9.0",
-    "react-native-super-grid": "^4.0.2",
-    "react-native-vector-icons": "^7.0.0",
+    "react-native-super-grid": "^4.1.0",
+    "react-native-vector-icons": "^8.0.0",
     "react-navigation": "^4.4.0"
   },
   "devDependencies": {

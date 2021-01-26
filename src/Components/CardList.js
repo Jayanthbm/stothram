@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
-import {Text, ImageBackground, TouchableOpacity} from 'react-native';
+import {ImageBackground} from 'react-native';
+import {Text, TouchableRipple} from 'react-native-paper';
 import {FlatGrid} from 'react-native-super-grid';
 import {ThemeContext} from '../providers/ThemeProvider';
 
@@ -10,10 +11,11 @@ const CardList = (props) => {
   function Item({title, goto, displayTitle}) {
     let image = require('../Assets/Images/god.webp');
     return (
-      <TouchableOpacity
+      <TouchableRipple
         onPress={() => {
           props.nav.navigate(goto);
-        }}>
+        }}
+        rippleColor="rgba(0, 0, 0, .32)">
         <React.Fragment>
           <ImageBackground
             source={image}
@@ -37,7 +39,7 @@ const CardList = (props) => {
             {displayTitle ? displayTitle : title}
           </Text>
         </React.Fragment>
-      </TouchableOpacity>
+      </TouchableRipple>
     );
   }
   return (

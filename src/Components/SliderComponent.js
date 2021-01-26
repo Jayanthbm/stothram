@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 import {Dimensions} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {ThemeContext} from '../providers/ThemeProvider';
-const SliderComponent = (props) => {
+const SliderComponent = () => {
   const {font, updateFont, headerBackground} = useContext(ThemeContext);
   return (
     <Slider

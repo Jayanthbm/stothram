@@ -1,15 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
-import {Text, FlatList, TouchableOpacity, View} from 'react-native';
+import {FlatList, View} from 'react-native';
+import {Text, TouchableRipple} from 'react-native-paper';
 import {ThemeContext} from '../providers/ThemeProvider';
 const InlineList = (props) => {
   const {darkmode, textColor, headerBackground} = useContext(ThemeContext);
 
   const LItem = ({title, goto}) => (
-    <TouchableOpacity
+    <TouchableRipple
       onPress={() => {
         props.nav.navigate(goto);
-      }}>
+      }}
+      rippleColor="rgba(0, 0, 0, .32)">
       <View style={{height: 40}}>
         <View
           style={{
@@ -30,7 +32,7 @@ const InlineList = (props) => {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableRipple>
   );
   const renderItem = ({item}) => (
     <LItem title={item.displayTitle} goto={item.goto} />

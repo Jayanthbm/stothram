@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext, useState} from 'react';
-import {View, BackHandler, TextInput} from 'react-native';
-import {Container} from 'native-base';
+import {View, BackHandler} from 'react-native';
+import {Searchbar} from 'react-native-paper';
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
 import CardList from '../Components/CardList';
@@ -45,49 +45,38 @@ const BhajaneScreen = ({navigation}) => {
   };
 
   return (
-    <Container style={{backgroundColor: backgroundColor}}>
-      <View style={{flex: 1, backgroundColor: backgroundColor}}>
-        <HeaderComponent
-          backAction={() => {
-            navigation.navigate('HomeScreen');
-          }}
-          title={'Bhajanas'}
-          viewType={true}
-        />
-        <TextInput
-          placeholder="Search"
-          placeholderTextColor={textColor}
-          value={searchvalue}
-          style={{
-            height: 40,
-            borderColor: 'gray',
-            borderWidth: 1,
-            marginTop: 10,
-            marginStart: 20,
-            marginEnd: 20,
-            fontSize: 15,
-            color: textColor,
-          }}
-          textAlign={'center'}
-          autoCapitalize={'none'}
-          autoCompleteType={'off'}
-          autoCorrect={false}
-          onChangeText={(text) => {
-            onChangeText(text);
-            searchFilterFunction(text);
-          }}
-        />
-        <React.Fragment>
-          {viewType === 'card' ? (
-            <CardList nav={navigation} data={dataarray} />
-          ) : (
+    <View style={{flex: 1, backgroundColor: backgroundColor}}>
+      <HeaderComponent
+        backAction={() => {
+          navigation.navigate('HomeScreen');
+        }}
+        title={'Bhajanas'}
+        viewType={true}
+      />
+      <Searchbar
+        placeholder="Search"
+        placeholderTextColor={textColor}
+        onChangeText={(text) => {
+          onChangeText(text);
+          searchFilterFunction(text);
+        }}
+        value={searchvalue}
+        style={{backgroundColor: backgroundColor}}
+        inputStyle={{color: textColor}}
+        iconColor={textColor}
+      />
+      <React.Fragment>
+        {viewType === 'card' ? (
+          <CardList nav={navigation} data={dataarray} />
+        ) : (
+          <View style={{flex: 1, marginTop: 5}}>
             <InlineList nav={navigation} data={dataarray} />
-          )}
-        </React.Fragment>
+          </View>
+        )}
+      </React.Fragment>
 
-        <Admob />
-      </View>
-    </Container>
+      <Admob />
+    </View>
   );
 };
 export default BhajaneScreen;

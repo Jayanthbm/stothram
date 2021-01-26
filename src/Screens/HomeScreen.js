@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
 import {View, Text, BackHandler, Alert, Pressable} from 'react-native';
-import {Container} from 'native-base';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -81,7 +80,7 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   return (
-    <Container style={{backgroundColor: backgroundColor}}>
+    <View style={{backgroundColor: backgroundColor, flex: 1}}>
       <Appbar.Header
         style={{backgroundColor: headerBackground, height: 50}}
         dark={true}>
@@ -111,7 +110,7 @@ const HomeScreen = ({navigation}) => {
         )}
       </View>
       <Admob />
-    </Container>
+    </View>
   );
 };
 export default HomeScreen;

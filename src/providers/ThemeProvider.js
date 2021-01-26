@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {Appearance} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-
-import {Toast} from 'native-base';
+import {Appearance, ToastAndroid} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const darkBackground = '#3A3B3C';
 const lightBackground = '#fff';
 const darkTextcolor = '#fff';
@@ -99,19 +97,9 @@ export const ThemeProvider = ({children}) => {
           AsyncStorage.setItem('@darkmode', JSON.stringify(!darkmode));
           setDarkMode(!darkmode);
           if (darkmode) {
-            Toast.show({
-              text: 'Light Mode Enabled',
-              duration: 1000,
-              position: 'bottom',
-              style: {backgroundColor: '#455559'},
-            });
+            ToastAndroid.show('Light Mode Enabled', ToastAndroid.SHORT);
           } else {
-            Toast.show({
-              text: 'Dark Mode Enabled',
-              duration: 1000,
-              position: 'bottom',
-              style: {backgroundColor: '#455559'},
-            });
+            ToastAndroid.show('Dark Mode Enabled', ToastAndroid.SHORT);
           }
         },
         darkSwitch,
@@ -119,19 +107,15 @@ export const ThemeProvider = ({children}) => {
           AsyncStorage.setItem('@darkmodetoggle', JSON.stringify(!darkSwitch));
           setDarkSwitch(!darkSwitch);
           if (darkSwitch) {
-            Toast.show({
-              text: 'Toggle in Every Page Disabled',
-              duration: 1000,
-              position: 'bottom',
-              style: {backgroundColor: '#455559'},
-            });
+            ToastAndroid.show(
+              'Toggle in Every Page Disabled',
+              ToastAndroid.SHORT,
+            );
           } else {
-            Toast.show({
-              text: 'Toggle in Every Page Enabled',
-              duration: 1000,
-              position: 'bottom',
-              style: {backgroundColor: '#455559'},
-            });
+            ToastAndroid.show(
+              'Toggle in Every Page Enabled',
+              ToastAndroid.SHORT,
+            );
           }
         },
         backgroundColor,

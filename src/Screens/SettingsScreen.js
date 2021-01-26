@@ -1,20 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
 import {View, BackHandler, Switch} from 'react-native';
-import {
-  Container,
-  Left,
-  Body,
-  Content,
-  ListItem,
-  Text,
-  Thumbnail,
-} from 'native-base';
+import {TouchableRipple, List, Avatar, Divider, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
-import {TouchableRipple, List} from 'react-native-paper';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const jayanth = require('../Assets/Images/jayanth.webp');
@@ -28,6 +19,7 @@ const SettingsScreen = ({navigation}) => {
     backgroundColor,
     textColor,
     toggleDarkSwitch,
+    headerBackground,
   } = useContext(ThemeContext);
 
   useEffect(() => {
@@ -80,58 +72,64 @@ const SettingsScreen = ({navigation}) => {
 
   const SCL = (props) => {
     return (
-      <ListItem avatar>
-        <Left>
-          <Thumbnail source={props.image} />
-        </Left>
-        <Body>
-          <Text style={{color: textColor}}>{props.title}</Text>
-        </Body>
-      </ListItem>
+      <>
+        <TouchableRipple
+          rippleColor="rgba(0, 0, 0, .32)"
+          centered={true}
+          style={{marginLeft: 10}}>
+          <List.Item
+            title={props.title}
+            titleStyle={{color: textColor}}
+            left={(_props) => <Avatar.Image size={50} source={props.image} />}
+          />
+        </TouchableRipple>
+        <Divider style={{backgroundColor: headerBackground}} />
+      </>
     );
   };
   return (
-    <Container>
-      <View style={{flex: 1, backgroundColor: backgroundColor}}>
-        <HeaderComponent
-          backAction={() => {
-            navigation.navigate('HomeScreen');
+    <View style={{flex: 1, backgroundColor: backgroundColor}}>
+      <HeaderComponent
+        backAction={() => {
+          navigation.navigate('HomeScreen');
+        }}
+        title={'Settings'}
+      />
+      <SLISTHEADER title={'General Settings'} icon={'cogs'} />
+      <SLISTITEM
+        toggle={toggleDarkMode}
+        title={'Dark theme'}
+        subtitle={'Reduce glare and improve night viewing'}
+        state={darkmode}
+      />
+      <SLISTITEM
+        toggle={toggleDarkSwitch}
+        title={'Toggle in Every Page'}
+        subtitle={'Show toggle dark mode switch in every page'}
+        state={darkSwitch}
+      />
+      <SLISTHEADER title={'Created By'} icon={'information'} />
+      <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
+      <SCL image={yoga} title={'Yoga'} />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignSelf: 'center',
+          marginBottom: 4,
+          flex: 1,
+        }}>
+        <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
+        <Icon
+          name={'heart'}
+          style={{
+            color: 'red',
+            fontSize: 25,
           }}
-          title={'Settings'}
         />
-        <Content>
-          <SLISTHEADER title={'General Settings'} icon={'cogs'} />
-          <SLISTITEM
-            toggle={toggleDarkMode}
-            title={'Dark theme'}
-            subtitle={'Reduce glare and improve night viewing'}
-            state={darkmode}
-          />
-          <SLISTITEM
-            toggle={toggleDarkSwitch}
-            title={'Toggle in Every Page'}
-            subtitle={'Show toggle dark mode switch in every page'}
-            state={darkSwitch}
-          />
-          <SLISTHEADER title={'Created By'} icon={'information'} />
-          <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
-          <SCL image={yoga} title={'Yoga'} />
-        </Content>
-        <View
-          style={{flexDirection: 'row', alignSelf: 'center', marginBottom: 4}}>
-          <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
-          <Icon
-            name={'heart'}
-            style={{
-              color: 'red',
-              fontSize: 25,
-            }}
-          />
-          <Text style={{color: textColor, fontSize: 20}}> In India</Text>
-        </View>
-        <Admob />
+        <Text style={{color: textColor, fontSize: 20}}> In India</Text>
       </View>
-    </Container>
+      <Admob />
+    </View>
   );
 };
 

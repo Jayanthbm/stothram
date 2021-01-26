@@ -1,11 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import {Root} from 'native-base';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {ThemeProvider} from './src/providers/ThemeProvider';
 
-import SplashScreen from './src/Screens/SplashScreen';
 import HomeScreen from './src/Screens/HomeScreen';
 import ShotramScreen from './src/Screens/ShotramScreen';
 import BhajaneScreen from './src/Screens/BhajaneScreen';
@@ -44,7 +42,6 @@ import DheeraMaruthi from './src/Bhajanes/DheeraMaruthi';
 import KodandaRama from './src/Bhajanes/KodandaRama';
 import SriramChandirane from './src/Bhajanes/SriramChandirane';
 const switchNavigator = createSwitchNavigator({
-  SplashScreen:SplashScreen,
   HomeScreen:HomeScreen,
   SettingsScreen:SettingsScreen,
   ShotramScreen: ShotramScreen,
@@ -87,13 +84,11 @@ const AppContainer = createAppContainer(switchNavigator);
 
 const App = () =>{
   return (
-    <Root>
-      <PaperProvider>
-        <ThemeProvider>
-          <AppContainer />
-        </ThemeProvider>
-      </PaperProvider>
-    </Root>
+    <PaperProvider>
+      <ThemeProvider>
+        <AppContainer />
+      </ThemeProvider>
+    </PaperProvider>
   );
 };
 export default App;
