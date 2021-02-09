@@ -1,6 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
-import {Dimensions} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {ThemeContext} from '../providers/ThemeProvider';
 const SliderComponent = () => {
@@ -13,9 +12,6 @@ const SliderComponent = () => {
       maximumValue={40}
       step={3}
       style={{
-        width: Dimensions.get('window').width / 1.5,
-        alignSelf: 'center',
-        transform: [{scaleX: 1.5}, {scaleY: 1.5}],
         height: 40,
       }}
       thumbTintColor={headerBackground}

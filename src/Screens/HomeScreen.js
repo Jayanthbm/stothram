@@ -1,6 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
-import {View, Text, BackHandler, Alert, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  BackHandler,
+  Alert,
+  Pressable,
+  ScrollView,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -93,12 +100,12 @@ const HomeScreen = ({navigation}) => {
         />
         <DarkToggle />
       </Appbar.Header>
+      <ScrollView />
       <View
         style={{
           alignItems: 'center',
-          flex: 1,
           justifyContent: 'center',
-          marginTop: 50,
+          marginBottom: 30,
         }}>
         {HOME_SCREEN_DATA && HOME_SCREEN_DATA != null && (
           <FlatGrid

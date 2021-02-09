@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 import {Switch} from 'react-native';
 import {ThemeContext} from '../providers/ThemeProvider';
 
-const HeaderComponent = (props) => {
+const DarkToggle = (props) => {
   const {darkmode, toggleDarkMode, darkSwitch} = useContext(ThemeContext);
   return (
     <React.Fragment>
@@ -24,4 +24,4 @@ const HeaderComponent = (props) => {
     </React.Fragment>
   );
 };
-export default React.memo(HeaderComponent);
+export default React.memo(DarkToggle);

@@ -54,11 +54,6 @@ const KodandaRama = ({navigation}) => {
           <St
             color={textColor}
             fontSize={font}
-            line1={'ನೀರೊಳುತೋರಿ ಪಾತಳಸೇರಿ ವೇಧವತೋರಿದ ಮತ್ಸ್ಯವತಾರಿ'}
-          />
-          <St
-            color={textColor}
-            fontSize={font}
             line1={'ನಾಗೇಶ ಭ್ರಮ್ಹಾ ಪ್ರಾರ್ಥಿಪೆ ನಿಮ್ಮ ಆದಿ ನೀ ಕೂರ್ಮ ಪಾಲಿಸುನಮ್ಮ'}
           />
           <St

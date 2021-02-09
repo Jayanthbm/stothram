@@ -31,6 +31,8 @@ import Shatumurai from './src/Shotras/Shatumurai';
 import ShatumuraiValitirunam from './src/Shotras/ShatumuraiValitirunam';
 import DeshikaMangalam from './src/Shotras/DeshikaMangalam';
 import SriStuti from './src/Shotras/SriStuti';
+import AdithyaHrudayam from './src/Shotras/AdithyaHrudayam';
+import Ramaraksha from './src/Shotras/Ramaraksha';
 
 import BhajaYatirajam from './src/Bhajanes/BhajaYatirajam';
 import ThugireRangana from './src/Bhajanes/ThugireRangana';
@@ -42,8 +44,8 @@ import DheeraMaruthi from './src/Bhajanes/DheeraMaruthi';
 import KodandaRama from './src/Bhajanes/KodandaRama';
 import SriramChandirane from './src/Bhajanes/SriramChandirane';
 const switchNavigator = createSwitchNavigator({
-  HomeScreen:HomeScreen,
-  SettingsScreen:SettingsScreen,
+  HomeScreen: HomeScreen,
+  SettingsScreen: SettingsScreen,
   ShotramScreen: ShotramScreen,
   BhajaneScreen: BhajaneScreen,
   //Shotras
@@ -68,6 +70,8 @@ const switchNavigator = createSwitchNavigator({
   ShatumuraiValitirunam: ShatumuraiValitirunam,
   DeshikaMangalam: DeshikaMangalam,
   SriStuti: SriStuti,
+  AdithyaHrudayam: AdithyaHrudayam,
+  Ramaraksha:  Ramaraksha,
   //Bhajanes
   BhajaYatirajam: BhajaYatirajam,
   ThugireRangana: ThugireRangana,

@@ -144,6 +144,18 @@ export const SHOTRAM_SCREEN_DATA = [
     displayTitle: 'ಶ್ರೀಸ್ತುತಿಃ',
     goto: 'SriStuti',
   },
+  {
+    id: 22,
+    title: 'AdithyaHrudayam',
+    displayTitle: 'ಆದಿತ್ಯ ಹೃದಯಮ್',
+    goto: 'AdithyaHrudayam',
+  },
+  {
+    id: 23,
+    title: 'Ramaraksha',
+    displayTitle: 'ಶ್ರೀ ರಾಮ ರಕ್ಷಾ ಸ್ತೋತ್ರಮ್',
+    goto: 'Ramaraksha',
+  },
 ];
 
 export const BHAJANE_SCREEN_DATA = [

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext} from 'react';
-import {View, BackHandler, Switch} from 'react-native';
+import {View, BackHandler, Switch, ScrollView} from 'react-native';
 import {TouchableRipple, List, Avatar, Divider, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -89,46 +89,49 @@ const SettingsScreen = ({navigation}) => {
   };
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
-      <HeaderComponent
-        backAction={() => {
-          navigation.navigate('HomeScreen');
-        }}
-        title={'Settings'}
-      />
-      <SLISTHEADER title={'General Settings'} icon={'cogs'} />
-      <SLISTITEM
-        toggle={toggleDarkMode}
-        title={'Dark theme'}
-        subtitle={'Reduce glare and improve night viewing'}
-        state={darkmode}
-      />
-      <SLISTITEM
-        toggle={toggleDarkSwitch}
-        title={'Toggle in Every Page'}
-        subtitle={'Show toggle dark mode switch in every page'}
-        state={darkSwitch}
-      />
-      <SLISTHEADER title={'Created By'} icon={'information'} />
-      <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
-      <SCL image={yoga} title={'Yoga'} />
-      <View
-        style={{
-          flexDirection: 'row',
-          alignSelf: 'center',
-          marginBottom: 4,
-          flex: 1,
-        }}>
-        <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
-        <Icon
-          name={'heart'}
-          style={{
-            color: 'red',
-            fontSize: 25,
+      <ScrollView>
+        <HeaderComponent
+          backAction={() => {
+            navigation.navigate('HomeScreen');
           }}
+          title={'Settings'}
         />
-        <Text style={{color: textColor, fontSize: 20}}> In India</Text>
-      </View>
-      <Admob />
+        <SLISTHEADER title={'General Settings'} icon={'cogs'} />
+        <SLISTITEM
+          toggle={toggleDarkMode}
+          title={'Dark theme'}
+          subtitle={'Reduce glare and improve night viewing'}
+          state={darkmode}
+        />
+        <SLISTITEM
+          toggle={toggleDarkSwitch}
+          title={'Toggle in Every Page'}
+          subtitle={'Show toggle dark mode switch in every page'}
+          state={darkSwitch}
+        />
+        <SLISTHEADER title={'Created By'} icon={'information'} />
+        <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
+        <SCL image={yoga} title={'Yoga'} />
+      </ScrollView>
+      <React.Fragment>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignSelf: 'center',
+            marginBottom: 7,
+          }}>
+          <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
+          <Icon
+            name={'heart'}
+            style={{
+              color: 'red',
+              fontSize: 25,
+            }}
+          />
+          <Text style={{color: textColor, fontSize: 20}}> In India</Text>
+        </View>
+        <Admob />
+      </React.Fragment>
     </View>
   );
 };

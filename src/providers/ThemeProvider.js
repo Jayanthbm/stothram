@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Appearance, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const darkBackground = '#3A3B3C';
+const darkBackground = '#000';
 const lightBackground = '#fff';
 const darkTextcolor = '#fff';
 const lightTextcolor = '#000';
 const darkHeaderBackground = '#878683';
 const lightHeaderBackground = '#6200EE';
-
+// #3A3B3C
 export const ThemeContext = React.createContext({
   darkmode: false,
   toggleDarkMode: () => {},
@@ -73,8 +73,8 @@ export const ThemeProvider = ({children}) => {
             setDarkSwitch(false);
           }
         } else {
-          AsyncStorage.setItem('@darkmodetoggle', JSON.stringify(false));
-          setDarkSwitch(false);
+          AsyncStorage.setItem('@darkmodetoggle', JSON.stringify(true));
+          setDarkSwitch(true);
         }
       });
       AsyncStorage.getItem('@fontSize').then((r) => {
@@ -82,7 +82,7 @@ export const ThemeProvider = ({children}) => {
           let f = parseInt(r, 10);
           setFont(f);
         } else {
-          AsyncStorage.setItem('@fontSize', 24);
+          AsyncStorage.setItem('@fontSize', '24');
           setFont(24);
         }
       });

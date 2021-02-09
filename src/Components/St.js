@@ -36,4 +36,4 @@ const St = (props) => {
   );
 };
 
-export default St;
+export default React.memo(St);

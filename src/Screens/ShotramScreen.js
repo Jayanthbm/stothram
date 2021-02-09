@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useContext, useState} from 'react';
-import {View, BackHandler} from 'react-native';
-import {Searchbar} from 'react-native-paper';
+import {View, BackHandler, ScrollView} from 'react-native';
+import {Searchbar, List} from 'react-native-paper';
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
 import CardList from '../Components/CardList';
@@ -64,16 +64,24 @@ const ShotramScreen = ({navigation}) => {
         inputStyle={{color: textColor}}
         iconColor={textColor}
       />
-      <React.Fragment>
-        {viewType === 'card' ? (
-          <CardList nav={navigation} data={dataarray} />
-        ) : (
-          <View style={{flex: 1, marginTop: 5}}>
-            <InlineList nav={navigation} data={dataarray} />
-          </View>
-        )}
-      </React.Fragment>
-
+      {dataarray.length < 1 ? (
+        <ScrollView>
+          <List.Item
+            title="No Results Found, Try changing keyword"
+            titleStyle={{color: textColor}}
+          />
+        </ScrollView>
+      ) : (
+        <React.Fragment>
+          {viewType === 'card' ? (
+            <CardList nav={navigation} data={dataarray} />
+          ) : (
+            <View style={{flex: 1, marginTop: 5}}>
+              <InlineList nav={navigation} data={dataarray} />
+            </View>
+          )}
+        </React.Fragment>
+      )}
       <Admob />
     </View>
   );
