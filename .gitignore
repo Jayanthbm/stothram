@@ -65,3 +65,6 @@ __tests__
 jys
 firebase.json
 yarn.lock
+
+android/app/release/*.apk
+android/app/release/*.json
