@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useContext} from 'react';
-import {View, BackHandler, ScrollView} from 'react-native';
+import React, {useContext} from 'react';
+import {View, ScrollView} from 'react-native';
 import St from '../Components/St';
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
@@ -10,23 +10,11 @@ import {ThemeContext} from '../providers/ThemeProvider';
 const DeshikaMangalam = ({navigation}) => {
   const {backgroundColor, textColor, font} = useContext(ThemeContext);
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('ShotramScreen');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
       <HeaderComponent
-        backAction={() => {
-          navigation.navigate('ShotramScreen');
-        }}
+        navigation={navigation}
+        back={'ShotramScreen'}
         title={'ಶ್ರೀ ದೇಶಿಕಮಂಗಳಂ'}
       />
       <SliderComponent />

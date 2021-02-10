@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useContext} from 'react';
-import {View, BackHandler, Switch, ScrollView} from 'react-native';
+import React, {useContext} from 'react';
+import {View, Switch, ScrollView} from 'react-native';
 import {TouchableRipple, List, Avatar, Divider, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -21,18 +21,6 @@ const SettingsScreen = ({navigation}) => {
     toggleDarkSwitch,
     headerBackground,
   } = useContext(ThemeContext);
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('HomeScreen');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
 
   const SLISTHEADER = (props) => {
     return (
@@ -91,9 +79,8 @@ const SettingsScreen = ({navigation}) => {
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
       <ScrollView>
         <HeaderComponent
-          backAction={() => {
-            navigation.navigate('HomeScreen');
-          }}
+          navigation={navigation}
+          back={'HomeScreen'}
           title={'Settings'}
         />
         <SLISTHEADER title={'General Settings'} icon={'cogs'} />

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useContext, useState} from 'react';
-import {View, BackHandler, ScrollView} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {View, ScrollView} from 'react-native';
 import {Searchbar, List} from 'react-native-paper';
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
@@ -18,18 +18,6 @@ const ShotramScreen = ({navigation}) => {
     setDataarray(SHOTRAM_SCREEN_DATA);
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('HomeScreen');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
-
   const searchFilterFunction = (text) => {
     if (text) {
       const newData = dataarray.filter((item) => {
@@ -46,9 +34,8 @@ const ShotramScreen = ({navigation}) => {
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
       <HeaderComponent
-        backAction={() => {
-          navigation.navigate('HomeScreen');
-        }}
+        navigation={navigation}
+        back={'HomeScreen'}
         title={'Stothram'}
         viewType={true}
       />
