@@ -66,5 +66,4 @@ jys
 firebase.json
 yarn.lock
 
-android/app/release/*.apk
-android/app/release/*.json
+android/app/release/

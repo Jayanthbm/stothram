@@ -31,7 +31,7 @@ const CardList = (props) => {
           <Text
             numberOfLines={1}
             style={{
-              fontSize: 20,
+              fontSize: 16,
               color: textColor,
               fontWeight: '600',
               textAlign: 'center',
