@@ -6,7 +6,7 @@ import {FlatGrid} from 'react-native-super-grid';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const CardList = (props) => {
-  const {textColor} = useContext(ThemeContext);
+  const {textColor, backgroundColor} = useContext(ThemeContext);
 
   function Item({title, goto, displayTitle}) {
     let image = require('../Assets/Images/god.webp');
@@ -21,11 +21,14 @@ const CardList = (props) => {
             source={image}
             style={{
               flex: 1,
-              resizeMode: 'cover',
-              justifyContent: 'center',
+              backgroundColor: backgroundColor,
               borderColor: textColor,
               borderWidth: 1,
               height: 100,
+            }}
+            imageStyle={{
+              height: 90,
+              resizeMode: 'cover',
             }}
           />
           <Text
@@ -33,7 +36,7 @@ const CardList = (props) => {
             style={{
               fontSize: 16,
               color: textColor,
-              fontWeight: '600',
+              fontWeight: '700',
               textAlign: 'center',
             }}>
             {displayTitle ? displayTitle : title}

@@ -9,7 +9,7 @@ import SubHeader from '../Components/SubHeader';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const Shatumurai = ({navigation}) => {
-  const {backgroundColor, textColor, font} = useContext(ThemeContext);
+  const {backgroundColor} = useContext(ThemeContext);
 
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
@@ -27,8 +27,6 @@ const Shatumurai = ({navigation}) => {
           }}>
           <SubHeader title="ತಿರುಪ್ಪಾವೈ" />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಶಿತ್ತಂ ಶಿರುಕಾಲೇ ವಂದುನ್ನೈ ಶೇವಿತ್ತು,'}
             line2={'ಉನ್ ಪೋತ್ತಾಮರೈ ಯಡಿಯೇ ಪೋತ್ತುಂ ಪೋರುಳ್ ಕೇಳಾಯ್,'}
             line3={'ಪೆತ್ತಂ ಮೇಯ್ ತುಣ್ಣುಂ ಕುಲತ್ತೀಲ್ ಪಿರಂದು,'}
@@ -39,8 +37,6 @@ const Shatumurai = ({navigation}) => {
             line8={'ಮತೈನಂಕಾಮಂಗಳ್ ಮಾತ್ತೇಲೋರೆಂಬಾವಾಯ್'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ವಂಗಕ್ಕಡಲ್ ಕಡೈನ್ಧ.ಮಾಧಾವನೇ ಕೇಶವನೈ,'}
             line2={'ತಿಂಗಳ್ ತಿರುಮುಗತ್ತುಚ್ಚೇಯೀಡೈಯಾಲ್ ಶನ್ನಿರೈಂಜಿ,'}
             line3={'ಅಂಗಪ್ಪರೈಗೊಂಡವಾತ್ರೈ ,'}
@@ -52,16 +48,12 @@ const Shatumurai = ({navigation}) => {
           />
           <SubHeader title="ತಿರುಪ್ಪಲ್ಲಾಂಡು" />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಪಲ್ಲಾಂಡು ಪಲ್ಲಾಂಡು ಪಲ್ಲಾಯಿರುತ್ತಾಂಡು,'}
             line2={'ಪಲಕೋಡಿ ನೂರಾಯಿರಂ,'}
             line3={'ಮಲ್ಲಾಂಡು ತಿಣ್ಣೋಳ್ ಮಣಿವಣ್ಣಾ,'}
             line4={'ಉನ್ ಚೇವಡಿ ಚೆವ್ವಿ ತಿರುಕ್ಕಾಪ್ಪು ||1||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಅಡಿಯೋಮೋಡುಂ ನಿನ್ನೋಡುಂ,'}
             line2={'ಪಿರಿವಿನ್ರಿ ಆಯಿರಂ ಪಲ್ಲಾಂಡು ವಡಿವಾಯ್ ನಿನ್ವಲ ಮಾರ್ಬಿನಿಲ್,'}
             line3={'ವಾಳ್ಗಿನ್ರ ಮಂಗೈಯುಂ ಪಲ್ಲಾಂಡು ವಡಿವಾರ್ ಚೋದಿ ವಳತ್ತುರೈಯುಂ,'}
@@ -70,46 +62,32 @@ const Shatumurai = ({navigation}) => {
           />
           <SubHeader title="ವಾಳಿತ್ತಿರುನಾಮಮ್" />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಸರ್ವದೇಶ ದಶಾಕಾಲೇಷ್ವವ್ಯಾಹತ ಪರಾಕ್ರಮಾ |'}
             line2={'ರಾಮಾನುಜಾರ್ಯ ದಿವ್ಯಾಜ್ನಾ ವರ್ಧತಾಂ ಅಭಿವರ್ಧತಾಂ ||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ರಾಮಾನುಜಾರ್ಯ ದಿವ್ಯಾಜ್ನಾ ಪ್ರತಿವಾಸರಮುಜ್ವಲಾ|'}
             line2={'ದಿಗಂತವ್ಯಾಪಿನೀ ಭೂಯಾತ್ಸಾಹಿ ಲೋಕಹಿತೈಷಿಣೀ||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಶ್ರೀಮನ್ ಶ್ರೀರಂಗ ಶ್ರಿಯಮನುಪದ್ರವಾಮನುದಿನಂ ಸಂವರ್ಧಯಾ |'}
             line2={'ಶ್ರೀಮನ್ ಶ್ರೀರಂಗ ಶ್ರಿಯಮನುಪದ್ರವಾಮನುದಿನಂಸಂವರ್ಧಯಾ ||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ನಮೋ ರಾಮಾನುಜಾರ್ಯಾಯ ವೇದಾಂತಾರ್ಥ ಪ್ರದಾಯಿನೇ|'}
             line2={'ಆತ್ರೇಯ ಪದ್ಮನಾಭಾರ್ಯ ಸುತಾಯ ಗುಣಶಾಲಿನೇ||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ರಾಮಾನುಜ ದಯಾಪಾತ್ರಂ ಜ್ನಾನವೈರಾಗ್ಯಾ ಭೂಷಣಂ|'}
             line2={'ಶ್ರೀಮದ್ವೇಂಕಟನಾಥಾರ್ಯಂ ವಂದೇ ವೇದಾಂತ ದೇಶಿಕಮ್||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={
               'ವಾಳಿಯಿ ರಾಮಾನುಜ ಪಿಳ್ಳಾನ್ ಮಾದಗವಾಲ್ ವಾಳುಂ ಅಣಿನಿಗಮಾಂತಗುರು ವಾಳಿಯವನ್ ,'
             }
             line2={'ಮಾರನ್ ಮರೈಯುಂ ಇರಾಮಾನುಜನ್ ಭಾಷ್ಯಾಮುಮ್ ತೇರುಂಪಡಿ ಉರೈಕ್ಕುಂ ಶೀರ್'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ವಂಜಪ್ಪರ ಶಮಯಂ ಮಾಟ್ರವಂದೋನ್ ವಾಳಿಯೇ'}
             line2={'ಮನ್ನುಪುಗಳ್ ಪ್ಪೂದುರಾನ್ ಮನುಮುಗಪ್ಪೋನ್ ವಾಳಿಯೇ'}
             line3={'ಕಂಜತ್ತಿರುಮಂಗೈ ಉಗಕ್ಕವಂದೋನ್ ವಾಳಿಯೇ '}
@@ -120,15 +98,11 @@ const Shatumurai = ({navigation}) => {
             line8={'ಶೆಣ್ತಮಿಳ್ತ್ ತ್ತೂಪುಲ್ ತಿರುವೇಂಗಡವನ್ ವಾಳಿಯೇ'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={
               'ನಾನಿಲಮುಂ ತಾನ್ವಾಳ್,,ನಾನ್ಮರೈಗಳ್ ತಾಮ್ ನಾಳೆ ಮಾನಹರಿಯನ್ ಮಾರನ್ ಮರೈವಾಳ್ ಜ್ಞಾನಿಯರ್ಗಳ್ ಶೆನ್ನಿಯಣಿಶೇರ್ ತೂಪ್ಪುಲ್ ವೇದಾಂತ ದೇಶಿಕನೇ ಇನ್ನುಮ್ಮೊರು ನೂಟ್ರಾಂಡಿರುಮ್!'
             }
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ವಾಳಿಯಣಿ ತೂಪ್ಪುಲ್ ವರುಮ್‌ ನಿಗಮಾಂತಾಶಿರಿಯನ್ '}
             line2={'ವಾಳಿಯವನ್ ಪಾದಾರವಿಂದಮಲರ್ ,'}
             line3={'ವಾಳಿಯವನ್ ಕೋದಿಲಾತ್ತಾಣ್, '}

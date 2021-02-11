@@ -8,7 +8,7 @@ import SliderComponent from '../Components/SliderComponent';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const Tirupalliyucchi = ({navigation}) => {
-  const {backgroundColor, textColor, font} = useContext(ThemeContext);
+  const {backgroundColor} = useContext(ThemeContext);
 
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
@@ -25,8 +25,6 @@ const Tirupalliyucchi = ({navigation}) => {
             marginRight: 1,
           }}>
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ತಮೇವಮತ್ವಾ ಪರವಾಸುದೇವಂ'}
             line2={'ರಂಗೇಶಯಂ ರಾಜ ವದರ್ಹಣೀಯಂ |'}
             line3={'ಫ್ರಾಭೋದಕೀಂ ಯೋಕೃತ ಸೂಕ್ತಿಮಾಲಾಂ'}
@@ -37,8 +35,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಪ್ಪಳ್ಳಿಉಣರ್ತುಂ ಪಿರಾನುದಿತ್ತವೂರ್||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಕದಿರವನ್ ಕುಣದಿಶೈ ಚ್ಚಿಗರಂ ವಂದಣೈಂದಾನ್'}
             line2={'ಕನೈಇರುಳ್ ಅಗನ್ರದು ಕಾಲೈಯಂ ಪೊಳುದಾಯ್'}
             line3={'ಮದುವಿರಿಂದೊಳುಗಿನ ಮಾಮಲರ್ ಎಲ್ಲಾಂ'}
@@ -49,8 +45,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||1||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಕೊಳುಂಗೊಡಿ ಮುಲ್ಲೈಯಿನ್ ಕೊಳುಮಲರಣವಿ'}
             line2={'ಕೂರ್ಂದದು ಕುಣತಿಶೈ ಮಾರುದಂ ಇದುವೋ'}
             line3={'ಎಳುಂದನ ಮಲರಣೈ ಪ್ಪಳ್ಳಿಕೊಳ್ಳನ್ನಂ'}
@@ -61,8 +55,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||2||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಚುಡರೊಳಿ ಪರಂದನ ಚೂಳ್ತಿಶೈಎಲ್ಲಾಂ'}
             line2={'ತುನ್ನಿಯ ತಾರಕೈ ಮಿನ್ನೊಳಿ ಚುರುಂಗಿ'}
             line3={'ಪಡರೊಳಿ ಪಶುತ್ತನನ್ ಪನಿಮದಿ ಇವನೋ'}
@@ -73,8 +65,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||3||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಮೇಟ್ಟಿಳ ಮೇದಿಗಳ್ ತಳೈವಿಡುಂ ಆಯರ್ಗಳ್'}
             line2={'ವೇಯ್ಂಗುಳಲ್ ಓಶೈಯುಂ ವಿಡೈ ಮಣಿಕ್ಕುರಲುಂ'}
             line3={'ಈಟ್ಟಿಯ ಇಶೈತಿಶೈ ಪರಂದನ ವಯಲುಳ್'}
@@ -85,8 +75,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||4||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಪುಲಂಬಿನ ಪುಟ್ಕಳುಂ ಪುಂ ಪೊಳಿಲ್ಗಳಿನ್ವಾಯ್'}
             line2={'ಪೋಯಿಟ್ರು ಕ್ಕಂಗುಲ್ ಪುಗುಂದದು ಪುಲರಿ'}
             line3={'ಕಲಂದದು ಕುಣದಿಶೈ ಕ್ಕನೈಕಡಲ್ ಅರವಂ'}
@@ -97,8 +85,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಎಂಬೆರುಮಾನ್ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||5|'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಇರವಿಯರ್ ಮಣಿನೆಡುಮ್ ತೇರೊಡುಮ್ ಇವರೋ'}
             line2={'ಇರೈಯವರ್ ಪದಿನೊರು ವಿಡೈಯರುಮ್ ಇವರೋ'}
             line3={'ಮರುವಿಯ ಮಯಿಲಿನನ್ ಅರುಮುಗನ್ ಇವನೋ'}
@@ -109,8 +95,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||6||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಅಂದರತ್ತಮರರ್ಗಳ್ ಕೂಟ್ಟಂಗಳ್ ಇವೈಯೋ'}
             line2={'ಅರುಂತರ ಮುನಿವರುಮ್ ಮರುದರುಮ್ ಇವರೋ'}
             line3={'ಇಂದಿರನ್ ಆನೈಯುಮ್ ತಾನುಮ್ ವಂದಿವನೋ'}
@@ -121,8 +105,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||7||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ವಂಬವಿಳ್ ವಾನವರ್ ವಾಯುರೈ ವಳಂಗ'}
             line2={'ಮಾನಿದಿ ಕಪಿಲೈ ಒಣ್ಕನ್ನಾಡಿಮುದಲಾ'}
             line3={'ಎಂಬೆರುಮಾನ್ ಪಡಿಮಕ್ಕಲಮ್ ಕಾಂಡರ್ಕು'}
@@ -133,8 +115,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||8||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಏದಮಿಲ್ ತಣ್ಣುಮೈ ಎಕ್ಕಂಮತ್ತಳಿ'}
             line2={'ಯಾಳ್ಕುಳಲ್ ಮುಳವಮೋಡು ಇಶೈತಿಶೈ ಕೆಳುಮಿ'}
             line3={'ಗೀದಂಗಳ್ ಪಾಡಿನರ್ ಕಿನ್ನರರ್ ಕೆರುಡರ್ಗಳ್'}
@@ -145,8 +125,6 @@ const Tirupalliyucchi = ({navigation}) => {
             line8={'ಅರಂಗತ್ತಮ್ಮಾ ಪಳ್ಳಿ ಎಳುಂದರುಳಾಯೇ ||9||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಕಡಿಮಲರ್ ಕ್ಕಮಲಂಗಳ್ ಮಲರ್ಂದನ ಇವೈಯೋ'}
             line2={'ಕದಿರವನ್ ಕನೈಕಡಲ್ ಮುಳೈತ್ತನನ್ ಇವನೋ'}
             line3={'ತುಡಿಯಿಡೈಯಾರ್ ಚುರಿಕುಳಲ್ ಪಿಳಿಂದುದರಿ'}

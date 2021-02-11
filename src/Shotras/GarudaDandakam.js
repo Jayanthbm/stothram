@@ -8,7 +8,7 @@ import SliderComponent from '../Components/SliderComponent';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const GarudaDandakam = ({navigation}) => {
-  const {backgroundColor, textColor, font} = useContext(ThemeContext);
+  const {backgroundColor} = useContext(ThemeContext);
 
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
@@ -25,14 +25,10 @@ const GarudaDandakam = ({navigation}) => {
             marginRight: 1,
           }}>
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಶ್ರೀಮಾನ್ ವೇಙ್ಕಟನಾಥಾರ್ಯಃ ಕವಿತಾರ್ಕಿಕಕೇಸರೀ |'}
             line2={'ವೇದಾನ್ತಚಾರ್ಯವರ್ಯೋ ಮೇ ಸನ್ನಿಧತ್ತಾಂ ಸದಾಹೃದಿ ||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ನಮಃ ಪನ್ನಗನದ್ಧಾಯ ವೈಕುಣ್ಠವಶವರ್ತಿನೇ |'}
             line2={'ಶ್ರುತಿಸಿನ್ಧುಸುಧೋತ್ಪಾದಮನ್ದರಾಯ ಗರುತ್ಮತೇ ||'}
             line3={
@@ -43,8 +39,6 @@ const GarudaDandakam = ({navigation}) => {
             }
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಜಯ ಗರುಡ ಸುಪರ್ಣ ದರ್ವೀಕರಾಹಾರ ದೇವಾಧಿಪಾಹಾರ ಹಾರಿನ್'}
             line2={
               'ಪತಿ ಕ್ಷಿಪ್ತ ದಂಭೋಳಿ ಧಾರಾ ಕಿಣಾಕಲ್ಪ ಕಲ್ಪಾನ್ತ ವಾತೂಲ ಕಲ್ಪೋದಯಾನಲ್ಪ'
@@ -58,8 +52,6 @@ const GarudaDandakam = ({navigation}) => {
             line5={'ಸಮಸ್ತೇ ನಮಸ್ತೇ ಪುನಸ್ತೇ ನಮಃ || ೨ |'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={
               'ನಮ ಇದಮಜಹತ್ ಸಪರ್ಯಾಯ ಪರ್ಯಾಯ ನಿರ್ಯಾತ ಪಕ್ಷಾನಿಲಾಸ್ಫಾಲನೋದ್ವೇಲ ಪಾಥೋಧಿ'
             }
@@ -68,8 +60,6 @@ const GarudaDandakam = ({navigation}) => {
             }
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={
               'ಮನುರನುಗತ ಪಕ್ಷಿವಕ್ತ್ರ ಸ್ಫುರತ್ತಾರಕಸ್ತಾವಕಶ್ಚಿತ್ರಭಾನು ಪ್ರಿಯಾ ಶೇಖರಸ್ತ್ರಾಯತಾಂ'
             }
@@ -78,24 +68,16 @@ const GarudaDandakam = ({navigation}) => {
             }
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಷಟ್ತ್ರಿಂಶದ್ಗಣಚರಣೋ ನರ ಪರಿಪಾಟೀ ನವೀನ ಗುಂಭಗಣಃ |'}
             line2={'ವಿಷ್ಣುರಥ ದಣ್ಡಕೋಽಯಂ ವಿಘಟಯತು ವಿಪಕ್ಷ ವಾಹಿನೀ ವ್ಯೂಹಮ್ ||'}
             line3={'ವಿಚಿತ್ರ ಸಿದ್ಧಿದಃ ಸೋಽಯಂ ವೇಙ್ಕಟೇಶವಿಪಶ್ಚಿತಾ |'}
             line4={'ಗರುಡಧ್ವಜತೋಷಾಯ ಗೀತೋ ಗರುಡದಣ್ಡಕಃ ||'}
           />
           <St
-            color={textColor}
-            fontSize={font}
             line1={'ಕವಿತಾರ್ಕಿಕ ಸಿಂಹಾಯ ಕಳ್ಯಾಣ ಗುಣಶಾಲಿನೇ |'}
             line2={'ಶ್ರೀಮತೇ ವೇಙ್ಕಟೇಶಾಯ ವೇದಾನ್ತ ಗುರವೇ ನಮಃ ||'}
           />
-          <St
-            color={textColor}
-            fontSize={font}
-            line1={'ಶ್ರೀಮತೇ ನಿಗಮಾನ್ತಮಹಾದೇಶಿಕಾಯ ನಮಃ ||'}
-          />
+          <St line1={'ಶ್ರೀಮತೇ ನಿಗಮಾನ್ತಮಹಾದೇಶಿಕಾಯ ನಮಃ ||'} />
         </View>
       </ScrollView>
       <Admob />

@@ -27,6 +27,7 @@ const InlineList = (props) => {
               fontSize: 20,
               color: textColor,
               marginBottom: 5,
+              fontWeight: '700',
             }}>
             {title}
           </Text>

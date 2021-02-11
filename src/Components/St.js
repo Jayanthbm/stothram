@@ -1,8 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text} from 'react-native';
+import {ThemeContext} from '../providers/ThemeProvider';
 
 const St = (props) => {
+  const {textColor, font} = useContext(ThemeContext);
   return (
     <React.Fragment>
       <View
@@ -12,8 +14,9 @@ const St = (props) => {
         }}>
         <Text
           style={{
-            color: props.color,
-            fontSize: props.fontSize,
+            color: textColor,
+            fontSize: font,
+            fontWeight: '700',
           }}>
           {props.line1 ? props.line1 + '\n' : ''}
           {props.line2 ? props.line2 + '\n' : ''}

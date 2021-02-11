@@ -25,11 +25,7 @@ const HareKrishnaMantram = ({navigation}) => {
             marginRight: 1,
           }}>
           <St color={textColor} fontSize={font} line1={'ಹರೇ ಕೃಷ್ಣ ಹರೇ ಕೃಷ್ಣ'} />
-          <St
-            color={textColor}
-            fontSize={font}
-            line1={'ಕೃಷ್ಣ ಕೃಷ್ಣ ಹರೇ ಹರೇ |'}
-          />
+          <St line1={'ಕೃಷ್ಣ ಕೃಷ್ಣ ಹರೇ ಹರೇ |'} />
           <St color={textColor} fontSize={font} line1={'ಹರೇ ರಾಮ ಹರೇ ರಾಮ'} />
 
           <St color={textColor} fontSize={font} line1={'ರಾಮ ರಾಮ ಹರೇ ಹರೇ ||'} />
