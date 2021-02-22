@@ -8,6 +8,7 @@ const Shatumurai = ({navigation}) => {
       navigation={navigation}
       back={'ShotramScreen'}
       title={'ಶಾತ್ತುಮರೈ'}>
+      <SubHeader title="ತಿರುಪ್ಪಾವೈ" />
       <St
         line1={'ಶಿತ್ತಂ ಶಿರುಕಾಲೇ ವಂದುನ್ನೈ ಶೇವಿತ್ತು,'}
         line2={'ಉನ್ ಪೋತ್ತಾಮರೈ ಯಡಿಯೇ ಪೋತ್ತುಂ ಪೋರುಳ್ ಕೇಳಾಯ್,'}
