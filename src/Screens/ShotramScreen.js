@@ -63,7 +63,7 @@ const ShotramScreen = ({navigation}) => {
           {viewType === 'card' ? (
             <CardList nav={navigation} data={dataarray} />
           ) : (
-            <View style={{flex: 1, marginTop: 5}}>
+            <View style={{flex: 1, marginTop: 15}}>
               <InlineList nav={navigation} data={dataarray} />
             </View>
           )}
