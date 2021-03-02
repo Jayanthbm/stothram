@@ -213,4 +213,16 @@ export const BHAJANE_SCREEN_DATA = [
     goto: 'SriramChandirane',
     displayTitle: 'ಶ್ರೀ ರಾಮಚಂದಿರನೆ',
   },
+  {
+    id: 10,
+    title: 'JayaJayaVitala',
+    goto: 'JayaJayaVitala',
+    displayTitle: 'ಜೈ ಜೈ ವಿಟ್ಟಲಾ ಪಾಂಡುರಂಗ',
+  },
+  {
+    id: 11,
+    title: 'RadheGovindha',
+    goto: 'RadheGovindha',
+    displayTitle: 'ರಾಧೆ ಗೋವಿಂದಾ',
+  },
 ];

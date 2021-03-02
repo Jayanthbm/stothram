@@ -43,6 +43,9 @@ import SreenivasaNeenePaliso from './src/Bhajanes/SreenivasaNeenePaliso';
 import DheeraMaruthi from './src/Bhajanes/DheeraMaruthi';
 import KodandaRama from './src/Bhajanes/KodandaRama';
 import SriramChandirane from './src/Bhajanes/SriramChandirane';
+import JayaJayaVitala from './src/Bhajanes/JayaJayaVitala';
+import RadheGovindha from './src/Bhajanes/RadheGovindha';
+
 const switchNavigator = createSwitchNavigator({
   HomeScreen: HomeScreen,
   SettingsScreen: SettingsScreen,
@@ -71,7 +74,7 @@ const switchNavigator = createSwitchNavigator({
   DeshikaMangalam: DeshikaMangalam,
   SriStuti: SriStuti,
   AdithyaHrudayam: AdithyaHrudayam,
-  Ramaraksha:  Ramaraksha,
+  Ramaraksha: Ramaraksha,
   //Bhajanes
   BhajaYatirajam: BhajaYatirajam,
   ThugireRangana: ThugireRangana,
@@ -82,6 +85,8 @@ const switchNavigator = createSwitchNavigator({
   DheeraMaruthi: DheeraMaruthi,
   KodandaRama: KodandaRama,
   SriramChandirane: SriramChandirane,
+  JayaJayaVitala: JayaJayaVitala,
+  RadheGovindha: RadheGovindha,
 });
 
 const AppContainer = createAppContainer(switchNavigator);
