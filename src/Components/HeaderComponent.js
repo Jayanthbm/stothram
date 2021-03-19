@@ -30,7 +30,7 @@ const HeaderComponent = (props) => {
       <Appbar.Content title={props.title} />
       {props.viewType && (
         <Appbar.Action
-          icon={viewType === 'card' ? 'clipboard-list' : 'card-outline'}
+          icon={viewType === 'card' ? 'clipboard-list' : 'card-text'}
           onPress={toggleViewType}
         />
       )}

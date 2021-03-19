@@ -1,22 +1,3 @@
-export const HOME_SCREEN_DATA = [
-  {
-    id: 1,
-    title: 'Stothram',
-    goto: 'ShotramScreen',
-    darkBackground: '#878683',
-    lightBackground: '#1abc9c',
-    icon: 'database',
-  },
-  {
-    id: 2,
-    title: 'Bhajanas',
-    goto: 'BhajaneScreen',
-    darkBackground: '#878683',
-    lightBackground: '#3498db',
-    icon: 'profile',
-  },
-];
-
 export const SHOTRAM_SCREEN_DATA = [
   {
     id: 1,
@@ -224,5 +205,26 @@ export const BHAJANE_SCREEN_DATA = [
     title: 'RadheGovindha',
     goto: 'RadheGovindha',
     displayTitle: 'ರಾಧೆ ಗೋವಿಂದಾ',
+  },
+];
+
+export const HOME_SCREEN_DATA = [
+  {
+    id: 1,
+    title: 'Stothram',
+    goto: 'ShotramScreen',
+    darkBackground: '#878683',
+    lightBackground: '#1abc9c',
+    icon: 'database',
+    total: SHOTRAM_SCREEN_DATA.length,
+  },
+  {
+    id: 2,
+    title: 'Bhajanas',
+    goto: 'BhajaneScreen',
+    darkBackground: '#878683',
+    lightBackground: '#3498db',
+    icon: 'profile',
+    total: BHAJANE_SCREEN_DATA.length,
   },
 ];

@@ -20,6 +20,8 @@ import {HOME_SCREEN_DATA} from '../Constants/data';
 
 import {ThemeContext} from '../providers/ThemeProvider';
 
+import {Badge} from 'react-native-paper';
+
 const HomeScreen = ({navigation}) => {
   const {darkmode, backgroundColor, headerBackground} = useContext(
     ThemeContext,
@@ -42,6 +44,7 @@ const HomeScreen = ({navigation}) => {
               padding: 10,
               height: 150,
             }}>
+            <Badge size={25}>{data.total}</Badge>
             <Icon
               name={data.icon}
               style={{
