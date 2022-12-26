@@ -331,7 +331,7 @@ PODS:
   - React-jsinspector (0.66.4)
   - React-logger (0.66.4):
     - glog
-  - react-native-slider (4.1.12):
+  - react-native-slider (4.2.1):
     - React-Core
   - React-perflogger (0.66.4)
   - React-RCTActionSheet (0.66.4):
@@ -398,7 +398,7 @@ PODS:
     - React-jsi (= 0.66.4)
     - React-logger (= 0.66.4)
     - React-perflogger (= 0.66.4)
-  - RNCAsyncStorage (1.15.15):
+  - RNCAsyncStorage (1.16.1):
     - React-Core
   - RNFBAdMob (11.5.0):
     - Firebase/AdMob (= 7.11.0)
@@ -410,7 +410,7 @@ PODS:
     - React-Core
   - RNGestureHandler (2.1.1):
     - React-Core
-  - RNVectorIcons (9.0.0):
+  - RNVectorIcons (9.1.0):
     - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -621,7 +621,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 94ce921e1d8ce7023366873ec371f3441383b396
   React-jsinspector: d0374f7509d407d2264168b6d0fad0b54e300b85
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
-  react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
+  react-native-slider: 241935e3ea8e47599c317f512f96ee8de607d4cb
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
   React-RCTActionSheet: 7d3041e6761b4f3044a37079ddcb156575fb6d89
   React-RCTAnimation: 743e88b55ac62511ae5c2e22803d4f503f2a3a13
@@ -634,11 +634,11 @@ SPEC CHECKSUMS:
   React-RCTVibration: e3ffca672dd3772536cb844274094b0e2c31b187
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
-  RNCAsyncStorage: 0bef6a21517c0254bd6bd59a3672963abfa0d18e
+  RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
   RNFBAdMob: a2b5f148468b16d02543707d4627bc9a19016bf3
   RNFBApp: 9c90f9d576861947ba75fe0830567c570bcbcf6d
   RNGestureHandler: e1ad51d31a580755079d5124d3ab66f0fcaa8311
-  RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
+  RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

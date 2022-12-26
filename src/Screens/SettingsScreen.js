@@ -6,7 +6,6 @@ import {
   Text,
   TouchableRipple,
 } from 'react-native-paper';
-/* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
 import {ScrollView, Share, Switch, View} from 'react-native';
 
@@ -41,6 +40,9 @@ const SettingsScreen = ({navigation}) => {
         left={_props => (
           <List.Icon {...props} icon={props.icon} color={textColor} />
         )}
+        style={{
+          marginLeft: 20
+        }}
       />
     );
   };
@@ -97,7 +99,7 @@ const SettingsScreen = ({navigation}) => {
     }
   };
   return (
-    <View style={{flex: 1, backgroundColor: backgroundColor}}>
+    <View style={{ flex: 1, backgroundColor: backgroundColor, }}>
       <ScrollView>
         <HeaderComponent
           navigation={navigation}
@@ -121,7 +123,7 @@ const SettingsScreen = ({navigation}) => {
         <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
         <SCL image={yoga} title={'Yoga'} />
 
-        <View style={{marginTop: 10, alignItems: 'center'}}>
+        <View style={{ marginTop: 10, alignItems: 'center' }}>
           <Button
             icon="share"
             mode="text"
@@ -139,7 +141,7 @@ const SettingsScreen = ({navigation}) => {
             alignSelf: 'center',
             marginBottom: 7,
           }}>
-          <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
+          <Text style={{ color: textColor, fontSize: 20 }}>Made With {''}</Text>
           <Icon
             name={'heart'}
             style={{
@@ -147,7 +149,7 @@ const SettingsScreen = ({navigation}) => {
               fontSize: 25,
             }}
           />
-          <Text style={{color: textColor, fontSize: 20}}> In India</Text>
+          <Text style={{ color: textColor, fontSize: 20 }}> In India</Text>
         </View>
         <Admob />
       </React.Fragment>

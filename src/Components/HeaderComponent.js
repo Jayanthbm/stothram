@@ -5,7 +5,7 @@ import DarkToggle from './DarkToggle';
 import {ThemeContext} from '../providers/ThemeProvider';
 import {Appbar} from 'react-native-paper';
 const HeaderComponent = (props) => {
-  const {headerBackground, viewType, toggleViewType} = useContext(ThemeContext);
+  const { darkmode, viewType, toggleViewType, headerBackground } = useContext(ThemeContext);
 
   useEffect(() => {
     const backAction = () => {
@@ -20,18 +20,27 @@ const HeaderComponent = (props) => {
   }, [props.navigation, props.back]);
   return (
     <Appbar.Header
-      style={{backgroundColor: headerBackground, height: 50}}
-      dark={true}>
+      style={{
+        backgroundColor: headerBackground
+      }}
+    >
       <Appbar.BackAction
         onPress={() => {
           props.navigation.navigate(props.back);
         }}
+        iconColor={'#fff'}
       />
-      <Appbar.Content title={props.title} />
+      <Appbar.Content
+        title={props.title}
+        titleStyle={{
+          color: '#fff'
+        }}
+      />
       {props.viewType && (
         <Appbar.Action
           icon={viewType === 'card' ? 'clipboard-list' : 'card-text'}
           onPress={toggleViewType}
+          iconColor={'#fff'}
         />
       )}
       <DarkToggle />

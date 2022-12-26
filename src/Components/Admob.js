@@ -1,6 +1,5 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
-import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 let adUnits = [
   'ca-app-pub-0714649342045057/8222174259',
   'ca-app-pub-0714649342045057/5615643477',

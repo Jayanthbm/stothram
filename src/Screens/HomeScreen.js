@@ -92,11 +92,19 @@ const HomeScreen = ({navigation}) => {
   return (
     <View style={{backgroundColor: backgroundColor, flex: 1}}>
       <Appbar.Header
-        style={{backgroundColor: headerBackground, height: 50}}
-        dark={true}>
-        <Appbar.Content title="Choose One" />
+        style={{
+          backgroundColor: headerBackground
+        }}
+      >
+        <Appbar.Content
+          title="Choose One"
+          titleStyle={{
+            color: '#fff'
+          }}
+        />
         <Appbar.Action
           icon={'cog-outline'}
+          iconColor={'#fff'}
           onPress={() => {
             navigation.navigate('SettingsScreen');
           }}
