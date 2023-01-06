@@ -120,7 +120,7 @@ const SettingsScreen = ({navigation}) => {
         <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
         <SCL image={yoga} title={'Yoga'} />
 
-        <View style={{marginTop: 25, alignItems: 'center'}}>
+        <View style={{marginTop: 30, alignItems: 'center'}}>
           <Button
             icon="share"
             mode="text"

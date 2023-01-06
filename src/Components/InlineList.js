@@ -7,12 +7,12 @@ const InlineList = props => {
   const {darkmode, textColor} = useContext(ThemeContext);
 
   const LItem = ({title, goto}) => (
-    <TouchableRipple
-      onPress={() => {
-        props.nav.navigate(goto);
-      }}
-      rippleColor="rgba(0, 0, 0, .32)">
-      <View style={{height: 40}}>
+    <View style={{height: 40}}>
+      <TouchableRipple
+        onPress={() => {
+          props.nav.navigate(goto);
+        }}
+        rippleColor="rgba(0, 0, 0, .32)">
         <View
           style={{
             flexDirection: 'row',
@@ -32,8 +32,8 @@ const InlineList = props => {
             {title}
           </Text>
         </View>
-      </View>
-    </TouchableRipple>
+      </TouchableRipple>
+    </View>
   );
   const renderItem = ({item}) => (
     <LItem title={item.displayTitle} goto={item.goto} />
