@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext, useState} from 'react';
-import {View, ScrollView} from 'react-native';
-import {Searchbar, List} from 'react-native-paper';
+import {ScrollView, View} from 'react-native';
+import {List, Searchbar} from 'react-native-paper';
 import Admob from '../Components/Admob';
-import HeaderComponent from '../Components/HeaderComponent';
 import CardList from '../Components/CardList';
+import HeaderComponent from '../Components/HeaderComponent';
 import InlineList from '../Components/InlineList';
 import {BHAJANE_SCREEN_DATA} from '../Constants/data';
 
@@ -19,9 +19,9 @@ const BhajaneScreen = ({navigation}) => {
     setDataarray(BHAJANE_SCREEN_DATA);
   };
 
-  const searchFilterFunction = (text) => {
+  const searchFilterFunction = text => {
     if (text) {
-      const newData = dataarray.filter((item) => {
+      const newData = dataarray.filter(item => {
         const itemData = item.title.toUpperCase();
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
@@ -43,7 +43,7 @@ const BhajaneScreen = ({navigation}) => {
       <Searchbar
         placeholder="Search"
         placeholderTextColor={textColor}
-        onChangeText={(text) => {
+        onChangeText={text => {
           onChangeText(text);
           searchFilterFunction(text);
         }}

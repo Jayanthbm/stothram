@@ -1,9 +1,24 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
 import {Switch} from 'react-native';
-import {ThemeContext} from '../providers/ThemeProvider';
 import Icon from 'react-native-vector-icons/Feather';
-const DarkToggle = (props) => {
+import {ThemeContext} from '../providers/ThemeProvider';
+
+const SwitchIcon = ({name, color}) => {
+  return (
+    <Icon
+      name={name}
+      style={{
+        color: color,
+        fontSize: 22,
+        textAlign: 'center',
+        paddingLeft: 3,
+      }}
+    />
+  );
+};
+
+const DarkToggle = () => {
   const {darkmode, toggleDarkMode, darkSwitch} = useContext(ThemeContext);
   return (
     <React.Fragment>
@@ -21,26 +36,10 @@ const DarkToggle = (props) => {
               paddingRight: 5,
             }}
           />
-          {darkmode === true ? (
-            <Icon
-              name={'moon'}
-              style={{
-                color: '#000',
-                fontSize: 22,
-                textAlign: 'center',
-                paddingLeft: 3,
-              }}
-            />
+          {darkmode ? (
+            <SwitchIcon name={'moon'} color={'#000'} />
           ) : (
-            <Icon
-              name={'sun'}
-              style={{
-                color: 'orange',
-                fontSize: 22,
-                textAlign: 'center',
-                paddingLeft: 3,
-              }}
-            />
+            <SwitchIcon name={'sun'} color={'orange'} />
           )}
         </React.Fragment>
       )}

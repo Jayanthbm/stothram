@@ -1,5 +1,5 @@
 import React from 'react';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 let adUnits = [
   'ca-app-pub-0714649342045057/8222174259',
   'ca-app-pub-0714649342045057/5615643477',
@@ -15,7 +15,7 @@ function GenerateId() {
     return adUnits[0];
   }
 }
-const Admob = (props) => {
+const Admob = () => {
   let unitId = GenerateId();
   return (
     <React.Fragment>

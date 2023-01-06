@@ -206,6 +206,36 @@ export const BHAJANE_SCREEN_DATA = [
     goto: 'RadheGovindha',
     displayTitle: 'ರಾಧೆ ಗೋವಿಂದಾ',
   },
+  {
+    id: 12,
+    title: 'HanumaneThandayu',
+    goto: 'HanumaneThandayu',
+    displayTitle: 'ಹನುಮನೆ ತಂದೆಯೂ',
+  },
+  {
+    id: 13,
+    title: 'SriRamaManagala',
+    goto: 'SriRamaManagala',
+    displayTitle: 'ಶ್ರೀ ರಾಮ ಮಂಗಳ',
+  },
+  {
+    id: 14,
+    title: 'RamaRakshiso',
+    goto: 'RamaRakshiso',
+    displayTitle: 'ರಾಮ ರಕ್ಷಿಸೋ',
+  },
+  {
+    id: 15,
+    title: 'RamaLali',
+    goto: 'RamaLali',
+    displayTitle: 'ರಾಮ ಲಾಲಿ',
+  },
+  {
+    id: 16,
+    title: 'HigguveYaako',
+    goto: 'HigguveYaako',
+    displayTitle: 'ಹಿಗ್ಗುವೆ ಯಾಕೋ',
+  },
 ];
 
 export const HOME_SCREEN_DATA = [

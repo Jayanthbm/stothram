@@ -1,3 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
+import React, {useContext} from 'react';
+import {ScrollView, Share, Switch, View} from 'react-native';
 import {
   Avatar,
   Button,
@@ -6,12 +9,10 @@ import {
   Text,
   TouchableRipple,
 } from 'react-native-paper';
-import React, {useContext} from 'react';
-import {ScrollView, Share, Switch, View} from 'react-native';
 
+import Icon from 'react-native-vector-icons/AntDesign';
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 const jayanth = require('../Assets/Images/jayanth.webp');
@@ -28,20 +29,16 @@ const SettingsScreen = ({navigation}) => {
     headerBackground,
   } = useContext(ThemeContext);
 
-  const shareBtn = {
-    marginTop: 10,
-    marginBottom: 10,
-  };
   const SLISTHEADER = props => {
     return (
       <List.Item
         title={props.title}
-        titleStyle={{color: textColor}}
+        titleStyle={{color: textColor, fontWeight: 'bold', fontSize: 20}}
         left={_props => (
           <List.Icon {...props} icon={props.icon} color={textColor} />
         )}
         style={{
-          marginLeft: 20
+          marginLeft: 20,
         }}
       />
     );
@@ -56,7 +53,7 @@ const SettingsScreen = ({navigation}) => {
         <List.Item
           title={props.title}
           description={props.subtitle}
-          titleStyle={{color: textColor}}
+          titleStyle={{color: textColor, fontSize: 16}}
           descriptionStyle={{color: textColor}}
           right={_props => (
             <Switch
@@ -99,7 +96,7 @@ const SettingsScreen = ({navigation}) => {
     }
   };
   return (
-    <View style={{ flex: 1, backgroundColor: backgroundColor, }}>
+    <View style={{flex: 1, backgroundColor: backgroundColor}}>
       <ScrollView>
         <HeaderComponent
           navigation={navigation}
@@ -123,13 +120,17 @@ const SettingsScreen = ({navigation}) => {
         <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
         <SCL image={yoga} title={'Yoga'} />
 
-        <View style={{ marginTop: 10, alignItems: 'center' }}>
+        <View style={{marginTop: 25, alignItems: 'center'}}>
           <Button
             icon="share"
             mode="text"
+            textColor={textColor}
             onPress={onShare}
             compact={false}
-            uppercase={false}>
+            uppercase={false}
+            labelStyle={{
+              fontSize: 20,
+            }}>
             Share App with friends/family
           </Button>
         </View>
@@ -141,7 +142,7 @@ const SettingsScreen = ({navigation}) => {
             alignSelf: 'center',
             marginBottom: 7,
           }}>
-          <Text style={{ color: textColor, fontSize: 20 }}>Made With {''}</Text>
+          <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
           <Icon
             name={'heart'}
             style={{
@@ -149,7 +150,7 @@ const SettingsScreen = ({navigation}) => {
               fontSize: 25,
             }}
           />
-          <Text style={{ color: textColor, fontSize: 20 }}> In India</Text>
+          <Text style={{color: textColor, fontSize: 20}}> In India</Text>
         </View>
         <Admob />
       </React.Fragment>

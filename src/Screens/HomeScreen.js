@@ -1,18 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
-  View,
-  Text,
-  BackHandler,
   Alert,
+  BackHandler,
   Pressable,
   ScrollView,
+  Text,
+  View,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 
-import {FlatGrid} from 'react-native-super-grid';
 import {Appbar} from 'react-native-paper';
+import {FlatGrid} from 'react-native-super-grid';
 import Admob from '../Components/Admob';
 import DarkToggle from '../Components/DarkToggle';
 
@@ -23,9 +23,8 @@ import {ThemeContext} from '../providers/ThemeProvider';
 import {Badge} from 'react-native-paper';
 
 const HomeScreen = ({navigation}) => {
-  const {darkmode, backgroundColor, headerBackground} = useContext(
-    ThemeContext,
-  );
+  const {darkmode, backgroundColor, headerBackground} =
+    useContext(ThemeContext);
 
   function Item({data}) {
     return (
@@ -44,12 +43,20 @@ const HomeScreen = ({navigation}) => {
               padding: 10,
               height: 150,
             }}>
-            <Badge size={25}>{data.total}</Badge>
+            <Badge
+              size={25}
+              style={{
+                backgroundColor: darkmode ? '#f8f9fa' : '#ffc107',
+                color: '#212529',
+                fontWeight: 'bold',
+              }}>
+              {data.total}
+            </Badge>
             <Icon
               name={data.icon}
               style={{
                 marginEnd: 6,
-                color: pressed ? '#000' : '#fff',
+                color: pressed ? (darkmode ? backgroundColor : '#000') : '#fff',
                 fontSize: 80,
                 fontWeight: '600',
                 textAlign: 'center',
@@ -58,7 +65,7 @@ const HomeScreen = ({navigation}) => {
             <Text
               style={{
                 fontSize: 20,
-                color: pressed ? '#000' : '#fff',
+                color: pressed ? (darkmode ? backgroundColor : '#000') : '#fff',
                 fontWeight: '600',
                 textAlign: 'center',
               }}>
@@ -93,13 +100,12 @@ const HomeScreen = ({navigation}) => {
     <View style={{backgroundColor: backgroundColor, flex: 1}}>
       <Appbar.Header
         style={{
-          backgroundColor: headerBackground
-        }}
-      >
+          backgroundColor: headerBackground,
+        }}>
         <Appbar.Content
           title="Choose One"
           titleStyle={{
-            color: '#fff'
+            color: '#fff',
           }}
         />
         <Appbar.Action

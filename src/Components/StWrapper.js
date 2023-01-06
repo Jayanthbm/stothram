@@ -7,7 +7,7 @@ import Admob from './Admob';
 
 import {ThemeContext} from '../providers/ThemeProvider';
 
-const StWrapper = (props) => {
+const StWrapper = props => {
   const {backgroundColor} = useContext(ThemeContext);
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>

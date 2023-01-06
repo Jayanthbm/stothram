@@ -4,8 +4,8 @@ import {BackHandler} from 'react-native';
 import DarkToggle from './DarkToggle';
 import {ThemeContext} from '../providers/ThemeProvider';
 import {Appbar} from 'react-native-paper';
-const HeaderComponent = (props) => {
-  const { darkmode, viewType, toggleViewType, headerBackground } = useContext(ThemeContext);
+const HeaderComponent = props => {
+  const {viewType, toggleViewType, headerBackground} = useContext(ThemeContext);
 
   useEffect(() => {
     const backAction = () => {
@@ -21,9 +21,8 @@ const HeaderComponent = (props) => {
   return (
     <Appbar.Header
       style={{
-        backgroundColor: headerBackground
-      }}
-    >
+        backgroundColor: headerBackground,
+      }}>
       <Appbar.BackAction
         onPress={() => {
           props.navigation.navigate(props.back);
@@ -33,7 +32,7 @@ const HeaderComponent = (props) => {
       <Appbar.Content
         title={props.title}
         titleStyle={{
-          color: '#fff'
+          color: '#fff',
         }}
       />
       {props.viewType && (

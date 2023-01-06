@@ -5,8 +5,8 @@ import {Text, TouchableRipple} from 'react-native-paper';
 import {FlatGrid} from 'react-native-super-grid';
 import {ThemeContext} from '../providers/ThemeProvider';
 
-const CardList = (props) => {
-  const {textColor, backgroundColor} = useContext(ThemeContext);
+const CardList = props => {
+  const {textColor} = useContext(ThemeContext);
 
   function Item({title, goto, displayTitle}) {
     let image = require('../Assets/Images/god.webp');
@@ -21,8 +21,7 @@ const CardList = (props) => {
             source={image}
             style={{
               flex: 1,
-              backgroundColor: backgroundColor,
-              borderColor: textColor,
+              borderColor: '#706f69',
               borderWidth: 1,
               height: 100,
             }}
