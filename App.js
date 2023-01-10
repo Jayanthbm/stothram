@@ -7,14 +7,17 @@ import ChaturShloki from './src/Shotras/ChaturShloki';
 //Shotras
 import React from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
+import Biduvanayya from './src/Bhajanes/Biduvanayya';
 import DheeraMaruthi from './src/Bhajanes/DheeraMaruthi';
 import HanumanChalisa from './src/Bhajanes/HanumanChalisa';
 import HanumaneThandayu from './src/Bhajanes/HanumaneThandayu';
 import HareKrishnaMantram from './src/Bhajanes/HareKrishnaMantram';
+import Harinarayana from './src/Bhajanes/Harinarayana';
 import HigguveYaako from './src/Bhajanes/HigguveYaako';
 import JayaJayaVitala from './src/Bhajanes/JayaJayaVitala';
 import KodandaRama from './src/Bhajanes/KodandaRama';
 import RadheGovindha from './src/Bhajanes/RadheGovindha';
+import RadheShyam from './src/Bhajanes/RadheShyam';
 import RamaLali from './src/Bhajanes/RamaLali';
 import RamaRakshiso from './src/Bhajanes/RamaRakshiso';
 import ShuddaBrahma from './src/Bhajanes/ShuddaBrahma';
@@ -93,6 +96,9 @@ const switchNavigator = createSwitchNavigator({
   RamaRakshiso: RamaRakshiso,
   RamaLali: RamaLali,
   HigguveYaako: HigguveYaako,
+  Biduvanayya: Biduvanayya,
+  RadheShyam: RadheShyam,
+  Harinarayana: Harinarayana,
 });
 
 const AppContainer = createAppContainer(switchNavigator);

@@ -237,6 +237,24 @@ export const BHAJANE_SCREEN_DATA = [
     goto: 'HareKrishnaMantram',
     displayTitle: 'ಹರೇ ಕೃಷ್ಣ ಮಂತ್ರಂ',
   },
+  {
+    id: 17,
+    title: 'Biduvanayya',
+    goto: 'Biduvanayya',
+    displayTitle: 'ಬಿಡುವೇನೇನಯ್ಯಾ',
+  },
+  {
+    id: 18,
+    title: 'RadheShyam',
+    goto: 'RadheShyam',
+    displayTitle: 'ರಾಧೇಶ್ಯಾಮ್‌',
+  },
+  {
+    id: 19,
+    title: 'Harinarayana',
+    goto: 'Harinarayana',
+    displayTitle: 'ಹರಿನಾರಾಯಣ',
+  },
 ];
 
 export const HOME_SCREEN_DATA = [
