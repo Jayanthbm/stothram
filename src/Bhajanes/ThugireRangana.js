@@ -1,6 +1,6 @@
 import React from 'react';
-import StWrapper from '../Components/StWrapper';
 import St from '../Components/St';
+import StWrapper from '../Components/StWrapper';
 
 const ThugireRangana = ({navigation}) => {
   return (
@@ -13,11 +13,14 @@ const ThugireRangana = ({navigation}) => {
         line2={'ತೂಗಿರೆ ಅಚ್ಯುತಾನಂತನ'}
         line3={'ತೂಗಿರೆ ವರಗಿರಿಯಪ್ಪ ತಿಮ್ಮಪ್ಪನ'}
         line4={'ತೂಗಿರೆ ಕಾವೇರಿ ರಂಗಯ್ಯನ'}
-        line5={'ನಾಗಲೋಕದಲ್ಲಿ ನಾರಾಯಣ ಮಲಗ್ಯಾನೆ'}
-        line6={'ನಾಗ ಕನ್ನಿಕೆಯರು ತೂಗಿರೆ'}
-        line7={'ನಾಗವೇಣಿಯರು ನೇಣ ಪಿಡಿದುಕೊಂಡು'}
-        line8={'ಬೇಗನೆ ತೊಟ್ಟಿಲ ತೂಗಿರೆ || ೧ ||'}
       />
+      <St
+        line1={'ನಾಗಲೋಕದಲ್ಲಿ ನಾರಾಯಣ ಮಲಗ್ಯಾನೆ'}
+        line2={'ನಾಗ ಕನ್ನಿಕೆಯರು ತೂಗಿರೆ'}
+        line3={'ನಾಗವೇಣಿಯರು ನೇಣ ಪಿಡಿದುಕೊಂಡು'}
+        line4={'ಬೇಗನೆ ತೊಟ್ಟಿಲ ತೂಗಿರೆ || ೧ ||'}
+      />
+
       <St
         line1={'ಇಂದ್ರಲೋಕದಲ್ಲುಪೇಂದ್ರ ಮಲಗ್ಯಾನೆ'}
         line2={'ಇಂದುಮುಖಿಯರೆಲ್ಲ ತೂಗಿರೆ'}
