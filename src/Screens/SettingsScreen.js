@@ -78,7 +78,7 @@ const SettingsScreen = ({navigation}) => {
           <List.Item
             title={props.title}
             titleStyle={{color: textColor}}
-            left={_props => <Avatar.Image size={50} source={props.image} />}
+            left={_props => <Avatar.Image size={40} source={props.image} />}
           />
         </TouchableRipple>
         <Divider style={{backgroundColor: headerBackground}} />
