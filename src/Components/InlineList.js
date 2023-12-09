@@ -7,7 +7,7 @@ const InlineList = props => {
   const {darkmode, textColor} = useContext(ThemeContext);
 
   const LItem = ({title, goto}) => (
-    <View style={{height: 40}}>
+    <View style={{height: 50}}>
       <TouchableRipple
         onPress={() => {
           props.nav.navigate(goto);
