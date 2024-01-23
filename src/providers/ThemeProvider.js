@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Appearance, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const darkBackground = '#000';
+const darkBackground = '#5e5e5c';
 const lightBackground = '#fff';
 const darkTextcolor = '#fff';
 const lightTextcolor = '#000';
 const darkHeaderBackground = '#878683';
 const lightHeaderBackground = '#6200EE';
-// #3A3B3C
+
 export const ThemeContext = React.createContext({
   darkmode: false,
   toggleDarkMode: () => {},
@@ -35,7 +35,7 @@ export const ThemeProvider = ({children}) => {
 
   useEffect(() => {
     function init() {
-      AsyncStorage.getItem('@darkmode').then((r) => {
+      AsyncStorage.getItem('@darkmode').then(r => {
         if (r) {
           if (r === 'true') {
             setDarkMode(true);
@@ -65,7 +65,7 @@ export const ThemeProvider = ({children}) => {
           }
         }
       });
-      AsyncStorage.getItem('@darkmodetoggle').then((r) => {
+      AsyncStorage.getItem('@darkmodetoggle').then(r => {
         if (r) {
           if (r === 'true') {
             setDarkSwitch(true);
@@ -77,7 +77,7 @@ export const ThemeProvider = ({children}) => {
           setDarkSwitch(true);
         }
       });
-      AsyncStorage.getItem('@fontSize').then((r) => {
+      AsyncStorage.getItem('@fontSize').then(r => {
         if (r) {
           let f = parseInt(r, 10);
           setFont(f);
@@ -130,7 +130,7 @@ export const ThemeProvider = ({children}) => {
           }
         },
         font,
-        updateFont: (size) => {
+        updateFont: size => {
           AsyncStorage.setItem('@fontSize', size.toString());
           setFont(size);
         },

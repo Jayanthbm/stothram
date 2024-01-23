@@ -3,22 +3,22 @@ import React, {useContext} from 'react';
 import {FlatList, View} from 'react-native';
 import {Text, TouchableRipple} from 'react-native-paper';
 import {ThemeContext} from '../providers/ThemeProvider';
-const InlineList = (props) => {
-  const {darkmode, textColor, headerBackground} = useContext(ThemeContext);
+const InlineList = props => {
+  const {darkmode, textColor} = useContext(ThemeContext);
 
   const LItem = ({title, goto}) => (
-    <TouchableRipple
-      onPress={() => {
-        props.nav.navigate(goto);
-      }}
-      rippleColor="rgba(0, 0, 0, .32)">
-      <View style={{height: 40}}>
+    <View style={{height: 40}}>
+      <TouchableRipple
+        onPress={() => {
+          props.nav.navigate(goto);
+        }}
+        rippleColor="rgba(0, 0, 0, .32)">
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             width: '98%',
-            borderBottomColor: darkmode ? headerBackground : '#eee',
+            borderBottomColor: darkmode ? '#706f69' : '#eee',
             borderBottomWidth: 2,
             marginLeft: 20,
           }}>
@@ -32,8 +32,8 @@ const InlineList = (props) => {
             {title}
           </Text>
         </View>
-      </View>
-    </TouchableRipple>
+      </TouchableRipple>
+    </View>
   );
   const renderItem = ({item}) => (
     <LItem title={item.displayTitle} goto={item.goto} />
@@ -43,7 +43,7 @@ const InlineList = (props) => {
     <FlatList
       data={props.data}
       renderItem={renderItem}
-      keyExtractor={(item) => item.title}
+      keyExtractor={item => item.title}
     />
   );
 };

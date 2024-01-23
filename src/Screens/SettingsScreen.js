@@ -1,9 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
-import {View, Switch, ScrollView} from 'react-native';
-import {TouchableRipple, List, Avatar, Divider, Text} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/AntDesign';
+import {ScrollView, Share, Switch, View} from 'react-native';
+import {
+  Avatar,
+  Button,
+  Divider,
+  List,
+  Text,
+  TouchableRipple,
+} from 'react-native-paper';
 
+import Icon from 'react-native-vector-icons/AntDesign';
 import Admob from '../Components/Admob';
 import HeaderComponent from '../Components/HeaderComponent';
 import {ThemeContext} from '../providers/ThemeProvider';
@@ -22,19 +29,22 @@ const SettingsScreen = ({navigation}) => {
     headerBackground,
   } = useContext(ThemeContext);
 
-  const SLISTHEADER = (props) => {
+  const SLISTHEADER = props => {
     return (
       <List.Item
         title={props.title}
-        titleStyle={{color: textColor}}
-        left={(_props) => (
+        titleStyle={{color: textColor, fontWeight: 'bold', fontSize: 20}}
+        left={_props => (
           <List.Icon {...props} icon={props.icon} color={textColor} />
         )}
+        style={{
+          marginLeft: 20,
+        }}
       />
     );
   };
 
-  const SLISTITEM = (props) => {
+  const SLISTITEM = props => {
     return (
       <TouchableRipple
         onPress={props.toggle}
@@ -43,9 +53,9 @@ const SettingsScreen = ({navigation}) => {
         <List.Item
           title={props.title}
           description={props.subtitle}
-          titleStyle={{color: textColor}}
+          titleStyle={{color: textColor, fontSize: 16}}
           descriptionStyle={{color: textColor}}
-          right={(_props) => (
+          right={_props => (
             <Switch
               value={props.state}
               onValueChange={props.toggle}
@@ -58,7 +68,7 @@ const SettingsScreen = ({navigation}) => {
     );
   };
 
-  const SCL = (props) => {
+  const SCL = props => {
     return (
       <>
         <TouchableRipple
@@ -68,12 +78,22 @@ const SettingsScreen = ({navigation}) => {
           <List.Item
             title={props.title}
             titleStyle={{color: textColor}}
-            left={(_props) => <Avatar.Image size={50} source={props.image} />}
+            left={_props => <Avatar.Image size={40} source={props.image} />}
           />
         </TouchableRipple>
         <Divider style={{backgroundColor: headerBackground}} />
       </>
     );
+  };
+  const onShare = async () => {
+    try {
+      await Share.share({
+        message:
+          'https://play.google.com/store/apps/details?id=com.jayanth.shotram',
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
@@ -99,6 +119,21 @@ const SettingsScreen = ({navigation}) => {
         <SLISTHEADER title={'Created By'} icon={'information'} />
         <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
         <SCL image={yoga} title={'Yoga'} />
+
+        <View style={{marginTop: 30, alignItems: 'center'}}>
+          <Button
+            icon="share"
+            mode="text"
+            textColor={textColor}
+            onPress={onShare}
+            compact={false}
+            uppercase={false}
+            labelStyle={{
+              fontSize: 20,
+            }}>
+            Share App with friends/family
+          </Button>
+        </View>
       </ScrollView>
       <React.Fragment>
         <View

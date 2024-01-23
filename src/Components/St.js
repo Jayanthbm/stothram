@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 import {View, Text} from 'react-native';
 import {ThemeContext} from '../providers/ThemeProvider';
 
-const St = (props) => {
+const St = props => {
   const {textColor, font} = useContext(ThemeContext);
   return (
     <React.Fragment>

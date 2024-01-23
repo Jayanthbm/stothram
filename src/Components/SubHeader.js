@@ -2,7 +2,7 @@
 import React, {useContext} from 'react';
 import {View, Text} from 'react-native';
 import {ThemeContext} from '../providers/ThemeProvider';
-const SubHeader = (props) => {
+const SubHeader = props => {
   const {headerBackground} = useContext(ThemeContext);
   return (
     <React.Fragment>
