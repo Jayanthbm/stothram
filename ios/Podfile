@@ -39,6 +39,12 @@ target 'Stothram' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # Add the following line to configure react-native-google-mobile-ads as static framework
+  $RNGoogleMobileAdsAsStaticFramework = true
+
+  # Add the following line to enable modular headers for Swift pods
+  use_modular_headers!
+  
   target 'StothramTests' do
     inherit! :complete
     # Pods for testing

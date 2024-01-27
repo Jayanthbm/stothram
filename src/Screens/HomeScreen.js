@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Alert,
   BackHandler,
@@ -21,11 +21,14 @@ import {HOME_SCREEN_DATA} from '../Constants/data';
 import {ThemeContext} from '../providers/ThemeProvider';
 
 import {Badge} from 'react-native-paper';
+import MoneyModal from '../Components/MoneyModal';
 
 const HomeScreen = ({navigation}) => {
   const {darkmode, backgroundColor, headerBackground} =
     useContext(ThemeContext);
-
+  const [moneyModal, setMoneyModal] = useState(false);
+  const showDialog = () => setMoneyModal(true);
+  const hideDialog = () => setMoneyModal(false);
   function Item({data}) {
     return (
       <Pressable
@@ -108,13 +111,16 @@ const HomeScreen = ({navigation}) => {
             color: '#fff',
           }}
         />
-        <Appbar.Action
-          icon={'cog-outline'}
-          iconColor={'#fff'}
-          onPress={() => {
-            navigation.navigate('SettingsScreen');
-          }}
-        />
+        <Text
+          onPress={showDialog}
+          style={{
+            color: '#fff',
+            fontSize: 20,
+            marginRight: 10,
+            padding: 10,
+          }}>
+          ₹
+        </Text>
         <DarkToggle />
       </Appbar.Header>
       <ScrollView />
@@ -134,6 +140,7 @@ const HomeScreen = ({navigation}) => {
         )}
       </View>
       <Admob />
+      <MoneyModal visible={moneyModal} hideDialog={hideDialog} />
     </View>
   );
 };
