@@ -24,7 +24,7 @@ const InlineList = props => {
           }}>
           <Text
             style={{
-              fontSize: 20,
+              fontSize: 18,
               color: textColor,
               marginBottom: 5,
               fontWeight: '700',

@@ -248,9 +248,15 @@ export const BHAJANE_SCREEN_DATA = [
     displayTitle: 'ಭಜ ಯತಿರಾಜಂ',
     goto: 'BhajaYatirajam',
   },
+  {
+    id: 18,
+    title: 'Nee yenna kayabekayya',
+    displayTitle: 'ನೀ ಎನ್ನ ಕಾಯಬೇಕಯ',
+    goto: 'NeeYennaKayabekayya',
+  },
 
   {
-    id: 19,
+    id: 20,
     title: 'Hare Krishna Mantram',
     goto: 'HareKrishnaMantram',
     displayTitle: 'ಹರೇ ಕೃಷ್ಣ ಮಂತ್ರಂ',

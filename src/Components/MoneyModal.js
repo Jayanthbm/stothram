@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Linking, View} from 'react-native';
 
 import {
@@ -6,14 +6,17 @@ import {
   Dialog,
   Portal,
   RadioButton,
+  Text,
   TextInput,
 } from 'react-native-paper';
+import {ThemeContext} from '../providers/ThemeProvider';
 
 const UPIID = '8892218@ybl';
 const PN = 'Stothram';
 const TN = 'Contribute to Stothram';
 
 const MoneyModal = props => {
+  const {headerBackground} = useContext(ThemeContext);
   const [amount, setAmount] = useState(1);
   const [money, setMoney] = useState(1);
 
@@ -22,12 +25,33 @@ const MoneyModal = props => {
     Linking.openURL(url);
   };
 
+  const MyRadioButtonItem = props => {
+    return (
+      <RadioButton.Item
+        value={props.value}
+        label={props.label}
+        disabled={false}
+        rippleColor={headerBackground}
+        labelStyle={{fontSize: 15, fontWeight: 'bold', color: 'black'}}
+        mode="android"
+        uncheckedColor="#ccc"
+      />
+    );
+  };
   return (
     <View>
       <Portal>
         <Dialog visible={props.visible} onDismiss={props.hideDialog}>
-          <Dialog.Title>Contribute</Dialog.Title>
           <Dialog.Content>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}>
+              Contribute to Stothram
+            </Text>
+            <Text> Choose amount</Text>
             <RadioButton.Group
               onValueChange={newValue => {
                 if (newValue === 'custom') {
@@ -39,15 +63,14 @@ const MoneyModal = props => {
                 }
               }}
               value={amount}>
-              <RadioButton.Item label="1" value={1} />
-              <RadioButton.Item label="10" value={10} />
-              <RadioButton.Item label="50" value={50} />
-              <RadioButton.Item label="100" value={100} />
-              <RadioButton.Item label="Custom" value={'custom'} />
+              <MyRadioButtonItem label="₹1" value={1} mode="ios" />
+              <MyRadioButtonItem label="₹10" value={10} mode="ios" />
+              <MyRadioButtonItem label="₹50" value={50} mode="ios" />
+              <MyRadioButtonItem label="Custom ₹" value={'custom'} mode="ios" />
             </RadioButton.Group>
             {amount === 'custom' && (
               <TextInput
-                label="choose amount"
+                label="Choose amount"
                 value={money}
                 keyboardType="numeric"
                 onChangeText={text => setMoney(text)}

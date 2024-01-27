@@ -23,10 +23,10 @@ const CardList = props => {
               flex: 1,
               borderColor: '#706f69',
               borderWidth: 1,
-              height: 100,
+              height: 80,
             }}
             imageStyle={{
-              height: 90,
+              height: 70,
               resizeMode: 'cover',
             }}
           />

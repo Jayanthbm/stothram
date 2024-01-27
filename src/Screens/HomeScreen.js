@@ -121,6 +121,13 @@ const HomeScreen = ({navigation}) => {
           }}>
           ₹
         </Text>
+        <Appbar.Action
+          icon={'cog-outline'}
+          iconColor={'#fff'}
+          onPress={() => {
+            navigation.navigate('SettingsScreen');
+          }}
+        />
         <DarkToggle />
       </Appbar.Header>
       <ScrollView />

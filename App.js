@@ -16,6 +16,7 @@ import Harinarayana from './src/Bhajanes/Harinarayana';
 import HigguveYaako from './src/Bhajanes/HigguveYaako';
 import JayaJayaVitala from './src/Bhajanes/JayaJayaVitala';
 import KodandaRama from './src/Bhajanes/KodandaRama';
+import NeeYennaKayabekayya from './src/Bhajanes/NeeYennaKayabekayya';
 import RadheGovindha from './src/Bhajanes/RadheGovindha';
 import RadheShyam from './src/Bhajanes/RadheShyam';
 import RamaLali from './src/Bhajanes/RamaLali';
@@ -25,7 +26,6 @@ import SreenivasaNeenePaliso from './src/Bhajanes/SreenivasaNeenePaliso';
 import SriRamaManagala from './src/Bhajanes/SriRamaManagala';
 import SriramChandirane from './src/Bhajanes/SriramChandirane';
 import ThugireRangana from './src/Bhajanes/ThugireRangana';
-import {ThemeProvider} from './src/providers/ThemeProvider';
 import HomeScreen from './src/Screens/HomeScreen';
 import SettingsScreen from './src/Screens/SettingsScreen';
 import ShotramScreen from './src/Screens/ShotramScreen';
@@ -49,6 +49,7 @@ import Tirupalland from './src/Shotras/Tirupalland';
 import Tirupalliyucchi from './src/Shotras/Tirupalliyucchi';
 import Tiruppavai from './src/Shotras/Tiruppavai';
 import VishnuSahasranamam from './src/Shotras/VishnuSahasranamam';
+import {ThemeProvider} from './src/providers/ThemeProvider';
 
 const switchNavigator = createSwitchNavigator({
   HomeScreen: HomeScreen,
@@ -99,6 +100,7 @@ const switchNavigator = createSwitchNavigator({
   Biduvanayya: Biduvanayya,
   RadheShyam: RadheShyam,
   Harinarayana: Harinarayana,
+  NeeYennaKayabekayya: NeeYennaKayabekayya,
 });
 
 const AppContainer = createAppContainer(switchNavigator);

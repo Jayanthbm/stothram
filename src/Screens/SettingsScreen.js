@@ -33,7 +33,7 @@ const SettingsScreen = ({navigation}) => {
     return (
       <List.Item
         title={props.title}
-        titleStyle={{color: textColor, fontWeight: 'bold', fontSize: 20}}
+        titleStyle={{color: textColor, fontWeight: 'bold', fontSize: 16}}
         left={_props => (
           <List.Icon {...props} icon={props.icon} color={textColor} />
         )}
@@ -53,8 +53,8 @@ const SettingsScreen = ({navigation}) => {
         <List.Item
           title={props.title}
           description={props.subtitle}
-          titleStyle={{color: textColor, fontSize: 16}}
-          descriptionStyle={{color: textColor}}
+          titleStyle={{color: textColor, fontSize: 14}}
+          descriptionStyle={{color: textColor, fontSize: 12}}
           right={_props => (
             <Switch
               value={props.state}
@@ -77,14 +77,23 @@ const SettingsScreen = ({navigation}) => {
           style={{marginLeft: 10}}>
           <List.Item
             title={props.title}
-            titleStyle={{color: textColor}}
-            left={_props => <Avatar.Image size={40} source={props.image} />}
+            description={props.subtitle}
+            titleStyle={{color: textColor, fontSize: 12}}
+            descriptionStyle={{color: textColor, fontSize: 10}}
+            left={_props =>
+              props.image ? (
+                <Avatar.Image size={40} source={props.image} />
+              ) : (
+                <Avatar.Text size={40} label={props.title[0]} />
+              )
+            }
           />
         </TouchableRipple>
         <Divider style={{backgroundColor: headerBackground}} />
       </>
     );
   };
+
   const onShare = async () => {
     try {
       await Share.share({
@@ -95,6 +104,7 @@ const SettingsScreen = ({navigation}) => {
       console.log(error);
     }
   };
+
   return (
     <View style={{flex: 1, backgroundColor: backgroundColor}}>
       <ScrollView>
@@ -116,20 +126,24 @@ const SettingsScreen = ({navigation}) => {
           subtitle={'Show toggle dark mode switch in every page'}
           state={darkSwitch}
         />
-        <SLISTHEADER title={'Created By'} icon={'information'} />
-        <SCL image={jayanth} title={'Jayanthbharadwaj M'} />
-        <SCL image={yoga} title={'Yoga'} />
-
-        <View style={{marginTop: 30, alignItems: 'center'}}>
+        <SLISTHEADER title={'Contributions'} icon={'information'} />
+        <SCL
+          image={jayanth}
+          title={'Jayanthbharadwaj M'}
+          subtitle="Developer"
+        />
+        <SCL image={yoga} title={'Yoga'} subtitle="Editor" />
+        <SCL image={null} title={'Sharath'} subtitle="Editor" />
+        <View style={{marginTop: 12, alignItems: 'center'}}>
           <Button
             icon="share"
             mode="text"
-            textColor={textColor}
+            textColor={'#5098E6'}
             onPress={onShare}
             compact={false}
             uppercase={false}
             labelStyle={{
-              fontSize: 20,
+              fontSize: 16,
             }}>
             Share App with friends/family
           </Button>
@@ -140,7 +154,7 @@ const SettingsScreen = ({navigation}) => {
           style={{
             flexDirection: 'row',
             alignSelf: 'center',
-            marginBottom: 7,
+            marginBottom: 5,
           }}>
           <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
           <Icon
@@ -148,6 +162,7 @@ const SettingsScreen = ({navigation}) => {
             style={{
               color: 'red',
               fontSize: 25,
+              marginTop: 5,
             }}
           />
           <Text style={{color: textColor, fontSize: 20}}> In India</Text>
