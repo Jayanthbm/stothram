@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import {Appearance, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
+import {Appearance, ToastAndroid} from 'react-native';
+
 const darkBackground = '#5e5e5c';
 const lightBackground = '#fff';
 const darkTextcolor = '#fff';

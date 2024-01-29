@@ -13,7 +13,7 @@ react {
     //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
     // reactNativeDir = file("../node_modules/react-native")
     //   The folder where the react-native Codegen package is. Default is ../node_modules/@react-native/codegen
-   // codegenDir = file("../node_modules/@react-native/codegen")
+    // codegenDir = file("../node_modules/@react-native/codegen")
     //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
     // cliFile = file("../node_modules/react-native/cli.js")
 
@@ -68,8 +68,10 @@ def enableProguardInReleaseBuilds = false
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
+
 android {
     ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.jayanth.shotram"
@@ -77,15 +79,8 @@ android {
         applicationId "com.jayanth.shotram"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "2.6"
-    }
-
-    splits {
-        abi {
-            reset()
-            universalApk false  // If true, also generate a universal APK
-        }
+        versionCode 10
+        versionName "3.0.0"
     }
     signingConfigs {
         debug {
@@ -113,6 +108,7 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
@@ -120,5 +116,9 @@ dependencies {
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
-apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle");applyNativeModulesAppBuildGradle(project)
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+project.ext.vectoricons = [
+    iconFontNames: [ 'AntDesign.ttf', 'Feather.ttf','FontAwesome.ttf','MaterialCommunityIcons.ttf' ]
+]
+
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
