@@ -11,7 +11,7 @@ const CustomHeaderLeft = ({navigation}) => {
 
 const styles = {
   headerIcon: {
-    marginRight: 20,
+    marginLeft: 15,
     color: '#fff',
   },
 };

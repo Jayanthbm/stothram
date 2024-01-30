@@ -25,13 +25,13 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await dataHelper(
+      const fetchedData = await dataHelper(
         CACHED_DATA_KEYS.HOME_SCREEN,
         DATA_URLS.HOME_SCREEN,
         SCREEN_NAMES.HOME_SCREEN,
       );
-      if (data) {
-        setTypes(data);
+      if (fetchedData) {
+        setTypes(fetchedData?.data);
       }
     };
 

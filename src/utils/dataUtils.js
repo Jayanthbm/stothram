@@ -17,7 +17,6 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
     if (cachedData) {
       console.log(`Fetching ${SCREEN_TYPE} data from cache`);
       const data = JSON.parse(cachedData);
-
       // Check if it's time to fetch from online
       const currentTime = new Date().getTime();
       const shouldFetchFromOnline = compareTimeDifference(
@@ -48,13 +47,13 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
     const data = await response.json();
 
     // Update local storage with the new data and timestamp
-    await AsyncStorage.setItem(KEYNAME, JSON.stringify(data?.data));
+    await AsyncStorage.setItem(KEYNAME, JSON.stringify(data));
     await AsyncStorage.setItem(
       `${KEYNAME}_lastFetchTime`,
       new Date().getTime().toString(),
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     console.error(`Error fetching data from online (${KEYNAME}):`, error);
     return null;

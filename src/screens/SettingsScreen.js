@@ -33,13 +33,13 @@ const SettingsScreen = ({navigation}) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await dataHelper(
+      const fetchedData = await dataHelper(
         CACHED_DATA_KEYS.SETTINGS_SCREEN,
         DATA_URLS.SETTINGS_SCREEN,
         SCREEN_NAMES.SETTINGS_SCREEN,
       );
-      if (data) {
-        setContributions(data.CONTRIBUTIONS);
+      if (fetchedData) {
+        setContributions(fetchedData?.contributions);
       }
     };
 
