@@ -9,16 +9,14 @@ import {
   View,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Admob from '../components/Admob';
+import Admob from '../components/admob';
 import {ThemeContext} from '../contexts/themeContext';
-import {
-  compareTimeDifference,
-  getItemFromStorage,
-  setItemInStorage,
-} from '../utils/asyncStorageUtils';
-const CACHE_KEY = 'cachedTypes';
-const FETCH_THRESHOLD = 15 * 24 * 60 * 60 * 1000; // 15 days in milliseconds
+
+import CustomHeaderRight from '../components/headerRight';
+import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
+import {commonNavigationOptions} from '../navigationOptions';
+import {dataHelper} from '../utils/dataUtils';
+
 const HomeScreen = ({navigation}) => {
   const {darkmode, backgroundColor, headerBackground} =
     useContext(ThemeContext);
@@ -26,81 +24,29 @@ const HomeScreen = ({navigation}) => {
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
-    const fetchTypesFromLocalStorage = async () => {
-      try {
-        const cachedTypes = await getItemFromStorage(CACHE_KEY);
-        const lastFetchTime = await getItemFromStorage(
-          `${CACHE_KEY}_lastFetchTime`,
-        );
-
-        if (cachedTypes) {
-          console.log('fetching from cache');
-          setTypes(JSON.parse(cachedTypes));
-
-          // Check if it's time to fetch from online
-          const currentTime = new Date().getTime();
-          const shouldFetchFromOnline = compareTimeDifference(
-            currentTime,
-            lastFetchTime,
-            FETCH_THRESHOLD,
-          );
-
-          if (!lastFetchTime || shouldFetchFromOnline) {
-            fetchTypesFromOnline();
-          }
-        } else {
-          // If no cached version, fetch from online
-          fetchTypesFromOnline();
-        }
-      } catch (error) {
-        console.error('Error fetching cached types:', error);
+    const fetchData = async () => {
+      const data = await dataHelper(
+        CACHED_DATA_KEYS.HOME_SCREEN,
+        DATA_URLS.HOME_SCREEN,
+        SCREEN_NAMES.HOME_SCREEN,
+      );
+      if (data) {
+        setTypes(data);
       }
     };
 
-    const fetchTypesFromOnline = async () => {
-      try {
-        console.log('fetching from online');
-        const response = await fetch(
-          'https://jayanthbm.github.io/stothram-data/home-screen-data.json',
-        );
-        const data = await response.json();
-
-        // Update local storage with the new data and timestamp
-        await setItemInStorage(CACHE_KEY, JSON.stringify(data?.data));
-        await setItemInStorage(
-          `${CACHE_KEY}_lastFetchTime`,
-          new Date().getTime().toString(),
-        );
-        // Update state with the new data
-        setTypes(data?.data);
-      } catch (error) {
-        console.error('Error fetching types from online:', error);
-      }
-    };
-
-    // Fetch from local storage
-    fetchTypesFromLocalStorage();
+    fetchData();
   }, []);
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Choose One',
-      headerStyle: {
-        backgroundColor: headerBackground,
-      },
-      headerTintColor: '#fff',
+      title: 'Stothram',
+      ...commonNavigationOptions(headerBackground),
       headerRight: () => (
-        <View style={styles.headerRightContainer}>
-          <TouchableOpacity onPress={() => {}}>
-            <FontAwesomeIcon name="rupee" size={24} style={styles.headerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-            <AntDesignIcon name="setting" size={24} style={styles.headerIcon} />
-          </TouchableOpacity>
-        </View>
+        <CustomHeaderRight navigation={navigation} showSettings={true} />
       ),
     });
-  }, [navigation]);
+  }, [navigation, headerBackground]);
 
   useEffect(() => {
     const backAction = () => {
@@ -156,6 +102,9 @@ const HomeScreen = ({navigation}) => {
         keyExtractor={item => item.id.toString()}
         renderItem={renderTypeItem}
         numColumns={2}
+        style={{
+          marginTop: 25,
+        }}
       />
       <Admob />
     </View>
@@ -165,18 +114,8 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 2,
-  },
-  headerRightContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  headerIcon: {
-    marginRight: 20,
-    color: '#fff',
+    marginLeft: 1,
+    marginRight: 1,
   },
   typeContainer: {
     flex: 1,

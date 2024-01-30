@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {Appearance, ToastAndroid} from 'react-native';
+import {Appearance, Platform, ToastAndroid} from 'react-native';
 
 const darkBackground = '#5e5e5c';
 const lightBackground = '#fff';
@@ -90,6 +90,12 @@ export const ThemeProvider = ({children}) => {
     }
     init();
   }, [darkmode, darkSwitch, font]);
+
+  const showToast = message => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+    }
+  };
   return (
     <ThemeContext.Provider
       value={{
@@ -97,27 +103,17 @@ export const ThemeProvider = ({children}) => {
         toggleDarkMode: () => {
           AsyncStorage.setItem('@darkmode', JSON.stringify(!darkmode));
           setDarkMode(!darkmode);
-          if (darkmode) {
-            ToastAndroid.show('Light Mode Enabled', ToastAndroid.SHORT);
-          } else {
-            ToastAndroid.show('Dark Mode Enabled', ToastAndroid.SHORT);
-          }
+          showToast(!darkmode ? 'Dark Mode Enabled' : 'Light Mode Enabled');
         },
         darkSwitch,
         toggleDarkSwitch: () => {
           AsyncStorage.setItem('@darkmodetoggle', JSON.stringify(!darkSwitch));
           setDarkSwitch(!darkSwitch);
-          if (darkSwitch) {
-            ToastAndroid.show(
-              'Toggle in Every Page Disabled',
-              ToastAndroid.SHORT,
-            );
-          } else {
-            ToastAndroid.show(
-              'Toggle in Every Page Enabled',
-              ToastAndroid.SHORT,
-            );
-          }
+          showToast(
+            !darkSwitch
+              ? 'Toggle in Every Page Enabled'
+              : 'Toggle in Every Page Disabled',
+          );
         },
         backgroundColor,
         textColor,

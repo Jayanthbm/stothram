@@ -1,15 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Admob from '../components/Admob';
+import {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
+import Admob from '../components/admob';
+import CustomHeaderLeft from '../components/headerLeft';
+import CustomHeaderRight from '../components/headerRight';
 import {ThemeContext} from '../contexts/themeContext';
+import {commonNavigationOptions} from '../navigationOptions';
 const ListScreen = ({navigation, route}) => {
   const {type} = route.params;
   const {backgroundColor, headerBackground} = useContext(ThemeContext);
@@ -19,27 +14,11 @@ const ListScreen = ({navigation, route}) => {
   useEffect(() => {
     navigation.setOptions({
       title: title,
-      headerStyle: {
-        backgroundColor: headerBackground,
-      },
-      headerTintColor: '#fff',
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesignIcon name="left" size={24} style={styles.headerIcon} />
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <View style={styles.headerRightContainer}>
-          <TouchableOpacity onPress={() => {}}>
-            <FontAwesomeIcon name="rupee" size={24} style={styles.headerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-            <AntDesignIcon name="setting" size={24} style={styles.headerIcon} />
-          </TouchableOpacity>
-        </View>
-      ),
+      ...commonNavigationOptions(headerBackground),
+      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
+      headerRight: () => <CustomHeaderRight navigation={navigation} />,
     });
-  }, [navigation, title]);
+  }, [navigation, title, headerBackground]);
 
   useEffect(() => {
     setTitle(type?.title);
@@ -54,9 +33,10 @@ const ListScreen = ({navigation, route}) => {
   return (
     <View style={[styles.container, {backgroundColor: backgroundColor}]}>
       <ScrollView>
-        <Text>List Screen</Text>
+        <Button title="Reader" onPress={() => navigation.navigate('Reader')}>
+          Reader
+        </Button>
       </ScrollView>
-
       <Admob />
     </View>
   );
@@ -66,17 +46,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: 2,
-  },
-  headerRightContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  headerIcon: {
-    marginRight: 20,
-    color: '#fff',
   },
 });
 
