@@ -17,7 +17,7 @@ export const ThemeContext = React.createContext({
   backgroundColor: lightBackground,
   textColor: lightTextcolor,
   headerBackground: lightHeaderBackground,
-  viewType: 'list',
+  viewType: 'card',
   toggleViewType: () => {},
   font: 24,
   updateFont: () => {},
@@ -31,7 +31,7 @@ export const ThemeProvider = ({children}) => {
   const [headerBackground, setHeaderBackground] = useState(
     lightHeaderBackground,
   );
-  const [viewType, setViewType] = useState('list');
+  const [viewType, setViewType] = useState('card');
   const [font, setFont] = useState(24);
 
   useEffect(() => {

@@ -69,7 +69,11 @@ const SettingsScreen = ({navigation}) => {
       onPress={toggle}
       style={styles.listItemContainer}
       key={title}>
-      <View style={styles.listItemContent}>
+      <View
+        style={[
+          styles.listItemContent,
+          {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
+        ]}>
         <Text style={[styles.listItemTitle, {color: textColor}]}>{title}</Text>
         {subtitle && (
           <Text style={[styles.listItemSubtitle, {color: textColor}]}>
@@ -189,6 +193,8 @@ const styles = StyleSheet.create({
   },
   listItemContent: {
     flex: 1,
+    borderBottomWidth: 2,
+    paddingBottom: 5,
   },
   listItemTitle: {
     fontSize: 18,
