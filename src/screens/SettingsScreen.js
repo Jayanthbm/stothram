@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   listHeaderIcon: {
-    fontSize: 25,
+    fontSize: 30,
     marginRight: 10,
   },
   listHeaderText: {

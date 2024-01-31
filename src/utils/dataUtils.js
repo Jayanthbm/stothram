@@ -15,7 +15,7 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
     );
 
     if (cachedData) {
-      console.log(`Fetching ${SCREEN_TYPE} data from cache`);
+      console.log(`Fetching ${KEYNAME} data from cache`);
       const data = JSON.parse(cachedData);
       // Check if it's time to fetch from online
       const currentTime = new Date().getTime();
@@ -70,4 +70,22 @@ export const compareTimeDifference = (
     : threshold;
 
   return timeDifference > threshold;
+};
+
+export const preFetcher = async (dataArray, SCREEN_TYPE) => {
+  try {
+    // Map each dataObject to a promise returned by dataHelper
+    const fetchPromises = dataArray.map(dataObject => {
+      if (dataObject.dataUrl) {
+        return dataHelper(dataObject.title, dataObject.dataUrl, SCREEN_TYPE);
+      }
+      return Promise.resolve(null); // If no dataUrl, resolve with null
+    });
+
+    // Use Promise.all to execute all promises in parallel
+    await Promise.all(fetchPromises);
+    return true;
+  } catch (error) {
+    console.log('Error in Prefetch:', error);
+  }
 };

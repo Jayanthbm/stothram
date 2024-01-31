@@ -15,7 +15,7 @@ import {ThemeContext} from '../contexts/themeContext';
 import CustomHeaderRight from '../components/headerRight';
 import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
 import {commonNavigationOptions} from '../navigationOptions';
-import {dataHelper} from '../utils/dataUtils';
+import {dataHelper, preFetcher} from '../utils/dataUtils';
 
 const HomeScreen = ({navigation}) => {
   const {darkmode, backgroundColor, headerBackground} =
@@ -32,6 +32,7 @@ const HomeScreen = ({navigation}) => {
       );
       if (fetchedData) {
         setTypes(fetchedData?.data);
+        preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
       }
     };
 

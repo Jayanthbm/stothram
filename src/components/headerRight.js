@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Switch, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
