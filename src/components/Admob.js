@@ -1,12 +1,16 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-
+import {
+  GAMBannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 let AD_UNITS = [
   'ca-app-pub-0714649342045057/8222174259',
   'ca-app-pub-0714649342045057/5615643477',
   'ca-app-pub-0714649342045057/1676398465',
   'ca-app-pub-0714649342045057/6338246941',
   'ca-app-pub-0714649342045057~1333332271',
+  'ca-app-pub-0714649342045057~1333332271'
 ];
 function generateId() {
   try {
@@ -18,10 +22,17 @@ function generateId() {
 }
 const Admob = () => {
   let unitId = generateId();
+  // unitId = TestIds.BANNER;
   return (
-    <View style={{height: 50, backgroundColor: '#fff'}}>
-      <Text style={{textAlign: 'center'}}>{unitId}</Text>
-    </View>
+    <React.Fragment>
+      <GAMBannerAd
+        unitId={unitId}
+        sizes={[BannerAdSize.FULL_BANNER]}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
+    </React.Fragment>
   );
 };
 

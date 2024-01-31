@@ -1,12 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// export const DATA_THRESHOLDS = {
+//   HOME: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+//   LIST: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+//   READER: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
+//   SETTING: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+// };
+
 export const DATA_THRESHOLDS = {
-  HOME: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+  HOME: 1000, // 15 days in milliseconds
   LIST: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
   READER: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
   SETTING: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
 };
-
 export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
   try {
     const cachedData = await AsyncStorage.getItem(KEYNAME);
@@ -87,5 +93,41 @@ export const preFetcher = async (dataArray, SCREEN_TYPE) => {
     return true;
   } catch (error) {
     console.log('Error in Prefetch:', error);
+  }
+};
+
+export const storeItem = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getItem = async key => {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    return value;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const storeJSON = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getJSON = async key => {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    return JSON.parse(value);
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };

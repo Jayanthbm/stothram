@@ -122,7 +122,8 @@ const SettingsScreen = ({navigation}) => {
         {contributions?.map(({name, role}) =>
           renderListItem(name, role, null, null),
         )}
-
+      </ScrollView>
+      <React.Fragment>
         <View
           style={{
             marginTop: 12,
@@ -139,8 +140,6 @@ const SettingsScreen = ({navigation}) => {
             accessibilityLabel="Share App with friends/family"
           />
         </View>
-      </ScrollView>
-      <React.Fragment>
         <View
           style={{
             flexDirection: 'row',
@@ -177,11 +176,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   listHeaderIcon: {
-    fontSize: 30,
+    fontSize: 25,
     marginRight: 10,
   },
   listHeaderText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   listItemContainer: {
@@ -193,14 +192,14 @@ const styles = StyleSheet.create({
   },
   listItemContent: {
     flex: 1,
-    borderBottomWidth: 2,
-    paddingBottom: 5,
+    borderBottomWidth: 1,
+    paddingBottom: 3,
   },
   listItemTitle: {
-    fontSize: 18,
+    fontSize: 14,
   },
   listItemSubtitle: {
-    fontSize: 14,
+    fontSize: 12,
   },
   madeInIndiaContainer: {
     flexDirection: 'row',

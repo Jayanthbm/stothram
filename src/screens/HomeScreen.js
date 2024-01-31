@@ -15,7 +15,7 @@ import {ThemeContext} from '../contexts/themeContext';
 import CustomHeaderRight from '../components/headerRight';
 import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
 import {commonNavigationOptions} from '../navigationOptions';
-import {dataHelper, preFetcher} from '../utils/dataUtils';
+import {dataHelper, preFetcher, storeItem, storeJSON} from '../utils/dataUtils';
 
 const HomeScreen = ({navigation}) => {
   const {darkmode, backgroundColor, headerBackground} =
@@ -32,6 +32,8 @@ const HomeScreen = ({navigation}) => {
       );
       if (fetchedData) {
         setTypes(fetchedData?.data);
+        storeItem('UPI_ID', fetchedData?.UPI_ID);
+        storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
         preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
       }
     };

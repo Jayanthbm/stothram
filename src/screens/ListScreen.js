@@ -25,7 +25,7 @@ const ListScreen = ({navigation, route}) => {
   const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [filteredData, setFilteredData] = useState(list);
-
+  const [rendered,setRendered] = useState(false)
   useEffect(() => {
     navigation.setOptions({
       title: title,
@@ -69,6 +69,7 @@ const ListScreen = ({navigation, route}) => {
     const newData = list.filter(item =>
       item.title.toLowerCase().includes(text.toLowerCase()),
     );
+    setRendered(true)
     setFilteredData(newData);
   };
   const handleItemClick = item => {
@@ -100,48 +101,61 @@ const ListScreen = ({navigation, route}) => {
         />
       </View>
       <ScrollView>
-        {viewType == 'list' ? (
-          <>
-            {filteredData?.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.listItem,
-                  {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
-                ]}
-                onPress={() => handleItemClick(item)}>
-                <Text style={[styles.listTextStyle, {color: textColor}]}>
-                  {item.displayTitle}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </>
-        ) : (
-          <>
-            <View style={styles.cardContainer}>
-              {filteredData.map((item, index) => (
+        <>
+          {viewType == 'list' ? (
+            <>
+              {filteredData?.map((item, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[
-                    styles.card,
-                    {
-                      borderColor: darkmode ? '#b8b6ab' : '#8f8f8f',
-                      marginLeft: index % 2 == 0 ? 4 : 0,
-                      marginRight: index % 2 == 0 ? 0 : 4,
-                    },
+                    styles.listItem,
+                    {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
                   ]}
                   onPress={() => handleItemClick(item)}>
-                  <Image
-                    source={require('../assets/images/god.webp')}
-                    style={styles.cardImage}
-                  />
-                  <Text style={[styles.cardTitle, {color: textColor}]}>
-                    {item.displayTitle ? item.displayTitle : item.title}
+                  <Text style={[styles.listTextStyle, {color: textColor}]}>
+                    {item.displayTitle}
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
-          </>
+            </>
+          ) : (
+            <>
+              <View style={styles.cardContainer}>
+                {filteredData.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.card,
+                      {
+                        borderColor: darkmode ? '#b8b6ab' : '#8f8f8f',
+                        marginLeft: index % 2 == 0 ? 4 : 0,
+                        marginRight: index % 2 == 0 ? 0 : 4,
+                      },
+                    ]}
+                    onPress={() => handleItemClick(item)}>
+                    <Image
+                      source={require('../assets/images/god.webp')}
+                      style={styles.cardImage}
+                    />
+                    <Text style={[styles.cardTitle, {color: textColor}]}>
+                      {item.displayTitle ? item.displayTitle : item.title}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </>
+          )}
+        </>
+        {rendered && filteredData.length == 0 && (
+          <View style={styles.noDataContainer}>
+            <Text style={[styles.noDataText, {color: textColor}]}>
+              No data found
+            </Text>
+            <Text style={styles.noDataTextButton} onPress={() => {
+              setSearchValue('');
+              handleSearch('');
+            }}>Clear</Text>
+          </View>
         )}
       </ScrollView>
       <Admob />
@@ -169,7 +183,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   searchInput: {
-    paddingVertical: 15,
+    paddingVertical: 10,
     fontSize: 20,
     marginLeft: 10,
   },
@@ -181,17 +195,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   listTextStyle: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  noResultsContainer: {
-    marginTop: 20,
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  noResults: {
-    fontSize: 20,
-    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
   },
   cardContainer: {
     flexDirection: 'row',
@@ -208,14 +213,28 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: 180,
-    height: 120,
+    height: 80,
     resizeMode: 'cover',
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
     textAlign: 'center',
-    padding: 10,
+    padding: 5,
+  },
+  noDataContainer: {
+    marginTop: 20,
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  noDataText: {
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  noDataTextButton: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: '#ADD8E6',
   },
 });
 
