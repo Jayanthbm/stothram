@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import React, {useContext, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, FlatList} from 'react-native';
 import Admob from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
@@ -9,6 +9,44 @@ import {ThemeContext} from '../contexts/themeContext';
 import {commonNavigationOptions} from '../navigationOptions';
 import {dataHelper} from '../utils/dataUtils';
 import { commonStyles } from '../styles/styles';
+
+const generateStyles = (
+  backgroundColor = '#FFF',
+  textColor='#000',
+  darkmode= false,
+  headerBackground,
+  fontSize = 18
+) => {
+  return StyleSheet.create({
+    container: {
+      ...commonStyles.container,
+      backgroundColor: backgroundColor,
+    },
+    paragraphStyle: {
+      marginLeft: 7,
+      marginRight: 2,
+      marginBottom: 18,
+      borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f',
+    },
+    lineStyle: {
+      fontWeight: '500',
+      marginBottom: 4,
+      fontSize: fontSize,
+      color: textColor,
+    },
+    subHeadingContainer: {
+      marginBottom: 5,
+      padding: 5,
+      backgroundColor: headerBackground,
+    },
+    subHeadingText: {
+      color: '#fff',
+      fontSize: 20,
+      textAlign: 'center',
+      fontWeight: '500',
+    },
+  });
+};
 
 // Main ReaderScreen component
 const ReaderScreen = ({ navigation, route }) => {
@@ -29,7 +67,7 @@ const ReaderScreen = ({ navigation, route }) => {
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
-  const SLIDER_COLOR = darkmode ? '#ab8b2c' : '#6200EE';
+  const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
 
   // useEffect to set navigation options
   useEffect(() => {
@@ -64,8 +102,36 @@ const ReaderScreen = ({ navigation, route }) => {
     }
   }, [item]);
 
+  // Generate styles based on current context values
+  const styles = generateStyles(
+    backgroundColor,
+    textColor,
+    darkmode,
+    headerBackground,
+    font,
+  );
+
+  const MemoizedParagraph = React.memo(({data, styles}) => {
+    return (
+      <View style={styles.paragraphStyle}>
+        {data.lines.map((line, index) => (
+          <Text style={styles.lineStyle} key={index}>
+            {line}
+          </Text>
+        ))}
+      </View>
+    );
+  });
+
+  const MemoizedSubheading = React.memo(({data, styles}) => {
+    return (
+      <View style={styles.subHeadingContainer}>
+        <Text style={styles.subHeadingText}>{data.title}</Text>
+      </View>
+    );
+  });
   return (
-    <View style={[commonStyles.container, {backgroundColor}]}>
+    <View style={styles.container}>
       {readerData && (
         <Slider
           value={font}
@@ -76,79 +142,32 @@ const ReaderScreen = ({ navigation, route }) => {
           style={{
             height: 40,
           }}
-          thumbTintColor={SLIDER_COLOR}
-          minimumTrackTintColor={SLIDER_COLOR}
+          thumbTintColor={sliderColor}
+          minimumTrackTintColor={sliderColor}
           tapToSeek={true}
         />
       )}
-      {/* ScrollView for displaying reader content */}
-      <ScrollView>
-        {readerData?.content.map((data, index) => {
-          if (data?.type == 'paragraph') {
-            // Render paragraphs
-            return (
-              <View
-                style={[
-                  styles.paragraphStyle,
-                  {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
-                ]}
-                key={index}>
-                {data?.lines?.map((line, index) => {
-                  return (
-                    <Text
-                      style={[
-                        styles.lineStyle,
-                        {fontSize: font, color: textColor},
-                      ]}
-                      key={index}>
-                      {line}
-                    </Text>
-                  );
-                })}
-              </View>
-            );
+
+      {/* FlatList for displaying reader content */}
+      <FlatList
+        data={readerData?.content}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item, index}) => {
+          if (item?.type === 'paragraph') {
+            // Render paragraphs using MemoizedParagraph
+            return <MemoizedParagraph data={item} styles={styles} />;
           }
-          if (data.type === 'subheading') {
-            // Render subheadings
-            return (
-              <View
-                style={[
-                  styles.subHeadingContainer,
-                  {backgroundColor: headerBackground},
-                ]}
-                key={index}>
-                <Text style={styles.subHeadingText}>{data.title}</Text>
-              </View>
-            );
+          if (item.type === 'subheading') {
+            // Render subheadings using MemoizedSubheading
+            return <MemoizedSubheading data={item} styles={styles} />;
           }
-        })}
-      </ScrollView>
+        }}
+      />
       {/* Display Admob component */}
       <Admob />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  paragraphStyle: {
-    marginLeft: 7,
-    marginRight: 2,
-    marginBottom: 18,
-  },
-  lineStyle: {
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  subHeadingContainer: {
-    marginBottom: 5,
-    padding: 5,
-  },
-  subHeadingText: {
-    color: '#fff',
-    fontSize: 20,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
-});
 
 export default ReaderScreen;

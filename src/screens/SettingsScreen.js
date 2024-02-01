@@ -16,7 +16,7 @@ import { commonNavigationOptions } from "../navigationOptions";
 import { dataHelper } from "../utils/dataUtils";
 import ListHeader from "../components/listHeader";
 import ListItem from "../components/listItem";
-import CustomIcon from "../components/customIcon";
+import CustomIcon from '../components/customIcon';
 import { commonStyles } from "../styles/styles";
 
 // Function to generate styles dynamically based on context values
@@ -138,7 +138,6 @@ const SettingsScreen = React.memo(({ navigation }) => {
       {/* Share and Made in India section */}
       <React.Fragment>
         <View style={styles.shareContainer}>
-          {/* CustomIcon component for sharing */}
           <CustomIcon
             name="share"
             library="FontAwesome"

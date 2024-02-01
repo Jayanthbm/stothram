@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import AntDesignIcon from "react-native-vector-icons/AntDesign";
 import Admob from "../components/admob";
 import { ThemeContext } from "../contexts/themeContext";
 import { commonStyles } from "../styles/styles";
@@ -21,7 +20,7 @@ import {
   storeItem,
   storeJSON,
 } from "../utils/dataUtils";
-
+import CustomIcon from '../components/customIcon';
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor = "#FFF") => {
   return StyleSheet.create({
@@ -60,27 +59,28 @@ const HomeScreen = ({ navigation }) => {
 
   const [types, setTypes] = useState([]);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const fetchedData = await dataHelper(
-        CACHED_DATA_KEYS.HOME_SCREEN,
-        DATA_URLS.HOME_SCREEN,
-        SCREEN_NAMES.HOME_SCREEN
-      );
-      if (fetchedData) {
-        setTypes(fetchedData?.data);
-        storeItem("UPI_ID", fetchedData?.UPI_ID);
-        storeJSON("UPI_AMOUNTS", fetchedData?.UPI_AMOUNTS);
-        preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []);
+
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedData = await dataHelper(
+          CACHED_DATA_KEYS.HOME_SCREEN,
+          DATA_URLS.HOME_SCREEN,
+          SCREEN_NAMES.HOME_SCREEN,
+        );
+        if (fetchedData) {
+          setTypes(fetchedData?.data);
+          storeItem('UPI_ID', fetchedData?.UPI_ID);
+          storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
+          preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   useEffect(() => {
     // Set navigation options when the headerBackground changes
@@ -140,11 +140,15 @@ const HomeScreen = ({ navigation }) => {
     return (
       <TouchableOpacity
         onPress={() => handleTypePress(item)}
-        style={[styles.typeContainer, typeContainerStyle]}
-      >
+        style={[styles.typeContainer, typeContainerStyle]}>
         <View style={[styles.typeItem, typeItemStyle]}>
           <View style={styles.iconContainer}>
-            <AntDesignIcon name={item.icon} size={60} style={styles.typeIcon} />
+            <CustomIcon
+              name={item.icon}
+              library="AntDesign"
+              size={60}
+              style={styles.typeIcon}
+            />
             <Text style={styles.typeTitle}>{item.title}</Text>
           </View>
         </View>

@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import PropTypes from "prop-types"; // Import PropTypes
 import { ThemeContext } from "../contexts/themeContext";
+import CustomIcon from './customIcon';
 
 const styles = StyleSheet.create({
   listHeaderContainer: {
@@ -30,12 +30,13 @@ const ListHeader = ({ title, icon }) => {
 
   return (
     <View style={styles.listHeaderContainer}>
-      <FontAwesomeIcon
+      <CustomIcon
+        library="FontAwesome"
         name={iconName}
         style={styles.listHeaderIcon}
         color={textColor}
       />
-      <Text style={[styles.listHeaderText, { color: textColor }]}>{title}</Text>
+      <Text style={[styles.listHeaderText, {color: textColor}]}>{title}</Text>
     </View>
   );
 };

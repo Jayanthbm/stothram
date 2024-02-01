@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { StyleSheet } from "react-native";
-import AntDesignIcon from "react-native-vector-icons/AntDesign";
 import CustomIcon from "./customIcon";
 const styles = StyleSheet.create({
   headerIcon: {
@@ -13,7 +12,7 @@ const CustomHeaderLeft = ({ navigation }) => {
   const renderButton = navigation.goBack && (
     <CustomIcon
       onPress={() => navigation.goBack()}
-      name="rupee"
+      name="left"
       size={24}
       library="AntDesign"
       style={styles.headerIcon}

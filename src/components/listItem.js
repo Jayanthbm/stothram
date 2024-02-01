@@ -3,7 +3,7 @@ import {
   StyleSheet,
   Switch,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
 } from "react-native";
 import PropTypes from "prop-types";
@@ -41,10 +41,10 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
   );
 
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       onPress={toggle}
       style={styles.listItemContainer}
-      underlayColor={darkmode ? "#9e9b92" : "#b8b6ab"} // Optional: Add underlay color for TouchableHighlight
+      underlayColor={darkmode ? "#9e9b92" : "#b8b6ab"}
     >
       <View
         style={[
@@ -65,7 +65,7 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
           thumbColor={state ? "#5098E6" : "#f4f3f4"}
         />
       )}
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 

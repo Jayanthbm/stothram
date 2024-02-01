@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
+  FlatList,
+} from 'react-native';
 import Admob from "../components/admob";
 import CustomHeaderLeft from "../components/headerLeft";
 import CustomHeaderRight from "../components/headerRight";
@@ -17,7 +16,7 @@ import { ThemeContext } from "../contexts/themeContext";
 import { commonNavigationOptions } from "../navigationOptions";
 import { dataHelper, preFetcher } from "../utils/dataUtils";
 import { commonStyles } from "../styles/styles";
-
+import CustomIcon from '../components/customIcon';
 // Function to generate styles dynamically based on context values
 const generateStyles = (
   backgroundColor = "#FFF",
@@ -110,13 +109,13 @@ const generateStyles = (
 // ListScreen Component
 const ListScreen = ({ navigation, route }) => {
   // Context and State
-  const { backgroundColor, headerBackground, textColor, darkmode, viewType } =
+  const {backgroundColor, headerBackground, textColor, darkmode, viewType} =
     useContext(ThemeContext);
-  const { type } = route.params;
-  const [title, setTitle] = useState("");
+  const {type} = route.params;
+  const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [filteredData, setFilteredData] = useState(list);
   const [rendered, setRendered] = useState(false);
 
@@ -144,7 +143,7 @@ const ListScreen = ({ navigation, route }) => {
       const fetchedData = await dataHelper(
         title,
         dataUrl,
-        SCREEN_NAMES.LIST_SCREEN
+        SCREEN_NAMES.LIST_SCREEN,
       );
       if (fetchedData) {
         setList(fetchedData?.data);
@@ -165,13 +164,13 @@ const ListScreen = ({ navigation, route }) => {
 
   // Filter Data based on Search Text
   const filterData = (data, searchText) => {
-    return data.filter((item) =>
-      item.title.toLowerCase().includes(searchText.toLowerCase())
+    return data.filter(item =>
+      item.title.toLowerCase().includes(searchText.toLowerCase()),
     );
   };
 
   // Handle Search Input
-  const handleSearch = (text) => {
+  const handleSearch = text => {
     setSearchValue(text);
     const newData = filterData(list, text);
     setRendered(true);
@@ -180,25 +179,61 @@ const ListScreen = ({ navigation, route }) => {
 
   // Handle Item Click
   const handleItemClick = useCallback(
-    (item) => {
-      navigation.navigate("Reader", { item });
+    item => {
+      navigation.navigate('Reader', {item});
     },
-    [navigation]
+    [navigation],
   );
 
   // Generate styles based on current context values
   const styles = generateStyles(backgroundColor, textColor, darkmode);
-  
+
+  // Define a key extractor function
+  const keyExtractor = useCallback((item, index) => index.toString(), []);
+  // Define renderItem functions for list and card views
+  // Memoized ListItem Component
+  const MemoizedListItem = React.memo(({item}) => {
+    const {displayTitle} = item;
+    return (
+      <TouchableOpacity
+        style={styles.listItem}
+        onPress={() => handleItemClick(item)}>
+        <Text style={styles.listTextStyle}>{displayTitle}</Text>
+      </TouchableOpacity>
+    );
+  });
+  // Memoized CardItem Component
+  const MemoizedCardItem = React.memo(({item, index}) => (
+    <TouchableOpacity
+      style={[
+        styles.card,
+        {
+          marginLeft: index % 2 === 0 ? 4 : 0,
+          marginRight: index % 2 === 0 ? 0 : 4,
+        },
+      ]}
+      onPress={() => handleItemClick(item)}>
+      <Image
+        source={require('../assets/images/god.webp')}
+        style={styles.cardImage}
+      />
+      <Text style={styles.cardTitle}>
+        {item.displayTitle ? item.displayTitle : item.title}
+      </Text>
+    </TouchableOpacity>
+  ));
+
   // Render Component
   return (
     <View style={styles.container}>
       {/* Search Input */}
       <View style={styles.searchContainer}>
-        <FontAwesomeIcon
+        <CustomIcon
           name="search"
           size={26}
           color={textColor}
           style={styles.searchIcon}
+          library="FontAwesome"
         />
         <TextInput
           placeholder="Search"
@@ -208,65 +243,38 @@ const ListScreen = ({ navigation, route }) => {
           style={styles.searchInput}
         />
       </View>
-      <ScrollView>
-        {/* Render List or Cards based on View Type */}
-        <>
-          {viewType == "list" ? (
-            <>
-              {filteredData?.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.listItem}
-                  onPress={() => handleItemClick(item)}
-                >
-                  <Text style={styles.listTextStyle}>{item.displayTitle}</Text>
-                </TouchableOpacity>
-              ))}
-            </>
+      <FlatList
+        data={filteredData}
+        keyExtractor={keyExtractor}
+        renderItem={({item, index}) =>
+          viewType === 'list' ? (
+            <MemoizedListItem item={item} />
           ) : (
-            <>
-              <View style={styles.cardContainer}>
-                {filteredData.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.card,
-                      {
-                        marginLeft: index % 2 == 0 ? 4 : 0,
-                        marginRight: index % 2 == 0 ? 0 : 4,
-                      },
-                    ]}
-                    onPress={() => handleItemClick(item)}
-                  >
-                    <Image
-                      source={require("../assets/images/god.webp")}
-                      style={styles.cardImage}
-                    />
-                    <Text style={styles.cardTitle}>
-                      {item.displayTitle ? item.displayTitle : item.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </>
-          )}
-        </>
-        {/* Render No Data Message if filtered data is empty */}
-        {rendered && filteredData.length == 0 && (
+            <MemoizedCardItem item={item} index={index} />
+          )
+        }
+        numColumns={viewType === 'list' ? 1 : 2}
+        extraData={viewType} // Add extraData to trigger a re-render when viewType changes
+        ListEmptyComponent={() => (
           <View style={styles.noDataContainer}>
-            <Text style={styles.noDataText}>No data found</Text>
-            <Text
-              style={styles.noDataTextButton}
-              onPress={() => {
-                setSearchValue("");
-                handleSearch("");
-              }}
-            >
-              Clear
-            </Text>
+            {rendered && (
+              <>
+                <Text style={styles.noDataText}>No data found</Text>
+                <Text
+                  style={styles.noDataTextButton}
+                  onPress={() => {
+                    setSearchValue('');
+                    handleSearch('');
+                  }}>
+                  Clear
+                </Text>
+              </>
+            )}
           </View>
         )}
-      </ScrollView>
+        key={viewType}
+      />
+
       {/* Display Admob component */}
       <Admob />
     </View>

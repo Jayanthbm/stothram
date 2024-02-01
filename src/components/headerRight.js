@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import { ThemeContext } from "../contexts/themeContext";
 import { getItem, getJSON } from "../utils/dataUtils";
 import CustomIcon from "./customIcon";
-import CustomModal from "./CustomModal";
+import CustomModal from './customModal';
 
 const styles = StyleSheet.create({
   headerRightContainer: {

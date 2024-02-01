@@ -35,7 +35,7 @@ const CustomIcon = ({ onPress, name, size, library, color, style }) => {
 CustomIcon.propTypes = {
   onPress: PropTypes.func,
   name: PropTypes.string.isRequired,
-  size: PropTypes.number.isRequired,
+  size: PropTypes.number,
   library: PropTypes.oneOf([
     "AntDesign",
     "Feather",
