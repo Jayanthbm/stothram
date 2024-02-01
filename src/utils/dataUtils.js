@@ -79,7 +79,7 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
  * Check if the device is connected to the internet.
  * @returns {boolean} - True if connected, false otherwise.
  */
-const isInternetConnected = async () => {
+export const isInternetConnected = async () => {
   try {
     const state = await NetInfo.fetch();
     // Check if the device is connected to the internet

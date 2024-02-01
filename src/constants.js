@@ -16,3 +16,13 @@ export const CACHED_DATA_KEYS = {
   HOME_SCREEN: 'CACHED_HOME_SCREEN',
   SETTINGS_SCREEN: 'CACHED_SETTINGS_SCREEN',
 };
+
+const BASE_IMAGE_URL = 'https://jayanthbm.github.io/stothram-data/images';
+
+export const PAYTM_LOGO = `${BASE_IMAGE_URL}/paytm.png`;
+
+export const GPAY_LOGO = `${BASE_IMAGE_URL}/gpay.webp`;
+
+export const PHONEPE_LOGO = `${BASE_IMAGE_URL}/phonepe.webp`;
+
+export const UPI_LOGO = `${BASE_IMAGE_URL}/upi.webp`
