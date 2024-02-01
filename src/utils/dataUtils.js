@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import NetInfo from "@react-native-community/netinfo";
 // Constants for data thresholds
 export const DATA_THRESHOLDS = {
   HOME: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
@@ -54,16 +54,39 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
  */
 export const fetchAndStoreData = async (KEYNAME, URL) => {
   try {
-    const response = await fetch(URL);
-    const data = await response.json();
+    // Check if the device is connected to the internet
+    const isConnected = await isInternetConnected();
 
-    // Update local storage with the new data and timestamp
-    await storeJSON(KEYNAME, data);
-    await storeItem(`${KEYNAME}_lastFetchTime`, new Date().getTime().toString());
-    return data;
+    if (isConnected) {
+      const response = await fetch(URL);
+      const data = await response.json();
+
+      // Update local storage with the new data and timestamp
+      await storeJSON(KEYNAME, data);
+      await storeItem(`${KEYNAME}_lastFetchTime`, new Date().getTime().toString());
+      return data;
+    } else {
+      console.log('No internet connection. Data fetching skipped.');
+      return null;
+    }
   } catch (error) {
     console.error(`Error fetching data from online (${KEYNAME}):`, error);
     return null;
+  }
+};
+
+/**
+ * Check if the device is connected to the internet.
+ * @returns {boolean} - True if connected, false otherwise.
+ */
+const isInternetConnected = async () => {
+  try {
+    const state = await NetInfo.fetch();
+    // Check if the device is connected to the internet
+    return state.isConnected;
+  } catch (error) {
+    console.error("Error checking internet connection:", error);
+    return false; // Handle the error appropriately based on your application's needs
   }
 };
 
@@ -79,15 +102,11 @@ export const compareTimeDifference = (
   lastFetchTime,
   threshold,
 ) => {
-  try {
-    const timeDifference = lastFetchTime
-      ? currentTime - parseInt(lastFetchTime)
-      : threshold;
-    return timeDifference > threshold;
-  } catch (error) {
-    console.error('Error in compareTimeDifference:', error);
-    return false;
-  }
+  const timeDifference = lastFetchTime
+    ? currentTime - parseInt(lastFetchTime)
+    : threshold;
+
+  return timeDifference > threshold;
 };
 
 /**
