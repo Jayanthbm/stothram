@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import {
   Alert,
   BackHandler,
@@ -7,47 +7,85 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import Admob from '../components/admob';
-import {ThemeContext} from '../contexts/themeContext';
-import {commonStyles} from '../styles/styles';
-import CustomHeaderRight from '../components/headerRight';
-import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
-import {commonNavigationOptions} from '../navigationOptions';
-import {dataHelper, preFetcher, storeItem, storeJSON} from '../utils/dataUtils';
+} from "react-native";
+import AntDesignIcon from "react-native-vector-icons/AntDesign";
+import Admob from "../components/admob";
+import { ThemeContext } from "../contexts/themeContext";
+import { commonStyles } from "../styles/styles";
+import CustomHeaderRight from "../components/headerRight";
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
+import { commonNavigationOptions } from "../navigationOptions";
+import {
+  dataHelper,
+  preFetcher,
+  storeItem,
+  storeJSON,
+} from "../utils/dataUtils";
 
-const HomeScreen = ({navigation}) => {
-  const {darkmode, backgroundColor, headerBackground} =
+// Function to generate styles dynamically based on context values
+const generateStyles = (backgroundColor = "#FFF") => {
+  return StyleSheet.create({
+    container: {
+      ...commonStyles.container,
+      backgroundColor: backgroundColor,
+    },
+    typeContainer: {
+      flex: 1,
+      margin: 8,
+      borderRadius: 10,
+      borderWidth: 1,
+    },
+    typeItem: {
+      padding: 20,
+    },
+    iconContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    typeIcon: {
+      color: "#fff",
+      marginBottom: 10,
+    },
+    typeTitle: {
+      color: "#fff",
+      fontSize: 18,
+    },
+  });
+};
+
+const HomeScreen = ({ navigation }) => {
+  const { darkmode, backgroundColor, headerBackground } =
     useContext(ThemeContext);
 
   const [types, setTypes] = useState([]);
 
-  useEffect(() => {
-    // Fetch data when the component mounts
-    const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    try {
       const fetchedData = await dataHelper(
         CACHED_DATA_KEYS.HOME_SCREEN,
         DATA_URLS.HOME_SCREEN,
-        SCREEN_NAMES.HOME_SCREEN,
+        SCREEN_NAMES.HOME_SCREEN
       );
       if (fetchedData) {
-        // Set types and store additional data
         setTypes(fetchedData?.data);
-        storeItem('UPI_ID', fetchedData?.UPI_ID);
-        storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
-        // Prefetch data for the list screen
+        storeItem("UPI_ID", fetchedData?.UPI_ID);
+        storeJSON("UPI_AMOUNTS", fetchedData?.UPI_AMOUNTS);
         preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
       }
-    };
-
-    fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     // Set navigation options when the headerBackground changes
     navigation.setOptions({
-      title: 'Stothram',
+      title: "Stothram",
       ...commonNavigationOptions(headerBackground),
       headerRight: () => (
         <CustomHeaderRight navigation={navigation} showSettings={true} />
@@ -55,17 +93,16 @@ const HomeScreen = ({navigation}) => {
     });
   }, [navigation, headerBackground]);
 
-  const confirmExit = () => {
-    // Display an alert to confirm exiting the app
-    Alert.alert('Hold on!', 'Do you want to Exit Stothram?', [
+  const confirmExit = useCallback(() => {
+    Alert.alert("Hold on!", "Do you want to Exit Stothram?", [
       {
-        text: 'Cancel',
+        text: "Cancel",
         onPress: () => null,
-        style: 'cancel',
+        style: "cancel",
       },
-      {text: 'YES', onPress: () => BackHandler.exitApp()},
+      { text: "YES", onPress: () => BackHandler.exitApp() },
     ]);
-  };
+  }, []);
 
   useEffect(() => {
     // Handle hardware back press event
@@ -75,16 +112,21 @@ const HomeScreen = ({navigation}) => {
       return true;
     };
     const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
+      "hardwareBackPress",
+      backAction
     );
     return () => backHandler.remove();
   }, []);
 
-  const handleTypePress = type => {
-    // Navigate to the List screen with the selected type
-    navigation.navigate('List', {type});
-  };
+  // Generate styles based on current context values
+  const styles = generateStyles(backgroundColor);
+
+  const handleTypePress = useCallback(
+    (type) => {
+      navigation.navigate("List", { type });
+    },
+    [navigation]
+  );
 
   // Render each type item in the FlatList
   const renderTypeItem = ({ item }) => {
@@ -98,7 +140,8 @@ const HomeScreen = ({navigation}) => {
     return (
       <TouchableOpacity
         onPress={() => handleTypePress(item)}
-        style={[styles.typeContainer, typeContainerStyle]}>
+        style={[styles.typeContainer, typeContainerStyle]}
+      >
         <View style={[styles.typeItem, typeItemStyle]}>
           <View style={styles.iconContainer}>
             <AntDesignIcon name={item.icon} size={60} style={styles.typeIcon} />
@@ -107,14 +150,14 @@ const HomeScreen = ({navigation}) => {
         </View>
       </TouchableOpacity>
     );
-  }
+  };
 
   return (
-    <View style={[commonStyles.container, {backgroundColor: backgroundColor}]}>
+    <View style={styles.container}>
       {/* Display types in a FlatList */}
       <FlatList
         data={types}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderTypeItem}
         numColumns={2}
         style={{
@@ -126,30 +169,5 @@ const HomeScreen = ({navigation}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  typeContainer: {
-    flex: 1,
-    margin: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-  },
-  typeItem: {
-    padding: 20,
-  },
-  iconContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  typeIcon: {
-    color: '#fff',
-    marginBottom: 10,
-  },
-  typeTitle: {
-    color: '#fff',
-    fontSize: 18,
-  },
-});
 
 export default HomeScreen;

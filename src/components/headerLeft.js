@@ -1,13 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
 import AntDesignIcon from "react-native-vector-icons/AntDesign";
+import CustomIcon from "./customIcon";
+const styles = StyleSheet.create({
+  headerIcon: {
+    marginLeft: 15,
+    color: "#fff",
+  },
+});
 const CustomHeaderLeft = ({ navigation }) => {
-  // Conditionally render TouchableOpacity based on navigation.goBack() existence
   const renderButton = navigation.goBack && (
-    <TouchableOpacity onPress={() => navigation.goBack()}>
-      <AntDesignIcon name="left" size={24} style={styles.headerIcon} />
-    </TouchableOpacity>
+    <CustomIcon
+      onPress={() => navigation.goBack()}
+      name="rupee"
+      size={24}
+      library="AntDesign"
+      style={styles.headerIcon}
+    />
   );
 
   return renderButton;
@@ -15,13 +25,6 @@ const CustomHeaderLeft = ({ navigation }) => {
 
 CustomHeaderLeft.propTypes = {
   navigation: PropTypes.object.isRequired,
-};
-
-const styles = {
-  headerIcon: {
-    marginLeft: 15,
-    color: "#fff",
-  },
 };
 
 export default CustomHeaderLeft;

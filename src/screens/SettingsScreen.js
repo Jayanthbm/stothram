@@ -1,26 +1,55 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import {
   Button,
   ScrollView,
   Share,
-  StyleSheet,
   Text,
   View,
-} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {ThemeContext} from '../contexts/themeContext';
+  StyleSheet,
+} from "react-native";
+import { ThemeContext } from "../contexts/themeContext";
 
-import Admob from '../components/admob';
-import CustomHeaderLeft from '../components/headerLeft';
-import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
-import {commonNavigationOptions} from '../navigationOptions';
-import {dataHelper} from '../utils/dataUtils';
-import ListHeader from '../components/listHeader';
-import ListItem from '../components/listItem';
-import { commonStyles } from '../styles/styles';
+import Admob from "../components/admob";
+import CustomHeaderLeft from "../components/headerLeft";
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
+import { commonNavigationOptions } from "../navigationOptions";
+import { dataHelper } from "../utils/dataUtils";
+import ListHeader from "../components/listHeader";
+import ListItem from "../components/listItem";
+import CustomIcon from "../components/customIcon";
+import { commonStyles } from "../styles/styles";
 
-const SettingsScreen = ({navigation}) => {
+// Function to generate styles dynamically based on context values
+const generateStyles = (backgroundColor, textColor) => {
+  return StyleSheet.create({
+    container: {
+      ...commonStyles.container,
+      backgroundColor: backgroundColor,
+    },
+    shareContainer: {
+      marginTop: 12,
+      alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    madeInIndiaContainer: {
+      flexDirection: "row",
+      alignSelf: "center",
+      marginBottom: 5,
+    },
+    madeInIndiaContainerIcon: {
+      color: "red",
+      fontSize: 25,
+      marginTop: 1,
+    },
+    madeInIndiaContainerText: {
+      color: textColor,
+      fontSize: 20,
+    },
+  });
+};
+
+const SettingsScreen = React.memo(({ navigation }) => {
   const {
     backgroundColor,
     textColor,
@@ -33,51 +62,67 @@ const SettingsScreen = ({navigation}) => {
 
   const [contributions, setContributions] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    try {
       const fetchedData = await dataHelper(
         CACHED_DATA_KEYS.SETTINGS_SCREEN,
         DATA_URLS.SETTINGS_SCREEN,
-        SCREEN_NAMES.SETTINGS_SCREEN,
+        SCREEN_NAMES.SETTINGS_SCREEN
       );
+      // Update state with fetched contributions
       if (fetchedData) {
         setContributions(fetchedData?.contributions);
       }
-    };
-
-    fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
+
   useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    // Set navigation options including the headerLeft component
     navigation.setOptions({
-      title: 'Settings',
+      title: "Settings",
       ...commonNavigationOptions(headerBackground),
       headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
     });
   }, [navigation, headerBackground]);
 
-
+  // Function to handle sharing the app
   const onShare = async () => {
     try {
       await Share.share({
         message:
-          'https://play.google.com/store/apps/details?id=com.jayanth.shotram',
+          "https://play.google.com/store/apps/details?id=com.jayanth.shotram",
       });
     } catch (error) {
       console.log(error);
     }
   };
+
+  // Generate styles based on current context values
+  const styles = generateStyles(backgroundColor, textColor);
+
+  // Memoized version of ListItem component
+  const MemoizedListItem = React.memo(ListItem);
+
   return (
-    <View style={[commonStyles.container, {backgroundColor: backgroundColor}]}>
+    <View style={styles.container}>
       <ScrollView>
         {/* General Settings */}
-        <ListHeader title="General Settings" icon={'cog'} />
-        <ListItem
+        <ListHeader title="General Settings" icon={"cog"} />
+
+        {/* Memoized version of ListItem */}
+        <MemoizedListItem
           title="Dark theme"
           subtitle="Reduce glare and improve night viewing"
           toggle={toggleDarkMode}
           state={darkmode}
         />
-        <ListItem
+        <MemoizedListItem
           title="Toggle in Every Page"
           subtitle="Show option to toggle dark mode in every screen"
           toggle={toggleDarkSwitch}
@@ -85,22 +130,21 @@ const SettingsScreen = ({navigation}) => {
         />
 
         {/* Contributions */}
-        <ListHeader title="Contributions" icon={'info'} />
-        {contributions?.map(({name, role}) => (
-          <ListItem title={name} subtitle={role} key={name} />
+        <ListHeader title="Contributions" icon={"info"} />
+        {contributions?.map(({ name, role }) => (
+          <MemoizedListItem title={name} subtitle={role} key={name} />
         ))}
       </ScrollView>
       {/* Share and Made in India section */}
       <React.Fragment>
-        <View
-          style={{
-            marginTop: 12,
-            alignItems: 'center',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}>
-          <FontAwesomeIcon name={'share'} size={24} color={textColor} />
+        <View style={styles.shareContainer}>
+          {/* CustomIcon component for sharing */}
+          <CustomIcon
+            name="share"
+            library="FontAwesome"
+            size={24}
+            color={textColor}
+          />
           <Button
             onPress={onShare}
             title="Share App with friends/family"
@@ -109,29 +153,20 @@ const SettingsScreen = ({navigation}) => {
           />
         </View>
         <View style={styles.madeInIndiaContainer}>
-          <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
-          <AntDesignIcon
-            name={'heart'}
-            style={{
-              color: 'red',
-              fontSize: 25,
-              marginTop: 1,
-            }}
+          <Text style={styles.madeInIndiaContainerText}>Made With {""}</Text>
+          {/* CustomIcon component for heart icon */}
+          <CustomIcon
+            name="heart"
+            library="AntDesign"
+            style={styles.madeInIndiaContainerIcon}
           />
-          <Text style={{color: textColor, fontSize: 20}}> In India</Text>
+          <Text style={styles.madeInIndiaContainerText}> In India</Text>
         </View>
         {/* Admob */}
         <Admob />
       </React.Fragment>
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  madeInIndiaContainer: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-    marginBottom: 5,
-  },
 });
+
 export default SettingsScreen;

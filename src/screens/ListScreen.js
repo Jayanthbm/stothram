@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import {
   Image,
   ScrollView,
@@ -7,27 +7,116 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Admob from '../components/admob';
-import CustomHeaderLeft from '../components/headerLeft';
-import CustomHeaderRight from '../components/headerRight';
-import {SCREEN_NAMES} from '../constants';
-import {ThemeContext} from '../contexts/themeContext';
-import {commonNavigationOptions} from '../navigationOptions';
-import {dataHelper, preFetcher} from '../utils/dataUtils';
-import {commonStyles} from '../styles/styles';
+} from "react-native";
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
+import Admob from "../components/admob";
+import CustomHeaderLeft from "../components/headerLeft";
+import CustomHeaderRight from "../components/headerRight";
+import { SCREEN_NAMES } from "../constants";
+import { ThemeContext } from "../contexts/themeContext";
+import { commonNavigationOptions } from "../navigationOptions";
+import { dataHelper, preFetcher } from "../utils/dataUtils";
+import { commonStyles } from "../styles/styles";
 
+// Function to generate styles dynamically based on context values
+const generateStyles = (
+  backgroundColor = "#FFF",
+  textColor,
+  darkmode = false
+) => {
+  return StyleSheet.create({
+    container: {
+      ...commonStyles.container,
+      backgroundColor: backgroundColor,
+    },
+    searchContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 15,
+      marginBottom: 10,
+      elevation: 2,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
+      backgroundColor: backgroundColor,
+    },
+    searchIcon: {
+      marginRight: 10,
+    },
+    searchInput: {
+      paddingVertical: 10,
+      fontSize: 20,
+      marginLeft: 10,
+      backgroundColor: backgroundColor,
+      color: textColor,
+    },
+    listItem: {
+      marginLeft: 10,
+      paddingTop: 10,
+      paddingBottom: 5,
+      paddingLeft: 5,
+      borderBottomWidth: 2,
+      borderBottomColor: darkmode ? "#b8b6ab" : "#8f8f8f",
+    },
+    listTextStyle: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: textColor,
+    },
+    cardContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      marginLeft: 2,
+      justifyContent: "space-between",
+    },
+    card: {
+      width: "48%",
+      borderWidth: 1,
+      borderRadius: 8,
+      marginBottom: 10,
+      overflow: "hidden",
+      borderColor: darkmode ? "#b8b6ab" : "#8f8f8f",
+    },
+    cardImage: {
+      width: 180,
+      height: 80,
+      resizeMode: "cover",
+    },
+    cardTitle: {
+      fontSize: 14,
+      fontWeight: "700",
+      textAlign: "center",
+      padding: 5,
+      color: textColor,
+    },
+    noDataContainer: {
+      marginTop: 20,
+      marginLeft: 5,
+      marginRight: 5,
+    },
+    noDataText: {
+      fontSize: 20,
+      textAlign: "center",
+      color: textColor,
+    },
+    noDataTextButton: {
+      fontSize: 20,
+      textAlign: "center",
+      color: "#ADD8E6",
+    },
+  });
+};
 // ListScreen Component
 const ListScreen = ({ navigation, route }) => {
   // Context and State
-  const {backgroundColor, headerBackground, textColor, darkmode, viewType} =
+  const { backgroundColor, headerBackground, textColor, darkmode, viewType } =
     useContext(ThemeContext);
-  const {type} = route.params;
-  const [title, setTitle] = useState('');
+  const { type } = route.params;
+  const [title, setTitle] = useState("");
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState(list);
   const [rendered, setRendered] = useState(false);
 
@@ -55,7 +144,7 @@ const ListScreen = ({ navigation, route }) => {
       const fetchedData = await dataHelper(
         title,
         dataUrl,
-        SCREEN_NAMES.LIST_SCREEN,
+        SCREEN_NAMES.LIST_SCREEN
       );
       if (fetchedData) {
         setList(fetchedData?.data);
@@ -76,13 +165,13 @@ const ListScreen = ({ navigation, route }) => {
 
   // Filter Data based on Search Text
   const filterData = (data, searchText) => {
-    return data.filter(item =>
-      item.title.toLowerCase().includes(searchText.toLowerCase()),
+    return data.filter((item) =>
+      item.title.toLowerCase().includes(searchText.toLowerCase())
     );
   };
 
   // Handle Search Input
-  const handleSearch = text => {
+  const handleSearch = (text) => {
     setSearchValue(text);
     const newData = filterData(list, text);
     setRendered(true);
@@ -90,16 +179,21 @@ const ListScreen = ({ navigation, route }) => {
   };
 
   // Handle Item Click
-  const handleItemClick = item => {
-    navigation.navigate('Reader', {item});
-  };
+  const handleItemClick = useCallback(
+    (item) => {
+      navigation.navigate("Reader", { item });
+    },
+    [navigation]
+  );
 
+  // Generate styles based on current context values
+  const styles = generateStyles(backgroundColor, textColor, darkmode);
+  
   // Render Component
   return (
-    <View style={[commonStyles.container, {backgroundColor: backgroundColor}]}>
+    <View style={styles.container}>
       {/* Search Input */}
-      <View
-        style={[styles.searchContainer, {backgroundColor: backgroundColor}]}>
+      <View style={styles.searchContainer}>
         <FontAwesomeIcon
           name="search"
           size={26}
@@ -111,31 +205,21 @@ const ListScreen = ({ navigation, route }) => {
           placeholderTextColor={textColor}
           onChangeText={handleSearch}
           value={searchValue}
-          style={[
-            styles.searchInput,
-            {
-              backgroundColor: backgroundColor,
-              color: textColor,
-            },
-          ]}
+          style={styles.searchInput}
         />
       </View>
       <ScrollView>
         {/* Render List or Cards based on View Type */}
         <>
-          {viewType == 'list' ? (
+          {viewType == "list" ? (
             <>
               {filteredData?.map((item, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={[
-                    styles.listItem,
-                    {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
-                  ]}
-                  onPress={() => handleItemClick(item)}>
-                  <Text style={[styles.listTextStyle, {color: textColor}]}>
-                    {item.displayTitle}
-                  </Text>
+                  style={styles.listItem}
+                  onPress={() => handleItemClick(item)}
+                >
+                  <Text style={styles.listTextStyle}>{item.displayTitle}</Text>
                 </TouchableOpacity>
               ))}
             </>
@@ -148,17 +232,17 @@ const ListScreen = ({ navigation, route }) => {
                     style={[
                       styles.card,
                       {
-                        borderColor: darkmode ? '#b8b6ab' : '#8f8f8f',
                         marginLeft: index % 2 == 0 ? 4 : 0,
                         marginRight: index % 2 == 0 ? 0 : 4,
                       },
                     ]}
-                    onPress={() => handleItemClick(item)}>
+                    onPress={() => handleItemClick(item)}
+                  >
                     <Image
-                      source={require('../assets/images/god.webp')}
+                      source={require("../assets/images/god.webp")}
                       style={styles.cardImage}
                     />
-                    <Text style={[styles.cardTitle, {color: textColor}]}>
+                    <Text style={styles.cardTitle}>
                       {item.displayTitle ? item.displayTitle : item.title}
                     </Text>
                   </TouchableOpacity>
@@ -170,15 +254,14 @@ const ListScreen = ({ navigation, route }) => {
         {/* Render No Data Message if filtered data is empty */}
         {rendered && filteredData.length == 0 && (
           <View style={styles.noDataContainer}>
-            <Text style={[styles.noDataText, {color: textColor}]}>
-              No data found
-            </Text>
+            <Text style={styles.noDataText}>No data found</Text>
             <Text
               style={styles.noDataTextButton}
               onPress={() => {
-                setSearchValue('');
-                handleSearch('');
-              }}>
+                setSearchValue("");
+                handleSearch("");
+              }}
+            >
               Clear
             </Text>
           </View>
@@ -189,76 +272,5 @@ const ListScreen = ({ navigation, route }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    marginBottom: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    paddingVertical: 10,
-    fontSize: 20,
-    marginLeft: 10,
-  },
-  listItem: {
-    marginLeft: 10,
-    paddingTop: 10,
-    paddingBottom: 5,
-    paddingLeft: 5,
-    borderBottomWidth: 2,
-  },
-  listTextStyle: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  cardContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginLeft: 2,
-    justifyContent: 'space-between',
-  },
-  card: {
-    width: '48%',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    overflow: 'hidden',
-  },
-  cardImage: {
-    width: 180,
-    height: 80,
-    resizeMode: 'cover',
-  },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    textAlign: 'center',
-    padding: 5,
-  },
-  noDataContainer: {
-    marginTop: 20,
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  noDataText: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  noDataTextButton: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: '#ADD8E6',
-  },
-});
 
 export default ListScreen;

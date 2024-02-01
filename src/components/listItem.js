@@ -1,48 +1,19 @@
-import React, {useContext} from 'react';
+import React, { useContext } from "react";
 import {
   StyleSheet,
   Switch,
   Text,
-  TouchableOpacity,
+  TouchableHighlight,
   View,
-} from 'react-native';
-import { ThemeContext } from '../contexts/themeContext';
+} from "react-native";
+import PropTypes from "prop-types";
+import { ThemeContext } from "../contexts/themeContext";
 
-const ListItem = ({ title, subtitle, toggle, state }) => {
-  const {textColor,darkmode} = useContext(ThemeContext);
-  return (
-    <TouchableOpacity
-      onPress={toggle}
-      style={styles.listItemContainer}
-      key={title}>
-      <View
-        style={[
-          styles.listItemContent,
-          {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
-        ]}>
-        <Text style={[styles.listItemTitle, {color: textColor}]}>{title}</Text>
-        {subtitle && (
-          <Text style={[styles.listItemSubtitle, {color: textColor}]}>
-            {subtitle}
-          </Text>
-        )}
-      </View>
-      {toggle && (
-        <Switch
-          value={state}
-          onValueChange={toggle}
-          trackColor={{false: '#ccc', true: '#81b0ff'}}
-          thumbColor={state ? '#5098E6' : '#f4f3f4'}
-        />
-      )}
-    </TouchableOpacity>
-  );
-}
 const styles = StyleSheet.create({
   listItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
@@ -58,4 +29,52 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
+
+const ListItem = ({ title, subtitle, toggle, state }) => {
+  const { textColor, darkmode } = useContext(ThemeContext);
+
+  // Provide default values for optional props
+  const renderSubtitle = subtitle && (
+    <Text style={[styles.listItemSubtitle, { color: textColor }]}>
+      {subtitle}
+    </Text>
+  );
+
+  return (
+    <TouchableHighlight
+      onPress={toggle}
+      style={styles.listItemContainer}
+      underlayColor={darkmode ? "#9e9b92" : "#b8b6ab"} // Optional: Add underlay color for TouchableHighlight
+    >
+      <View
+        style={[
+          styles.listItemContent,
+          { borderBottomColor: darkmode ? "#b8b6ab" : "#8f8f8f" },
+        ]}
+      >
+        <Text style={[styles.listItemTitle, { color: textColor }]}>
+          {title}
+        </Text>
+        {renderSubtitle}
+      </View>
+      {toggle && (
+        <Switch
+          value={state}
+          onValueChange={toggle}
+          trackColor={{ false: "#ccc", true: "#81b0ff" }}
+          thumbColor={state ? "#5098E6" : "#f4f3f4"}
+        />
+      )}
+    </TouchableHighlight>
+  );
+};
+
+// PropTypes for better documentation
+ListItem.propTypes = {
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
+  toggle: PropTypes.func,
+  state: PropTypes.bool,
+};
+
 export default ListItem;
