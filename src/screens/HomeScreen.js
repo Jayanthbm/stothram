@@ -11,7 +11,7 @@ import {
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Admob from '../components/admob';
 import {ThemeContext} from '../contexts/themeContext';
-
+import {commonStyles} from '../styles/styles';
 import CustomHeaderRight from '../components/headerRight';
 import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
 import {commonNavigationOptions} from '../navigationOptions';
@@ -24,6 +24,7 @@ const HomeScreen = ({navigation}) => {
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
+    // Fetch data when the component mounts
     const fetchData = async () => {
       const fetchedData = await dataHelper(
         CACHED_DATA_KEYS.HOME_SCREEN,
@@ -31,9 +32,11 @@ const HomeScreen = ({navigation}) => {
         SCREEN_NAMES.HOME_SCREEN,
       );
       if (fetchedData) {
+        // Set types and store additional data
         setTypes(fetchedData?.data);
         storeItem('UPI_ID', fetchedData?.UPI_ID);
         storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
+        // Prefetch data for the list screen
         preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
       }
     };
@@ -42,6 +45,7 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
+    // Set navigation options when the headerBackground changes
     navigation.setOptions({
       title: 'Stothram',
       ...commonNavigationOptions(headerBackground),
@@ -51,16 +55,23 @@ const HomeScreen = ({navigation}) => {
     });
   }, [navigation, headerBackground]);
 
+  const confirmExit = () => {
+    // Display an alert to confirm exiting the app
+    Alert.alert('Hold on!', 'Do you want to Exit Stothram?', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
+    ]);
+  };
+
   useEffect(() => {
+    // Handle hardware back press event
     const backAction = () => {
-      Alert.alert('Hold on!', 'Do you want to Exit Stothram?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        {text: 'YES', onPress: () => BackHandler.exitApp()},
-      ]);
+      // Confirm exit when the hardware back button is pressed
+      confirmExit();
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -71,35 +82,36 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   const handleTypePress = type => {
+    // Navigate to the List screen with the selected type
     navigation.navigate('List', {type});
   };
 
-  const renderTypeItem = ({item}) => (
-    <TouchableOpacity
-      onPress={() => handleTypePress(item)}
-      style={[
-        styles.typeContainer,
-        {borderColor: darkmode ? item.darkBackground : item.lightBackground},
-      ]}>
-      <View
-        style={[
-          styles.typeItem,
-          {
-            backgroundColor: darkmode
-              ? item.darkBackground
-              : item.lightBackground,
-          },
-        ]}>
-        <View style={styles.iconContainer}>
-          <AntDesignIcon name={item.icon} size={60} style={styles.typeIcon} />
-          <Text style={styles.typeTitle}>{item.title}</Text>
+  // Render each type item in the FlatList
+  const renderTypeItem = ({ item }) => {
+    const typeContainerStyle = {
+      borderColor: darkmode ? item.darkBackground : item.lightBackground,
+    };
+
+    const typeItemStyle = {
+      backgroundColor: darkmode ? item.darkBackground : item.lightBackground,
+    };
+    return (
+      <TouchableOpacity
+        onPress={() => handleTypePress(item)}
+        style={[styles.typeContainer, typeContainerStyle]}>
+        <View style={[styles.typeItem, typeItemStyle]}>
+          <View style={styles.iconContainer}>
+            <AntDesignIcon name={item.icon} size={60} style={styles.typeIcon} />
+            <Text style={styles.typeTitle}>{item.title}</Text>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  }
 
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <View style={[commonStyles.container, {backgroundColor: backgroundColor}]}>
+      {/* Display types in a FlatList */}
       <FlatList
         data={types}
         keyExtractor={item => item.id.toString()}
@@ -109,17 +121,13 @@ const HomeScreen = ({navigation}) => {
           marginTop: 25,
         }}
       />
+      {/* Display Admob component */}
       <Admob />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginLeft: 1,
-    marginRight: 1,
-  },
   typeContainer: {
     flex: 1,
     margin: 8,

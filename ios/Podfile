@@ -39,6 +39,7 @@ target 'Stothram' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+
   target 'StothramTests' do
     inherit! :complete
     # Pods for testing

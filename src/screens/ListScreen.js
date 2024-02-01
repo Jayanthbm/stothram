@@ -16,16 +16,22 @@ import {SCREEN_NAMES} from '../constants';
 import {ThemeContext} from '../contexts/themeContext';
 import {commonNavigationOptions} from '../navigationOptions';
 import {dataHelper, preFetcher} from '../utils/dataUtils';
-const ListScreen = ({navigation, route}) => {
-  const {type} = route.params;
+import {commonStyles} from '../styles/styles';
+
+// ListScreen Component
+const ListScreen = ({ navigation, route }) => {
+  // Context and State
   const {backgroundColor, headerBackground, textColor, darkmode, viewType} =
     useContext(ThemeContext);
+  const {type} = route.params;
   const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [filteredData, setFilteredData] = useState(list);
-  const [rendered,setRendered] = useState(false)
+  const [rendered, setRendered] = useState(false);
+
+  // Set Navigation Options
   useEffect(() => {
     navigation.setOptions({
       title: title,
@@ -37,11 +43,13 @@ const ListScreen = ({navigation, route}) => {
     });
   }, [navigation, title, headerBackground]);
 
+  // Set Title and Data URL
   useEffect(() => {
     setTitle(type?.title);
     setDataUrl(type?.dataUrl);
   }, [type]);
 
+  // Fetch Data
   useEffect(() => {
     const fetchData = async () => {
       const fetchedData = await dataHelper(
@@ -51,6 +59,7 @@ const ListScreen = ({navigation, route}) => {
       );
       if (fetchedData) {
         setList(fetchedData?.data);
+        // Prefetch data for the Reader screen
         preFetcher(fetchedData?.data, SCREEN_NAMES.READER_SCREEN);
       }
     };
@@ -60,24 +69,35 @@ const ListScreen = ({navigation, route}) => {
     }
   }, [dataUrl]);
 
+  // Update Filtered Data when List Changes
   useEffect(() => {
     setFilteredData(list);
   }, [list]);
 
+  // Filter Data based on Search Text
+  const filterData = (data, searchText) => {
+    return data.filter(item =>
+      item.title.toLowerCase().includes(searchText.toLowerCase()),
+    );
+  };
+
+  // Handle Search Input
   const handleSearch = text => {
     setSearchValue(text);
-    const newData = list.filter(item =>
-      item.title.toLowerCase().includes(text.toLowerCase()),
-    );
-    setRendered(true)
+    const newData = filterData(list, text);
+    setRendered(true);
     setFilteredData(newData);
   };
+
+  // Handle Item Click
   const handleItemClick = item => {
     navigation.navigate('Reader', {item});
   };
 
+  // Render Component
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <View style={[commonStyles.container, {backgroundColor: backgroundColor}]}>
+      {/* Search Input */}
       <View
         style={[styles.searchContainer, {backgroundColor: backgroundColor}]}>
         <FontAwesomeIcon
@@ -101,6 +121,7 @@ const ListScreen = ({navigation, route}) => {
         />
       </View>
       <ScrollView>
+        {/* Render List or Cards based on View Type */}
         <>
           {viewType == 'list' ? (
             <>
@@ -146,28 +167,30 @@ const ListScreen = ({navigation, route}) => {
             </>
           )}
         </>
+        {/* Render No Data Message if filtered data is empty */}
         {rendered && filteredData.length == 0 && (
           <View style={styles.noDataContainer}>
             <Text style={[styles.noDataText, {color: textColor}]}>
               No data found
             </Text>
-            <Text style={styles.noDataTextButton} onPress={() => {
-              setSearchValue('');
-              handleSearch('');
-            }}>Clear</Text>
+            <Text
+              style={styles.noDataTextButton}
+              onPress={() => {
+                setSearchValue('');
+                handleSearch('');
+              }}>
+              Clear
+            </Text>
           </View>
         )}
       </ScrollView>
+      {/* Display Admob component */}
       <Admob />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 2,
-  },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',

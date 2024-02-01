@@ -4,9 +4,7 @@ import {
   ScrollView,
   Share,
   StyleSheet,
-  Switch,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -18,6 +16,10 @@ import CustomHeaderLeft from '../components/headerLeft';
 import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
 import {commonNavigationOptions} from '../navigationOptions';
 import {dataHelper} from '../utils/dataUtils';
+import ListHeader from '../components/listHeader';
+import ListItem from '../components/listItem';
+import { commonStyles } from '../styles/styles';
+
 const SettingsScreen = ({navigation}) => {
   const {
     backgroundColor,
@@ -53,44 +55,6 @@ const SettingsScreen = ({navigation}) => {
     });
   }, [navigation, headerBackground]);
 
-  const renderListHeader = (title, icon) => (
-    <View style={styles.listHeaderContainer}>
-      <FontAwesomeIcon
-        name={icon}
-        style={styles.listHeaderIcon}
-        color={textColor}
-      />
-      <Text style={[styles.listHeaderText, {color: textColor}]}>{title}</Text>
-    </View>
-  );
-
-  const renderListItem = (title, subtitle, toggle, state) => (
-    <TouchableOpacity
-      onPress={toggle}
-      style={styles.listItemContainer}
-      key={title}>
-      <View
-        style={[
-          styles.listItemContent,
-          {borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f'},
-        ]}>
-        <Text style={[styles.listItemTitle, {color: textColor}]}>{title}</Text>
-        {subtitle && (
-          <Text style={[styles.listItemSubtitle, {color: textColor}]}>
-            {subtitle}
-          </Text>
-        )}
-      </View>
-      {toggle && (
-        <Switch
-          value={state}
-          onValueChange={toggle}
-          trackColor={{false: '#ccc', true: '#81b0ff'}}
-          thumbColor={state ? '#5098E6' : '#f4f3f4'}
-        />
-      )}
-    </TouchableOpacity>
-  );
 
   const onShare = async () => {
     try {
@@ -103,26 +67,30 @@ const SettingsScreen = ({navigation}) => {
     }
   };
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <View style={[commonStyles.container, {backgroundColor: backgroundColor}]}>
       <ScrollView>
-        {renderListHeader('General Settings', 'cog')}
-        {renderListItem(
-          'Dark theme',
-          'Reduce glare and improve night viewing',
-          toggleDarkMode,
-          darkmode,
-        )}
-        {renderListItem(
-          'Toggle in Every Page',
-          'Show option to toggle dark mode in every screen',
-          toggleDarkSwitch,
-          darkSwitch,
-        )}
-        {renderListHeader('Contributions', 'info')}
-        {contributions?.map(({name, role}) =>
-          renderListItem(name, role, null, null),
-        )}
+        {/* General Settings */}
+        <ListHeader title="General Settings" icon={'cog'} />
+        <ListItem
+          title="Dark theme"
+          subtitle="Reduce glare and improve night viewing"
+          toggle={toggleDarkMode}
+          state={darkmode}
+        />
+        <ListItem
+          title="Toggle in Every Page"
+          subtitle="Show option to toggle dark mode in every screen"
+          toggle={toggleDarkSwitch}
+          state={darkSwitch}
+        />
+
+        {/* Contributions */}
+        <ListHeader title="Contributions" icon={'info'} />
+        {contributions?.map(({name, role}) => (
+          <ListItem title={name} subtitle={role} key={name} />
+        ))}
       </ScrollView>
+      {/* Share and Made in India section */}
       <React.Fragment>
         <View
           style={{
@@ -140,12 +108,7 @@ const SettingsScreen = ({navigation}) => {
             accessibilityLabel="Share App with friends/family"
           />
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignSelf: 'center',
-            marginBottom: 5,
-          }}>
+        <View style={styles.madeInIndiaContainer}>
           <Text style={{color: textColor, fontSize: 20}}>Made With {''}</Text>
           <AntDesignIcon
             name={'heart'}
@@ -157,6 +120,7 @@ const SettingsScreen = ({navigation}) => {
           />
           <Text style={{color: textColor, fontSize: 20}}> In India</Text>
         </View>
+        {/* Admob */}
         <Admob />
       </React.Fragment>
     </View>
@@ -164,43 +128,6 @@ const SettingsScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 2,
-  },
-  listHeaderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 20,
-    marginTop: 10,
-    marginBottom: 5,
-  },
-  listHeaderIcon: {
-    fontSize: 25,
-    marginRight: 10,
-  },
-  listHeaderText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  listItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  listItemContent: {
-    flex: 1,
-    borderBottomWidth: 1,
-    paddingBottom: 3,
-  },
-  listItemTitle: {
-    fontSize: 14,
-  },
-  listItemSubtitle: {
-    fontSize: 12,
-  },
   madeInIndiaContainer: {
     flexDirection: 'row',
     alignSelf: 'center',

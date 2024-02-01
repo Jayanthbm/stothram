@@ -1,28 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// export const DATA_THRESHOLDS = {
-//   HOME: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
-//   LIST: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-//   READER: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
-//   SETTING: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
-// };
-
+// Constants for data thresholds
 export const DATA_THRESHOLDS = {
-  HOME: 1000, // 15 days in milliseconds
+  HOME: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
   LIST: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
   READER: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
   SETTING: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
 };
+
+/**
+ * Helper function to handle data fetching and caching.
+ * @param {string} KEYNAME - The key under which data is stored.
+ * @param {string} URL - The URL to fetch the data from.
+ * @param {string} SCREEN_TYPE - The type of the screen.
+ * @returns {object|null} - The fetched data or null on error.
+ */
 export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
   try {
-    const cachedData = await AsyncStorage.getItem(KEYNAME);
-    const lastFetchTime = await AsyncStorage.getItem(
-      `${KEYNAME}_lastFetchTime`,
-    );
+    const cachedData = await getJSON(KEYNAME);
+    const lastFetchTime = await getItem(`${KEYNAME}_lastFetchTime`);
 
     if (cachedData) {
       console.log(`Fetching ${KEYNAME} data from cache`);
-      const data = JSON.parse(cachedData);
       // Check if it's time to fetch from online
       const currentTime = new Date().getTime();
       const shouldFetchFromOnline = compareTimeDifference(
@@ -34,7 +33,7 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
         fetchAndStoreData(KEYNAME, URL);
       }
 
-      return data;
+      return cachedData;
     } else {
       // If no cached version, fetch from online
       console.log(`Fetching ${SCREEN_TYPE} data from online`);
@@ -47,18 +46,20 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
   }
 };
 
+/**
+ * Helper function to fetch and store data in AsyncStorage
+ * @param {string} KEYNAME - The key under which data is stored.
+ * @param {string} URL - The URL to fetch the data from.
+ * @returns {object|null} - The fetched data or null on error.
+ */
 export const fetchAndStoreData = async (KEYNAME, URL) => {
   try {
     const response = await fetch(URL);
     const data = await response.json();
 
     // Update local storage with the new data and timestamp
-    await AsyncStorage.setItem(KEYNAME, JSON.stringify(data));
-    await AsyncStorage.setItem(
-      `${KEYNAME}_lastFetchTime`,
-      new Date().getTime().toString(),
-    );
-
+    await storeJSON(KEYNAME, data);
+    await storeItem(`${KEYNAME}_lastFetchTime`, new Date().getTime().toString());
     return data;
   } catch (error) {
     console.error(`Error fetching data from online (${KEYNAME}):`, error);
@@ -66,36 +67,56 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
   }
 };
 
+/**
+ * Helper function to compare the time difference between the current time and the last fetch time.
+ * @param {number} currentTime - The current time in milliseconds.
+ * @param {string} lastFetchTime - The timestamp of the last fetch.
+ * @param {number} threshold - The threshold for time difference in milliseconds.
+ * @returns {boolean} - True if the time difference is greater than the threshold, false otherwise.
+ */
 export const compareTimeDifference = (
   currentTime,
   lastFetchTime,
   threshold,
 ) => {
-  const timeDifference = lastFetchTime
-    ? currentTime - parseInt(lastFetchTime)
-    : threshold;
-
-  return timeDifference > threshold;
-};
-
-export const preFetcher = async (dataArray, SCREEN_TYPE) => {
   try {
-    // Map each dataObject to a promise returned by dataHelper
-    const fetchPromises = dataArray.map(dataObject => {
-      if (dataObject.dataUrl) {
-        return dataHelper(dataObject.title, dataObject.dataUrl, SCREEN_TYPE);
-      }
-      return Promise.resolve(null); // If no dataUrl, resolve with null
-    });
-
-    // Use Promise.all to execute all promises in parallel
-    await Promise.all(fetchPromises);
-    return true;
+    const timeDifference = lastFetchTime
+      ? currentTime - parseInt(lastFetchTime)
+      : threshold;
+    return timeDifference > threshold;
   } catch (error) {
-    console.log('Error in Prefetch:', error);
+    console.error('Error in compareTimeDifference:', error);
+    return false;
   }
 };
 
+/**
+ * Prefetch data for multiple data objects asynchronously.
+ * @param {Array} dataArray - Array of data objects.
+ * @param {string} SCREEN_TYPE - The type of the screen.
+ * @returns {boolean} - True if prefetching is successful, false otherwise.
+ */
+export const preFetcher = async (dataArray, SCREEN_TYPE) => {
+  try {
+    const fetchPromises = dataArray.map(dataObject =>
+      dataObject.dataUrl
+        ? dataHelper(dataObject.title, dataObject.dataUrl, SCREEN_TYPE)
+        : Promise.resolve(null),
+    );
+
+    await Promise.all(fetchPromises);
+    return true;
+  } catch (error) {
+    console.error('Error in preFetcher:', error);
+    return false;
+  }
+};
+
+/**
+ * Store a key-value pair in AsyncStorage.
+ * @param {string} key - The key to store.
+ * @param {string} value - The value to store.
+ */
 export const storeItem = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, value);
@@ -104,6 +125,11 @@ export const storeItem = async (key, value) => {
   }
 };
 
+/**
+ * Retrieve the value associated with the given key from AsyncStorage.
+ * @param {string} key - The key to retrieve.
+ * @returns {string|null} - The retrieved value or null on error.
+ */
 export const getItem = async key => {
   try {
     const value = await AsyncStorage.getItem(key);
@@ -114,6 +140,12 @@ export const getItem = async key => {
   }
 };
 
+
+/**
+ * Store a key-value pair as JSON in AsyncStorage.
+ * @param {string} key - The key to store.
+ * @param {object} value - The value to store as JSON.
+ */
 export const storeJSON = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
@@ -122,6 +154,11 @@ export const storeJSON = async (key, value) => {
   }
 };
 
+/**
+ * Retrieve the JSON value associated with the given key from AsyncStorage.
+ * @param {string} key - The key to retrieve.
+ * @returns {object|null} - The retrieved JSON value or null on error.
+ */
 export const getJSON = async key => {
   try {
     const value = await AsyncStorage.getItem(key);

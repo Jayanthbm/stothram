@@ -8,8 +8,11 @@ import {SCREEN_NAMES} from '../constants';
 import {ThemeContext} from '../contexts/themeContext';
 import {commonNavigationOptions} from '../navigationOptions';
 import {dataHelper} from '../utils/dataUtils';
-const ReaderScreen = ({navigation, route}) => {
-  const {item} = route.params;
+import { commonStyles } from '../styles/styles';
+
+// Main ReaderScreen component
+const ReaderScreen = ({ navigation, route }) => {
+  // Extract theme-related context
   const {
     backgroundColor,
     headerBackground,
@@ -18,12 +21,17 @@ const ReaderScreen = ({navigation, route}) => {
     updateFont,
     darkmode,
   } = useContext(ThemeContext);
+
+  // Navigation State
+  const {item} = route.params;
+
+  // State variables for managing data and UI
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
-  const [dataUrl, setDataUrl] = useState(null);
   const [readerData, setReaderData] = useState(null);
+  const SLIDER_COLOR = darkmode ? '#ab8b2c' : '#6200EE';
 
-  const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
+  // useEffect to set navigation options
   useEffect(() => {
     navigation.setOptions({
       title: displayTitle ? displayTitle : title,
@@ -33,27 +41,31 @@ const ReaderScreen = ({navigation, route}) => {
     });
   }, [navigation, title, displayTitle, headerBackground]);
 
+  // useEffect to fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData = await dataHelper(
-        item?.title,
-        item?.dataUrl,
-        SCREEN_NAMES.READER_SCREEN,
-      );
-      if (fetchedData) {
-        setReaderData(fetchedData);
+      try {
+        const fetchedData = await dataHelper(
+          item?.title,
+          item?.dataUrl,
+          SCREEN_NAMES.READER_SCREEN,
+        );
+        if (fetchedData) {
+          setReaderData(fetchedData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
     setDisplayTitle(item.displayTitle);
     setTitle(item?.title);
-    setDataUrl(item?.dataUrl);
     if (item?.dataUrl) {
       fetchData();
     }
   }, [item]);
 
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <View style={[commonStyles.container, {backgroundColor}]}>
       {readerData && (
         <Slider
           value={font}
@@ -64,15 +76,16 @@ const ReaderScreen = ({navigation, route}) => {
           style={{
             height: 40,
           }}
-          thumbTintColor={sliderColor}
-          minimumTrackTintColor={sliderColor}
+          thumbTintColor={SLIDER_COLOR}
+          minimumTrackTintColor={SLIDER_COLOR}
           tapToSeek={true}
         />
       )}
-
+      {/* ScrollView for displaying reader content */}
       <ScrollView>
         {readerData?.content.map((data, index) => {
           if (data?.type == 'paragraph') {
+            // Render paragraphs
             return (
               <View
                 style={[
@@ -96,6 +109,7 @@ const ReaderScreen = ({navigation, route}) => {
             );
           }
           if (data.type === 'subheading') {
+            // Render subheadings
             return (
               <View
                 style={[
@@ -109,17 +123,13 @@ const ReaderScreen = ({navigation, route}) => {
           }
         })}
       </ScrollView>
-
+      {/* Display Admob component */}
       <Admob />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 2,
-  },
   paragraphStyle: {
     marginLeft: 7,
     marginRight: 2,
