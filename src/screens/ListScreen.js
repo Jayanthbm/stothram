@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
   FlatList,
-} from 'react-native';
+} from "react-native";
 import Admob from "../components/admob";
 import CustomHeaderLeft from "../components/headerLeft";
 import CustomHeaderRight from "../components/headerRight";
@@ -16,7 +16,8 @@ import { ThemeContext } from "../contexts/themeContext";
 import { commonNavigationOptions } from "../navigationOptions";
 import { dataHelper, preFetcher } from "../utils/dataUtils";
 import { commonStyles } from "../styles/styles";
-import CustomIcon from '../components/customIcon';
+import CustomIcon from "../components/customIcon";
+import NetInfo from "@react-native-community/netinfo";
 // Function to generate styles dynamically based on context values
 const generateStyles = (
   backgroundColor = "#FFF",
@@ -89,11 +90,6 @@ const generateStyles = (
       padding: 5,
       color: textColor,
     },
-    noDataContainer: {
-      marginTop: 20,
-      marginLeft: 5,
-      marginRight: 5,
-    },
     noDataText: {
       fontSize: 20,
       textAlign: "center",
@@ -109,15 +105,63 @@ const generateStyles = (
 // ListScreen Component
 const ListScreen = ({ navigation, route }) => {
   // Context and State
-  const {backgroundColor, headerBackground, textColor, darkmode, viewType} =
+  const { backgroundColor, headerBackground, textColor, darkmode, viewType } =
     useContext(ThemeContext);
-  const {type} = route.params;
-  const [title, setTitle] = useState('');
+  const { type } = route.params;
+  const [title, setTitle] = useState("");
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState(list);
   const [rendered, setRendered] = useState(false);
+
+  const [internetConncted, setInternetConnected] = useState(false);
+
+  // Define fetchData function outside of useEffect
+  const fetchData = useCallback(async () => {
+    try {
+      const fetchedData = await dataHelper(
+        title,
+        dataUrl,
+        SCREEN_NAMES.LIST_SCREEN
+      );
+      if (fetchedData) {
+        setList(fetchedData?.data);
+        // Prefetch data for the Reader screen
+        preFetcher(fetchedData?.data, SCREEN_NAMES.READER_SCREEN);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, []);
+
+  // Subscribe for internet connection
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setInternetConnected(state.isConnected);
+    });
+    return unsubscribe;
+  }, []);
+
+  // Fetch data when internet connection is available and types are not already set
+  useEffect(() => {
+    if (internetConnected && list.length === 0) {
+      fetchData();
+    }
+  }, [internetConnected, fetchData]);
+
+  // Set Title and Data URL
+  useEffect(() => {
+    setTitle(type?.title);
+    setDataUrl(type?.dataUrl);
+  }, [type]);
+
+  // Fetch Data
+  useEffect(() => {
+    if (dataUrl) {
+      fetchData();
+    }
+  }, [dataUrl, fetchData]);
 
   // Set Navigation Options
   useEffect(() => {
@@ -131,32 +175,6 @@ const ListScreen = ({ navigation, route }) => {
     });
   }, [navigation, title, headerBackground]);
 
-  // Set Title and Data URL
-  useEffect(() => {
-    setTitle(type?.title);
-    setDataUrl(type?.dataUrl);
-  }, [type]);
-
-  // Fetch Data
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchedData = await dataHelper(
-        title,
-        dataUrl,
-        SCREEN_NAMES.LIST_SCREEN,
-      );
-      if (fetchedData) {
-        setList(fetchedData?.data);
-        // Prefetch data for the Reader screen
-        preFetcher(fetchedData?.data, SCREEN_NAMES.READER_SCREEN);
-      }
-    };
-
-    if (dataUrl) {
-      fetchData();
-    }
-  }, [dataUrl]);
-
   // Update Filtered Data when List Changes
   useEffect(() => {
     setFilteredData(list);
@@ -164,13 +182,13 @@ const ListScreen = ({ navigation, route }) => {
 
   // Filter Data based on Search Text
   const filterData = (data, searchText) => {
-    return data.filter(item =>
-      item.title.toLowerCase().includes(searchText.toLowerCase()),
+    return data.filter((item) =>
+      item.title.toLowerCase().includes(searchText.toLowerCase())
     );
   };
 
   // Handle Search Input
-  const handleSearch = text => {
+  const handleSearch = (text) => {
     setSearchValue(text);
     const newData = filterData(list, text);
     setRendered(true);
@@ -179,10 +197,10 @@ const ListScreen = ({ navigation, route }) => {
 
   // Handle Item Click
   const handleItemClick = useCallback(
-    item => {
-      navigation.navigate('Reader', {item});
+    (item) => {
+      navigation.navigate("Reader", { item });
     },
-    [navigation],
+    [navigation]
   );
 
   // Generate styles based on current context values
@@ -190,20 +208,23 @@ const ListScreen = ({ navigation, route }) => {
 
   // Define a key extractor function
   const keyExtractor = useCallback((item, index) => index.toString(), []);
+
   // Define renderItem functions for list and card views
   // Memoized ListItem Component
-  const MemoizedListItem = React.memo(({item}) => {
-    const {displayTitle} = item;
+  const MemoizedListItem = React.memo(({ item }) => {
+    const { displayTitle } = item;
     return (
       <TouchableOpacity
         style={styles.listItem}
-        onPress={() => handleItemClick(item)}>
+        onPress={() => handleItemClick(item)}
+      >
         <Text style={styles.listTextStyle}>{displayTitle}</Text>
       </TouchableOpacity>
     );
   });
+
   // Memoized CardItem Component
-  const MemoizedCardItem = React.memo(({item, index}) => (
+  const MemoizedCardItem = React.memo(({ item, index }) => (
     <TouchableOpacity
       style={[
         styles.card,
@@ -212,9 +233,10 @@ const ListScreen = ({ navigation, route }) => {
           marginRight: index % 2 === 0 ? 0 : 4,
         },
       ]}
-      onPress={() => handleItemClick(item)}>
+      onPress={() => handleItemClick(item)}
+    >
       <Image
-        source={require('../assets/images/god.webp')}
+        source={require("../assets/images/god.webp")}
         style={styles.cardImage}
       />
       <Text style={styles.cardTitle}>
@@ -246,28 +268,37 @@ const ListScreen = ({ navigation, route }) => {
       <FlatList
         data={filteredData}
         keyExtractor={keyExtractor}
-        renderItem={({item, index}) =>
-          viewType === 'list' ? (
+        renderItem={({ item, index }) =>
+          viewType === "list" ? (
             <MemoizedListItem item={item} />
           ) : (
             <MemoizedCardItem item={item} index={index} />
           )
         }
-        numColumns={viewType === 'list' ? 1 : 2}
+        numColumns={viewType === "list" ? 1 : 2}
         extraData={viewType} // Add extraData to trigger a re-render when viewType changes
         ListEmptyComponent={() => (
-          <View style={styles.noDataContainer}>
-            {rendered && (
+          <View style={commonStyles.noDataContainer}>
+            {rendered ? (
               <>
                 <Text style={styles.noDataText}>No data found</Text>
                 <Text
                   style={styles.noDataTextButton}
                   onPress={() => {
-                    setSearchValue('');
-                    handleSearch('');
-                  }}>
+                    setSearchValue("");
+                    handleSearch("");
+                  }}
+                >
                   Clear
                 </Text>
+              </>
+            ) : (
+              <>
+                {list?.length === 0 && !internetConncted && (
+                  <Text style={styles.noDataText}>
+                    Please connect to internet once to sync the data
+                  </Text>
+                )}
               </>
             )}
           </View>

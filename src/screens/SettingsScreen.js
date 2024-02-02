@@ -16,7 +16,7 @@ import { commonNavigationOptions } from "../navigationOptions";
 import { dataHelper } from "../utils/dataUtils";
 import ListHeader from "../components/listHeader";
 import ListItem from "../components/listItem";
-import CustomIcon from '../components/customIcon';
+import CustomIcon from "../components/customIcon";
 import { commonStyles } from "../styles/styles";
 
 // Function to generate styles dynamically based on context values
@@ -130,7 +130,9 @@ const SettingsScreen = React.memo(({ navigation }) => {
         />
 
         {/* Contributions */}
-        <ListHeader title="Contributions" icon={"info"} />
+        {contributions?.length > 0 ? (
+          <ListHeader title="Contributions" icon={"info"} />
+        ) : null}
         {contributions?.map(({ name, role }) => (
           <MemoizedListItem title={name} subtitle={role} key={name} />
         ))}
