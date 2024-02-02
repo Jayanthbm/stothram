@@ -14,6 +14,7 @@ import {getItem, getJSON, isInternetConnected} from '../utils/dataUtils';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
 import ImageButton from './imageButton';
+import {CACHED_DATA_KEYS} from '../constants';
 
 const styles = StyleSheet.create({
   headerRightContainer: {
@@ -44,9 +45,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const PN = 'Stothram';
-const TN = 'Contribute to Stothram';
-
 const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
   const {darkmode, toggleDarkMode, darkSwitch, toggleViewType, textColor} =
     useContext(ThemeContext);
@@ -63,12 +61,12 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
   const [money, setMoney] = useState(1);
 
   const [upiId, setUpiId] = useState(null);
-  const [upiAmounts, setUpiAmounts] = useState(null);
+  const [upidata, setUpiData] = useState(null);
 
   useEffect(() => {
     async function init() {
-      setUpiId(await getItem('UPI_ID'));
-      setUpiAmounts(await getJSON('UPI_AMOUNTS'));
+      setUpiId(await getItem(CACHED_DATA_KEYS.UPI_ID));
+      setUpiData(await getJSON(CACHED_DATA_KEYS.UPI_DATA));
       setInternetState(await isInternetConnected());
     }
     init();
@@ -111,7 +109,9 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
 
    url =
      url +
-     `pay?pa=${upiId}&pn=${PN}&tn=${TN}&am=${amnt}&cu=INR&mc=0000&tr=${genearteTransactionId()}`;
+     `pay?pa=${upiId}&pn=${upidata?.payee_name}&tn=${
+       upidata?.transaction_note
+     }&am=${amnt}&cu=INR&mc=0000&tr=${genearteTransactionId()}`;
    hideDialog();
    setAmount(1);
    setMoney(1);
@@ -168,7 +168,7 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
         title="Contribute to Stothram">
         <Text style={{color: textColor}}>Choose amount</Text>
         <View style={styles.radioButtons}>
-          {upiAmounts?.map(amount => (
+          {upidata && upidata.upi_amounts?.map(amount => (
             <TouchableOpacity
               key={amount}
               onPress={() => {
@@ -205,7 +205,7 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
         {amount === 'custom' && (
           <TextInput
             label="Choose amount"
-            placeholder='Enter amount'
+            placeholder="Enter amount"
             placeholderTextColor={textColor}
             value={money ? money.toString() : ''}
             keyboardType="numeric"
@@ -216,11 +216,13 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
               borderColor: '#ccc',
               borderWidth: 2,
               color: textColor,
-              marginBottom:10
+              marginBottom: 10,
             }}
           />
         )}
-        <Text style={{color: textColor,textAlign:'center'}}>Choose App to pay</Text>
+        <Text style={{color: textColor, textAlign: 'center'}}>
+          Choose App to pay
+        </Text>
         <View
           style={{
             flexDirection: 'row',

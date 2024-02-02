@@ -12,7 +12,7 @@ import Admob from "../components/admob";
 import { ThemeContext } from "../contexts/themeContext";
 import { commonStyles } from "../styles/styles";
 import CustomHeaderRight from "../components/headerRight";
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
+import {CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES} from '../constants';
 import { commonNavigationOptions } from "../navigationOptions";
 import {
   dataHelper,
@@ -71,8 +71,8 @@ const HomeScreen = ({ navigation }) => {
         );
         if (fetchedData) {
           setTypes(fetchedData?.data);
-          storeItem('UPI_ID', fetchedData?.UPI_ID);
-          storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
+          storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
+          storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
           preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
         }
       } catch (error) {
