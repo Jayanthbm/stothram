@@ -26,7 +26,7 @@ const Admob = () => {
     <React.Fragment>
       {Platform.OS === 'android' ? (
         <GAMBannerAd
-          unitId={"ca-app-pub-0714649342045057~1333332271"}
+          unitId={unitId}
           sizes={[BannerAdSize.FULL_BANNER]}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,

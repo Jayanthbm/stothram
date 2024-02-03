@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
+const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender }) => {
   const {darkmode, toggleDarkMode, darkSwitch, toggleViewType, textColor,viewType} =
     useContext(ThemeContext);
   const [moneyModal, setMoneyModal] = useState(false);
@@ -71,7 +71,7 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
       setInternetState(await isInternetConnected());
     }
     init();
-  }, []);
+  }, [reRender]);
 
   //generate 10 letter transaction id include letter and numbers
   function genearteTransactionId() {

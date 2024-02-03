@@ -58,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
     useContext(ThemeContext);
 
   const [types, setTypes] = useState([]);
-
+  const [loaded,setLoaded] =useState(false)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,9 +69,11 @@ const HomeScreen = ({ navigation }) => {
         );
         if (fetchedData) {
           setTypes(fetchedData?.data);
-          storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
-          storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
+          await storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
+          await storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
+          setLoaded(true)
           preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
+
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -86,7 +88,7 @@ const HomeScreen = ({ navigation }) => {
       title: "Stothram",
       ...commonNavigationOptions(headerBackground),
       headerRight: () => (
-        <CustomHeaderRight navigation={navigation} showSettings={true} />
+        <CustomHeaderRight navigation={navigation} showSettings={true} reRender={loaded} />
       ),
     });
   }, [navigation, headerBackground]);

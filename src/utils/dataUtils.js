@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 // Constants for data thresholds
 export const DATA_THRESHOLDS = {
-  HOME: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
-  LIST: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-  READER: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
-  SETTING: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
-};
+  HOME: 1 * 60 * 60 * 1000, // 1 hours in milliseconds
+  LIST: 2 * 60 * 60 * 1000, // 3 hours in milliseconds
+  READER: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
+  SETTING: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+}
 
 /**
  * Helper function to handle data fetching and caching.
