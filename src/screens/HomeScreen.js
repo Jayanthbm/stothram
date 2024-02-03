@@ -71,8 +71,8 @@ const HomeScreen = ({ navigation }) => {
         );
         if (fetchedData) {
           setTypes(fetchedData?.data);
-          storeItem('UPI_ID', fetchedData?.UPI_ID);
-          storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
+          storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
+          storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.UPI_AMOUNTS);
           preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
         }
       } catch (error) {

@@ -113,7 +113,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
     <View style={styles.container}>
       <ScrollView>
         {/* General Settings */}
-        <ListHeader title="General Settings" icon={"cog"} />
+        <ListHeader title="General Settings" icon={"settings"} />
 
         {/* Memoized version of ListItem */}
         <MemoizedListItem
@@ -140,7 +140,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
         <View style={styles.shareContainer}>
           <CustomIcon
             name="share"
-            library="FontAwesome"
+            library="Feather"
             size={24}
             color={textColor}
           />

@@ -31,7 +31,7 @@ const ListHeader = ({ title, icon }) => {
   return (
     <View style={styles.listHeaderContainer}>
       <CustomIcon
-        library="FontAwesome"
+        library="Feather"
         name={iconName}
         style={styles.listHeaderIcon}
         color={textColor}

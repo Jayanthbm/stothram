@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
-  const {darkmode, toggleDarkMode, darkSwitch, toggleViewType, textColor} =
+  const {darkmode, toggleDarkMode, darkSwitch, toggleViewType, textColor,viewType} =
     useContext(ThemeContext);
   const [moneyModal, setMoneyModal] = useState(false);
   const showDialog = () => setMoneyModal(true);
@@ -137,9 +137,9 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
         {showViewToggle && (
           <CustomIcon
             onPress={toggleViewType}
-            name="clipboard-list"
+            name={viewType === 'list' ? 'grid' :'list' }
             size={26}
-            library="MaterialCommunityIcons"
+            library="Feather"
             style={styles.headerIcon}
           />
         )}
@@ -155,9 +155,9 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
         {showSettings && (
           <CustomIcon
             onPress={() => navigation.navigate('Settings')}
-            name="setting"
+            name="settings"
             size={26}
-            library="AntDesign"
+            library="Feather"
             style={styles.headerIcon}
           />
         )}

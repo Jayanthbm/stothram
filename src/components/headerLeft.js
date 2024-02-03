@@ -12,9 +12,9 @@ const CustomHeaderLeft = ({ navigation }) => {
   const renderButton = navigation.goBack && (
     <CustomIcon
       onPress={() => navigation.goBack()}
-      name="left"
+      name="chevron-left"
       size={24}
-      library="AntDesign"
+      library="Feather"
       style={styles.headerIcon}
     />
   );
