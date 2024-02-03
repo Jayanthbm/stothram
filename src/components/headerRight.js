@@ -1,7 +1,8 @@
+import { useNetInfo } from "@react-native-community/netinfo";
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  Button,
+  Alert,
   Linking,
   StyleSheet,
   Text,
@@ -12,7 +13,7 @@ import {
 import { CACHED_DATA_KEYS } from '../constants';
 import { ThemeContext } from '../contexts/themeContext';
 import { commonStyles } from '../styles/styles';
-import { getItem, getJSON, isInternetConnected } from '../utils/dataUtils';
+import { getItem, getJSON } from '../utils/dataUtils';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
 import ImageButton from './imageButton';
@@ -50,8 +51,8 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
   const {darkmode, toggleDarkMode, darkSwitch, toggleViewType, textColor,viewType} =
     useContext(ThemeContext);
   const [moneyModal, setMoneyModal] = useState(false);
-  const showDialog = () => setMoneyModal(true);
-  const [internetState, setInternetState] = useState(false);
+
+  const netInfo = useNetInfo();
   const hideDialog = () => {
     setAmount(1);
     setMoney(1);
@@ -61,17 +62,28 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
   const [amount, setAmount] = useState(1);
   const [money, setMoney] = useState(1);
 
-  const [upiId, setUpiId] = useState(null);
+  const [upiId, setUpiId] = useState('');
   const [upidata, setUpiData] = useState(null);
 
   useEffect(() => {
     async function init() {
       setUpiId(await getItem(CACHED_DATA_KEYS.UPI_ID));
       setUpiData(await getJSON(CACHED_DATA_KEYS.UPI_DATA));
-      setInternetState(await isInternetConnected());
     }
     init();
   }, [reRender]);
+
+  const showDialog = () => {
+    if (!netInfo.isConnected) {
+      Alert.alert("Please connect to the internet");
+      return;
+    }
+    if (upiId === '') {
+      Alert.alert("Coming Soon");
+      return;
+    }
+    setMoneyModal(true)
+  };
 
   //generate 10 letter transaction id include letter and numbers
   function genearteTransactionId() {
@@ -83,63 +95,59 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
     return text;
   }
 
-
   const openPaymentApp = async (payApp, amnt) => {
-   if(isNaN(amnt)) {
-     alert('Please enter valid amount');
-     return;
-   }
+    if (isNaN(amnt)) {
+      alert('Please enter valid amount');
+      return;
+    }
     if (amnt < 1) {
       alert('Please enter amount greater than 0');
       return;
     }
-   let url = '';
-   switch (payApp) {
-     case 'PAYTM':
-       url = 'paytmmp://';
-       break;
-     case 'GPAY':
-       url = 'tez://upi/';
-       break;
-     case 'PHONEPE':
-       url = 'phonepe://';
-       break;
-     case 'BHIM':
-       url = 'upi://';
-   }
+    let url = '';
+    switch (payApp) {
+      case 'PAYTM':
+        url = 'paytmmp://';
+        break;
+      case 'GPAY':
+        url = 'tez://upi/';
+        break;
+      case 'PHONEPE':
+        url = 'phonepe://';
+        break;
+      case 'BHIM':
+        url = 'upi://';
+    }
 
-   url =
-     url +
-     `pay?pa=${upiId}&pn=${upidata?.payee_name}&tn=${
-       upidata?.transaction_note
-     }&am=${amnt}&cu=INR&mc=0000&tr=${genearteTransactionId()}`;
+    url =
+      url +
+      `pay?pa=${upiId}&pn=${upidata?.payee_name}&tn=${upidata?.transaction_note
+      }&am=${amnt}&cu=INR&mc=0000&tr=${genearteTransactionId()}`;
 
     hideDialog();
     setAmount(1);
     setMoney(1);
-   try {
-     await Linking.openURL(url);
-   } catch (err) {
-     console.error('ERROR : ', err);
-   }
- };
+    try {
+      await Linking.openURL(url);
+    } catch (err) {
+      console.error('ERROR : ', err);
+    }
+  };
 
   return (
     <>
       <View style={styles.headerRightContainer}>
-        {internetState && upiId && upiId != '' && (
-          <CustomIcon
-            onPress={showDialog}
-            name="rupee"
-            size={26}
-            library="FontAwesome"
-            style={styles.headerIcon}
-          />
-        )}
+        <CustomIcon
+          onPress={showDialog}
+          name="rupee"
+          size={26}
+          library="FontAwesome"
+          style={styles.headerIcon}
+        />
         {showViewToggle && (
           <CustomIcon
             onPress={toggleViewType}
-            name={viewType === 'list' ? 'grid' :'list' }
+            name={viewType === 'list' ? 'grid' : 'list'}
             size={26}
             library="Feather"
             style={styles.headerIcon}
@@ -171,91 +179,96 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
         visible={moneyModal}
         onClose={hideDialog}
         title="Contribute to Stothram">
-        <Text style={{color: textColor}}>Choose amount</Text>
-        <View style={styles.radioButtons}>
-          {upidata && upidata.upi_amounts?.map(amount => (
+        {upidata && upidata?.upi_amounts.length > 0 ? (<>
+          <Text style={{ color: textColor }}>Choose amount</Text>
+          <View style={styles.radioButtons}>
+            {upidata?.upi_amounts?.map(amount => (
+              <TouchableOpacity
+                key={amount}
+                onPress={() => {
+                  setAmount(amount);
+                  setMoney(amount);
+                }}>
+                <CustomIcon
+                  name="circle"
+                  size={20}
+                  library="FontAwesome"
+                  color={amount === money ? '#007BFF' : '#ccc'}
+                />
+                <Text style={[styles.radioButtonLabel, { color: textColor }]}>
+                  ₹{amount}
+                </Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
-              key={amount}
               onPress={() => {
-                setAmount(amount);
-                setMoney(amount);
+                setAmount('custom');
+                setMoney(null);
               }}>
               <CustomIcon
                 name="circle"
                 size={20}
                 library="FontAwesome"
-                color={amount === money ? '#007BFF' : '#ccc'}
+                color={amount === 'custom' ? '#007BFF' : '#ccc'}
               />
-              <Text style={[styles.radioButtonLabel, {color: textColor}]}>
-                ₹{amount}
+              <Text style={[styles.radioButtonLabel, { color: textColor }]}>
+                Custom ₹
               </Text>
             </TouchableOpacity>
-          ))}
-          <TouchableOpacity
-            onPress={() => {
-              setAmount('custom');
-              setMoney(null);
-            }}>
-            <CustomIcon
-              name="circle"
-              size={20}
-              library="FontAwesome"
-              color={amount === 'custom' ? '#007BFF' : '#ccc'}
+          </View>
+          {amount === 'custom' && (
+            <TextInput
+              label="Choose amount"
+              placeholder="Enter amount"
+              placeholderTextColor={textColor}
+              value={money ? money.toString() : ''}
+              keyboardType="numeric"
+              onChangeText={text => setMoney(text)}
+              style={{
+                paddingVertical: 3,
+                fontSize: 18,
+                borderColor: '#ccc',
+                borderWidth: 2,
+                color: textColor,
+                marginBottom: 10,
+              }}
             />
-            <Text style={[styles.radioButtonLabel, {color: textColor}]}>
-              Custom ₹
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {amount === 'custom' && (
-          <TextInput
-            label="Choose amount"
-            placeholder="Enter amount"
-            placeholderTextColor={textColor}
-            value={money ? money.toString() : ''}
-            keyboardType="numeric"
-            onChangeText={text => setMoney(text)}
+          )}
+          <Text style={{ color: textColor, textAlign: 'center' }}>
+            Choose App to pay
+          </Text>
+          <View
             style={{
-              paddingVertical: 3,
-              fontSize: 18,
-              borderColor: '#ccc',
-              borderWidth: 2,
-              color: textColor,
-              marginBottom: 10,
-            }}
-          />
-        )}
-        <Text style={{color: textColor, textAlign: 'center'}}>
-          Choose App to pay
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            marginTop: 10,
-          }}>
-          <ImageButton
-            onPress={() => openPaymentApp('PHONEPE', money)}
-            name={'PHONEPE'}
-          />
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              marginTop: 10,
+            }}>
+            <ImageButton
+              onPress={() => openPaymentApp('PHONEPE', money)}
+              name={'PHONEPE'}
+            />
 
-          <ImageButton
-            onPress={() => openPaymentApp('GPAY', money)}
-            name={'GPAY'}
-          />
+            <ImageButton
+              onPress={() => openPaymentApp('GPAY', money)}
+              name={'GPAY'}
+            />
 
-          <ImageButton
-            onPress={() => {
-              openPaymentApp('PAYTM', money);
-            }}
-            name={'PAYTM'}
-          />
+            <ImageButton
+              onPress={() => {
+                openPaymentApp('PAYTM', money);
+              }}
+              name={'PAYTM'}
+            />
 
-          <ImageButton
-            onPress={() => openPaymentApp('BHIM', money)}
-            name={'BHIM'}
-          />
-        </View>
+            <ImageButton
+              onPress={() => openPaymentApp('BHIM', money)}
+              name={'BHIM'}
+            />
+          </View>
+        </>) : <>
+          <Text>Coming Soon</Text>
+        </>}
+
         <View style={styles.modalButtons}>
           <Text style={commonStyles.textButton} onPress={hideDialog}>Cancel</Text>
         </View>

@@ -91,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
         <CustomHeaderRight navigation={navigation} showSettings={true} reRender={loaded} />
       ),
     });
-  }, [navigation, headerBackground]);
+  }, [navigation, headerBackground, loaded]);
 
   const confirmExit = useCallback(() => {
     Alert.alert("Hold on!", "Do you want to Exit Stothram?", [
