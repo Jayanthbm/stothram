@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import NetInfo from "@react-native-community/netinfo";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Alert,
   BackHandler,
@@ -9,19 +10,18 @@ import {
   View,
 } from "react-native";
 import Admob from "../components/admob";
-import { ThemeContext } from "../contexts/themeContext";
-import { commonStyles } from "../styles/styles";
+import CustomIcon from "../components/customIcon";
 import CustomHeaderRight from "../components/headerRight";
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
+import { ThemeContext } from "../contexts/themeContext";
 import { commonNavigationOptions } from "../navigationOptions";
+import { commonStyles } from "../styles/styles";
 import {
   dataHelper,
   preFetcher,
   storeItem,
   storeJSON,
 } from "../utils/dataUtils";
-import CustomIcon from "../components/customIcon";
-import NetInfo from "@react-native-community/netinfo";
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor = "#FFF", textColor) => {
   return StyleSheet.create({

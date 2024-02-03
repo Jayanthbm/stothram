@@ -1,20 +1,20 @@
-import React, {useContext, useEffect, useState} from 'react';
+import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Button,
   Linking,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  StyleSheet,
 } from 'react-native';
-import PropTypes from 'prop-types';
-import {ThemeContext} from '../contexts/themeContext';
-import {getItem, getJSON, isInternetConnected} from '../utils/dataUtils';
+import { CACHED_DATA_KEYS } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { getItem, getJSON, isInternetConnected } from '../utils/dataUtils';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
 import ImageButton from './imageButton';
-import {CACHED_DATA_KEYS} from '../constants';
 
 const styles = StyleSheet.create({
   headerRightContainer: {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Navigation from './src/Navigation';
-import {ThemeProvider} from './src/contexts/themeContext';
+import { ThemeProvider } from './src/contexts/themeContext';
 
 const App = () => {
   return (

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React, { useContext } from "react";
 import {
   StyleSheet,
@@ -6,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import PropTypes from "prop-types";
 import { ThemeContext } from "../contexts/themeContext";
 
 const styles = StyleSheet.create({

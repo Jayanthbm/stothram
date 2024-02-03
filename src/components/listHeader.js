@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
 import PropTypes from "prop-types"; // Import PropTypes
+import React, { useContext } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { ThemeContext } from "../contexts/themeContext";
 import CustomIcon from './customIcon';
 

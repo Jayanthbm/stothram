@@ -1,23 +1,23 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import NetInfo from "@react-native-community/netinfo";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
+  FlatList,
   Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  FlatList,
 } from "react-native";
 import Admob from "../components/admob";
+import CustomIcon from "../components/customIcon";
 import CustomHeaderLeft from "../components/headerLeft";
 import CustomHeaderRight from "../components/headerRight";
 import { SCREEN_NAMES } from "../constants";
 import { ThemeContext } from "../contexts/themeContext";
 import { commonNavigationOptions } from "../navigationOptions";
-import { dataHelper, preFetcher } from "../utils/dataUtils";
 import { commonStyles } from "../styles/styles";
-import CustomIcon from "../components/customIcon";
-import NetInfo from "@react-native-community/netinfo";
+import { dataHelper, preFetcher } from "../utils/dataUtils";
 // Function to generate styles dynamically based on context values
 const generateStyles = (
   backgroundColor = "#FFF",

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
-import {Appearance, Platform, ToastAndroid} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Appearance, Platform, ToastAndroid } from 'react-native';
 
 // Constants for theme colors
 const darkBackground = '#5e5e5c';

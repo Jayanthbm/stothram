@@ -1,23 +1,23 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Button,
   ScrollView,
   Share,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
 } from "react-native";
 import { ThemeContext } from "../contexts/themeContext";
 
 import Admob from "../components/admob";
+import CustomIcon from "../components/customIcon";
 import CustomHeaderLeft from "../components/headerLeft";
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
-import { commonNavigationOptions } from "../navigationOptions";
-import { dataHelper } from "../utils/dataUtils";
 import ListHeader from "../components/listHeader";
 import ListItem from "../components/listItem";
-import CustomIcon from "../components/customIcon";
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
+import { commonNavigationOptions } from "../navigationOptions";
 import { commonStyles } from "../styles/styles";
+import { dataHelper } from "../utils/dataUtils";
 
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor, textColor) => {

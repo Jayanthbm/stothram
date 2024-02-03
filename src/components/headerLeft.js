@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { StyleSheet } from "react-native";
 import CustomIcon from "./customIcon";
 const styles = StyleSheet.create({

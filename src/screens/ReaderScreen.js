@@ -1,15 +1,15 @@
+import NetInfo from "@react-native-community/netinfo";
 import Slider from "@react-native-community/slider";
 import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View, FlatList } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 import Admob from "../components/admob";
 import CustomHeaderLeft from "../components/headerLeft";
 import CustomHeaderRight from "../components/headerRight";
 import { SCREEN_NAMES } from "../constants";
 import { ThemeContext } from "../contexts/themeContext";
 import { commonNavigationOptions } from "../navigationOptions";
-import { dataHelper } from "../utils/dataUtils";
 import { commonStyles } from "../styles/styles";
-import NetInfo from "@react-native-community/netinfo";
+import { dataHelper } from "../utils/dataUtils";
 
 const generateStyles = (
   backgroundColor = "#FFF",

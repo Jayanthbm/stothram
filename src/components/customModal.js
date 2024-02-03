@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { Modal, StyleSheet, View,Text } from "react-native";
 import PropTypes from "prop-types";
+import React, { useContext } from "react";
+import { Modal, StyleSheet, Text, View } from "react-native";
 import { ThemeContext } from "../contexts/themeContext";
 
 const styles = StyleSheet.create({

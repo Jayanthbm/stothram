@@ -2,7 +2,7 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import {View, Image} from 'react-native';
+import { Image, View } from 'react-native';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { GPAY_LOGO, PAYTM_LOGO, PHONEPE_LOGO, UPI_LOGO } from '../constants';
 
