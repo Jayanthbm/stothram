@@ -148,7 +148,10 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
             onPress={toggleDarkMode}
             name={darkmode ? 'sun' : 'moon'}
             size={26}
-            style={{color: darkmode ? 'orange' : '#fff'}}
+            style={{
+              ...styles.headerIcon,
+              color: darkmode ? 'orange' : '#fff'
+            }}
             library="Feather"
           />
         )}

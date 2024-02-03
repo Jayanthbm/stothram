@@ -59,8 +59,6 @@ const HomeScreen = ({ navigation }) => {
 
   const [types, setTypes] = useState([]);
 
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,7 +70,7 @@ const HomeScreen = ({ navigation }) => {
         if (fetchedData) {
           setTypes(fetchedData?.data);
           storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
-          storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.UPI_AMOUNTS);
+          storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
           preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
         }
       } catch (error) {
