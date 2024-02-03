@@ -1,4 +1,3 @@
-import NetInfo from "@react-native-community/netinfo";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Alert,
@@ -10,7 +9,7 @@ import {
   View,
 } from "react-native";
 import Admob from "../components/admob";
-import CustomIcon from "../components/customIcon";
+import CustomIcon from '../components/customIcon';
 import CustomHeaderRight from "../components/headerRight";
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
 import { ThemeContext } from "../contexts/themeContext";
@@ -23,7 +22,7 @@ import {
   storeJSON,
 } from "../utils/dataUtils";
 // Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor = "#FFF", textColor) => {
+const generateStyles = (backgroundColor = "#FFF") => {
   return StyleSheet.create({
     container: {
       ...commonStyles.container,
@@ -51,60 +50,37 @@ const generateStyles = (backgroundColor = "#FFF", textColor) => {
       color: "#fff",
       fontSize: 18,
     },
-    noDataText: {
-      fontSize: 20,
-      textAlign: "center",
-      color: textColor,
-    },
   });
 };
 
 const HomeScreen = ({ navigation }) => {
-  const { darkmode, backgroundColor, headerBackground, textColor } =
+  const { darkmode, backgroundColor, headerBackground } =
     useContext(ThemeContext);
 
   const [types, setTypes] = useState([]);
 
-  const [internetConncted, setInternetConnected] = useState(false);
 
-  // Define fetchData function outside of useEffect
-  const fetchData = useCallback(async () => {
-    try {
-      const fetchedData = await dataHelper(
-        CACHED_DATA_KEYS.HOME_SCREEN,
-        DATA_URLS.HOME_SCREEN,
-        SCREEN_NAMES.HOME_SCREEN
-      );
-      if (fetchedData) {
-        setTypes(fetchedData?.data);
-        storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
-        storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
-        preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedData = await dataHelper(
+          CACHED_DATA_KEYS.HOME_SCREEN,
+          DATA_URLS.HOME_SCREEN,
+          SCREEN_NAMES.HOME_SCREEN,
+        );
+        if (fetchedData) {
+          setTypes(fetchedData?.data);
+          storeItem('UPI_ID', fetchedData?.UPI_ID);
+          storeJSON('UPI_AMOUNTS', fetchedData?.UPI_AMOUNTS);
+          preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []);
-
-  // Subscribe for internet connection
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setInternetConnected(state.isConnected);
-    });
-    return unsubscribe;
-  }, []);
-
-  // Fetch data when internet connection is available and types are not already set
-  useEffect(() => {
-    if (internetConnected && types.length === 0) {
-      fetchData();
-    }
-  }, [internetConnected, fetchData]);
-
-  // Fetch data when the component mounts
-  useEffect(() => {
+    };
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   useEffect(() => {
     // Set navigation options when the headerBackground changes
@@ -143,7 +119,7 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   // Generate styles based on current context values
-  const styles = generateStyles(backgroundColor, textColor);
+  const styles = generateStyles(backgroundColor);
 
   const handleTypePress = useCallback(
     (type) => {
@@ -164,8 +140,7 @@ const HomeScreen = ({ navigation }) => {
     return (
       <TouchableOpacity
         onPress={() => handleTypePress(item)}
-        style={[styles.typeContainer, typeContainerStyle]}
-      >
+        style={[styles.typeContainer, typeContainerStyle]}>
         <View style={[styles.typeItem, typeItemStyle]}>
           <View style={styles.iconContainer}>
             <CustomIcon
@@ -191,17 +166,6 @@ const HomeScreen = ({ navigation }) => {
         numColumns={2}
         style={{
           marginTop: 25,
-        }}
-        ListEmptyComponent={() => {
-          if (types?.length === 0 && !internetConncted) {
-            return (
-              <View style={commonStyles.noDataContainer}>
-                <Text style={styles.noDataText}>
-                  Please connect to internet once to sync the data
-                </Text>
-              </View>
-            );
-          }
         }}
       />
       {/* Display Admob component */}

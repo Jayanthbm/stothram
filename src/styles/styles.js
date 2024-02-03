@@ -6,9 +6,4 @@ export const commonStyles = StyleSheet.create({
     marginLeft: 1,
     marginRight: 1,
   },
-  noDataContainer: {
-    marginTop: 20,
-    marginLeft: 5,
-    marginRight: 5,
-  },
 });

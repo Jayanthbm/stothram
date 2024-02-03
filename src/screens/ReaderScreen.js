@@ -1,19 +1,18 @@
-import NetInfo from "@react-native-community/netinfo";
-import Slider from "@react-native-community/slider";
-import React, { useContext, useEffect, useState } from "react";
-import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
-import Admob from "../components/admob";
-import CustomHeaderLeft from "../components/headerLeft";
-import CustomHeaderRight from "../components/headerRight";
-import { SCREEN_NAMES } from "../constants";
-import { ThemeContext } from "../contexts/themeContext";
-import { commonNavigationOptions } from "../navigationOptions";
-import { commonStyles } from "../styles/styles";
-import { dataHelper } from "../utils/dataUtils";
+import Slider from '@react-native-community/slider';
+import React, { useContext, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, FlatList } from 'react-native';
+import Admob from '../components/admob';
+import CustomHeaderLeft from '../components/headerLeft';
+import CustomHeaderRight from '../components/headerRight';
+import { SCREEN_NAMES } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { commonNavigationOptions } from '../navigationOptions';
+import { dataHelper } from '../utils/dataUtils';
+import { commonStyles } from '../styles/styles';
 
 const generateStyles = (
-  backgroundColor = "#FFF",
-  textColor = "#000",
+  backgroundColor = '#FFF',
+  textColor = '#000',
   darkmode = false,
   headerBackground,
   fontSize = 18
@@ -27,10 +26,10 @@ const generateStyles = (
       marginLeft: 7,
       marginRight: 2,
       marginBottom: 18,
-      borderBottomColor: darkmode ? "#b8b6ab" : "#8f8f8f",
+      borderBottomColor: darkmode ? '#b8b6ab' : '#8f8f8f',
     },
     lineStyle: {
-      fontWeight: "500",
+      fontWeight: '500',
       marginBottom: 4,
       fontSize: fontSize,
       color: textColor,
@@ -41,10 +40,10 @@ const generateStyles = (
       backgroundColor: headerBackground,
     },
     subHeadingText: {
-      color: "#fff",
+      color: '#fff',
       fontSize: 20,
-      textAlign: "center",
-      fontWeight: "500",
+      textAlign: 'center',
+      fontWeight: '500',
     },
   });
 };
@@ -65,10 +64,10 @@ const ReaderScreen = ({ navigation, route }) => {
   const { item } = route.params;
 
   // State variables for managing data and UI
-  const [title, setTitle] = useState("");
-  const [displayTitle, setDisplayTitle] = useState("");
+  const [title, setTitle] = useState('');
+  const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
-  const sliderColor = darkmode ? "#ab8b2c" : "#6200EE";
+  const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
 
   // useEffect to set navigation options
   useEffect(() => {
@@ -87,13 +86,13 @@ const ReaderScreen = ({ navigation, route }) => {
         const fetchedData = await dataHelper(
           item?.title,
           item?.dataUrl,
-          SCREEN_NAMES.READER_SCREEN
+          SCREEN_NAMES.READER_SCREEN,
         );
         if (fetchedData) {
           setReaderData(fetchedData);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
     setDisplayTitle(item.displayTitle);
@@ -109,7 +108,7 @@ const ReaderScreen = ({ navigation, route }) => {
     textColor,
     darkmode,
     headerBackground,
-    font
+    font,
   );
 
   const MemoizedParagraph = React.memo(({ data, styles }) => {
@@ -136,7 +135,7 @@ const ReaderScreen = ({ navigation, route }) => {
       {readerData && (
         <Slider
           value={font}
-          onValueChange={(value) => updateFont(value)}
+          onValueChange={value => updateFont(value)}
           minimumValue={15}
           maximumValue={40}
           step={3}
@@ -154,11 +153,11 @@ const ReaderScreen = ({ navigation, route }) => {
         data={readerData?.content}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => {
-          if (item?.type === "paragraph") {
+          if (item?.type === 'paragraph') {
             // Render paragraphs using MemoizedParagraph
             return <MemoizedParagraph data={item} styles={styles} />;
           }
-          if (item.type === "subheading") {
+          if (item.type === 'subheading') {
             // Render subheadings using MemoizedSubheading
             return <MemoizedSubheading data={item} styles={styles} />;
           }
@@ -169,5 +168,6 @@ const ReaderScreen = ({ navigation, route }) => {
     </View>
   );
 };
+
 
 export default ReaderScreen;

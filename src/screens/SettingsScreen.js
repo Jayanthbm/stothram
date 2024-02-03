@@ -10,7 +10,7 @@ import {
 import { ThemeContext } from "../contexts/themeContext";
 
 import Admob from "../components/admob";
-import CustomIcon from "../components/customIcon";
+import CustomIcon from '../components/customIcon';
 import CustomHeaderLeft from "../components/headerLeft";
 import ListHeader from "../components/listHeader";
 import ListItem from "../components/listItem";
@@ -130,9 +130,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
         />
 
         {/* Contributions */}
-        {contributions?.length > 0 ? (
-          <ListHeader title="Contributions" icon={"info"} />
-        ) : null}
+        <ListHeader title="Contributions" icon={"info"} />
         {contributions?.map(({ name, role }) => (
           <MemoizedListItem title={name} subtitle={role} key={name} />
         ))}
