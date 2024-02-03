@@ -13,7 +13,7 @@ const CustomHeaderLeft = ({ navigation }) => {
     <CustomIcon
       onPress={() => navigation.goBack()}
       name="chevron-left"
-      size={24}
+      size={30}
       library="Feather"
       style={styles.headerIcon}
     />

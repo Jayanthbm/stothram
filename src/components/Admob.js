@@ -10,7 +10,6 @@ let AD_UNITS = [
   'ca-app-pub-0714649342045057/1676398465',
   'ca-app-pub-0714649342045057/6338246941',
   'ca-app-pub-0714649342045057~1333332271',
-  'ca-app-pub-0714649342045057~1333332271'
 ];
 function generateId() {
   try {
@@ -27,7 +26,7 @@ const Admob = () => {
     <React.Fragment>
       {Platform.OS === 'android' ? (
         <GAMBannerAd
-          unitId={unitId}
+          unitId={"ca-app-pub-0714649342045057~1333332271"}
           sizes={[BannerAdSize.FULL_BANNER]}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,

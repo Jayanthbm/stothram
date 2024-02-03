@@ -27,7 +27,8 @@ const generateStyles = (backgroundColor, textColor) => {
       backgroundColor: backgroundColor,
     },
     shareContainer: {
-      marginTop: 12,
+      marginTop: 10,
+      marginBottom:10,
       alignItems: "center",
       flexDirection: "row",
       justifyContent: "center",
@@ -134,9 +135,6 @@ const SettingsScreen = React.memo(({ navigation }) => {
         {contributions?.map(({ name, role }) => (
           <MemoizedListItem title={name} subtitle={role} key={name} />
         ))}
-      </ScrollView>
-      {/* Share and Made in India section */}
-      <React.Fragment>
         <View style={styles.shareContainer}>
           <CustomIcon
             name="share"
@@ -144,13 +142,12 @@ const SettingsScreen = React.memo(({ navigation }) => {
             size={24}
             color={textColor}
           />
-          <Button
-            onPress={onShare}
-            title="Share App with friends/family"
-            color="#5098E6"
-            accessibilityLabel="Share App with friends/family"
-          />
+          <Text style={commonStyles.textButton} onPress={onShare}>Share App with friends/family</Text>
+
         </View>
+      </ScrollView>
+      {/* Share and Made in India section */}
+      <React.Fragment>
         <View style={styles.madeInIndiaContainer}>
           <Text style={styles.madeInIndiaContainerText}>Made With {""}</Text>
           {/* CustomIcon component for heart icon */}

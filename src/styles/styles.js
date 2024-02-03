@@ -6,4 +6,8 @@ export const commonStyles = StyleSheet.create({
     marginLeft: 1,
     marginRight: 1,
   },
+  textButton: {
+    color: '#5098E6',
+    fontSize:16
+  }
 });

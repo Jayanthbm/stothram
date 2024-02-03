@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { CACHED_DATA_KEYS } from '../constants';
 import { ThemeContext } from '../contexts/themeContext';
+import { commonStyles } from '../styles/styles';
 import { getItem, getJSON, isInternetConnected } from '../utils/dataUtils';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
@@ -112,9 +113,10 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
      `pay?pa=${upiId}&pn=${upidata?.payee_name}&tn=${
        upidata?.transaction_note
      }&am=${amnt}&cu=INR&mc=0000&tr=${genearteTransactionId()}`;
-   hideDialog();
-   setAmount(1);
-   setMoney(1);
+
+    hideDialog();
+    setAmount(1);
+    setMoney(1);
    try {
      await Linking.openURL(url);
    } catch (err) {
@@ -255,7 +257,7 @@ const CustomHeaderRight = ({navigation, showSettings, showViewToggle}) => {
           />
         </View>
         <View style={styles.modalButtons}>
-          <Button onPress={hideDialog} title="Cancel" color="#ccc" />
+          <Text style={commonStyles.textButton} onPress={hideDialog}>Cancel</Text>
         </View>
       </CustomModal>
     </>

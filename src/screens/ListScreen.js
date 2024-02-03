@@ -79,7 +79,7 @@ const generateStyles = (
     },
     cardImage: {
       width: 180,
-      height: 80,
+      height: 100,
       resizeMode: "cover",
     },
     cardTitle: {
