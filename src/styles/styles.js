@@ -19,8 +19,9 @@ export const COLOR_SCHEME = {
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    marginLeft: 1,
-    marginRight: 1,
+    paddingBottom: 10,
+    paddingLeft: 5,
+    paddingRight: 5,
   },
   textButton: {
     color: '#5098E6',
