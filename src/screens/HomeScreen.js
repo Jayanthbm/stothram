@@ -169,7 +169,7 @@ const HomeScreen = ({ navigation }) => {
         renderItem={renderTypeItem}
         numColumns={2}
         style={{
-          marginTop: 25,
+          flexDirection:'column-reverse'
         }}
       />
       {/* Display Admob component */}
