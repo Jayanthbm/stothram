@@ -67,4 +67,6 @@ yarn-error.log
 
 # App Releases
 
-/android/app/release
+/android/app/release/
+
+*.aab
