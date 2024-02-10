@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
+  BackHandler,
   FlatList,
   Image,
   StyleSheet,
@@ -129,6 +130,23 @@ const ListScreen = ({navigation, route}) => {
     });
   }, [navigation, title, darkmode]);
 
+   const confirmExit = useCallback(() => {
+     navigation.goBack();
+   }, [navigation]);
+
+   useEffect(() => {
+     // Handle hardware back press event
+     const backAction = () => {
+       // Confirm exit when the hardware back button is pressed
+       confirmExit();
+       return true;
+     };
+     const backHandler = BackHandler.addEventListener(
+       'hardwareBackPress',
+       backAction,
+     );
+     return () => backHandler.remove();
+   }, []);
   // Set Title and Data URL
   useEffect(() => {
     setTitle(type?.title);

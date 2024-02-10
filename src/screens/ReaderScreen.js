@@ -1,14 +1,14 @@
 import Slider from '@react-native-community/slider';
-import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, Text, View, FlatList} from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { BackHandler, FlatList, StyleSheet, Text, View } from 'react-native';
 import Admob from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
-import {SCREEN_NAMES} from '../constants';
-import {ThemeContext} from '../contexts/themeContext';
-import {commonNavigationOptions} from '../navigationOptions';
-import {dataHelper} from '../utils/dataUtils';
-import {COLOR_SCHEME, commonStyles} from '../styles/styles';
+import { SCREEN_NAMES } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { commonNavigationOptions } from '../navigationOptions';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import { dataHelper } from '../utils/dataUtils';
 
 const generateStyles = (
   backgroundColor,
@@ -99,6 +99,26 @@ const ReaderScreen = ({navigation, route}) => {
       fetchData();
     }
   }, [item]);
+
+
+
+  const confirmExit = useCallback(() => {
+   navigation.goBack();
+  }, [navigation]);
+
+  useEffect(() => {
+    // Handle hardware back press event
+    const backAction = () => {
+      // Confirm exit when the hardware back button is pressed
+      confirmExit();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
 
   // Generate styles based on current context values
   const styles = generateStyles(
