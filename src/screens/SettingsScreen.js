@@ -16,7 +16,7 @@ import ListHeader from "../components/listHeader";
 import ListItem from "../components/listItem";
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
 import { commonNavigationOptions } from "../navigationOptions";
-import { commonStyles } from "../styles/styles";
+import { COLOR_SCHEME, commonStyles } from "../styles/styles";
 import { dataHelper } from "../utils/dataUtils";
 
 // Function to generate styles dynamically based on context values
@@ -52,9 +52,6 @@ const generateStyles = (backgroundColor, textColor) => {
 
 const SettingsScreen = React.memo(({ navigation }) => {
   const {
-    backgroundColor,
-    textColor,
-    headerBackground,
     toggleDarkMode,
     darkmode,
     toggleDarkSwitch,
@@ -86,11 +83,14 @@ const SettingsScreen = React.memo(({ navigation }) => {
   useEffect(() => {
     // Set navigation options including the headerLeft component
     navigation.setOptions({
-      title: "Settings",
-      ...commonNavigationOptions(headerBackground),
+      title: 'Settings',
+      ...commonNavigationOptions(
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+      ),
       headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
     });
-  }, [navigation, headerBackground]);
+  }, [navigation, darkmode]);
 
   // Function to handle sharing the app
   const onShare = async () => {
@@ -105,7 +105,10 @@ const SettingsScreen = React.memo(({ navigation }) => {
   };
 
   // Generate styles based on current context values
-  const styles = generateStyles(backgroundColor, textColor);
+  const styles = generateStyles(
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+  );
 
   // Memoized version of ListItem component
   const MemoizedListItem = React.memo(ListItem);
@@ -114,7 +117,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
     <View style={styles.container}>
       <ScrollView>
         {/* General Settings */}
-        <ListHeader title="General Settings" icon={"settings"} />
+        <ListHeader title="General Settings" icon={'settings'} />
 
         {/* Memoized version of ListItem */}
         <MemoizedListItem
@@ -131,8 +134,8 @@ const SettingsScreen = React.memo(({ navigation }) => {
         />
 
         {/* Contributions */}
-        <ListHeader title="Contributions" icon={"info"} />
-        {contributions?.map(({ name, role }) => (
+        <ListHeader title="Contributions" icon={'info'} />
+        {contributions?.map(({name, role}) => (
           <MemoizedListItem title={name} subtitle={role} key={name} />
         ))}
         <View style={styles.shareContainer}>
@@ -140,16 +143,17 @@ const SettingsScreen = React.memo(({ navigation }) => {
             name="share"
             library="Feather"
             size={24}
-            color={textColor}
+            color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
           />
-          <Text style={commonStyles.textButton} onPress={onShare}>Share App with friends/family</Text>
-
+          <Text style={commonStyles.textButton} onPress={onShare}>
+            Share App with friends/family
+          </Text>
         </View>
       </ScrollView>
       {/* Share and Made in India section */}
       <React.Fragment>
         <View style={styles.madeInIndiaContainer}>
-          <Text style={styles.madeInIndiaContainerText}>Made With {""}</Text>
+          <Text style={styles.madeInIndiaContainerText}>Made With {''}</Text>
           {/* CustomIcon component for heart icon */}
           <CustomIcon
             name="heart"

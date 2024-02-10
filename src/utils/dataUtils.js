@@ -21,7 +21,7 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
     const lastFetchTime = await getItem(`${KEYNAME}_lastFetchTime`);
 
     if (cachedData) {
-      console.log(`Fetching ${KEYNAME} data from cache`);
+      // console.log(`Fetching ${KEYNAME} data from cache`);
       // Check if it's time to fetch from online
       const currentTime = new Date().getTime();
       const shouldFetchFromOnline = compareTimeDifference(

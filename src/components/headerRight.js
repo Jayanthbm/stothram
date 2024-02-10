@@ -12,44 +12,52 @@ import {
 } from 'react-native';
 import { CACHED_DATA_KEYS } from '../constants';
 import { ThemeContext } from '../contexts/themeContext';
-import { commonStyles } from '../styles/styles';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { getItem, getJSON } from '../utils/dataUtils';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
 import ImageButton from './imageButton';
 
-const styles = StyleSheet.create({
-  headerRightContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  headerIcon: {
-    marginRight: 12,
-    marginLeft: 12,
-    color: '#fff',
-  },
-  radioButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  radioButtonLabel: {
-    marginTop: 5,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 20,
-  },
-});
+const generateStyles = (headertext) => {
+  return StyleSheet.create({
+    headerRightContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+    headerIcon: {
+      marginRight: 12,
+      marginLeft: 12,
+      color: headertext,
+    },
+    radioButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 10,
+      marginBottom: 10,
+    },
+    radioButtonLabel: {
+      marginTop: 5,
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      marginTop: 20,
+    },
+  });
+}
+
 
 const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender }) => {
-  const {darkmode, toggleDarkMode, darkSwitch, toggleViewType, textColor,viewType} =
-    useContext(ThemeContext);
+  const {
+    darkmode,
+    toggleDarkMode,
+    darkSwitch,
+    viewType,
+    toggleViewType,
+  } = useContext(ThemeContext);
   const [moneyModal, setMoneyModal] = useState(false);
 
   const netInfo = useNetInfo();
@@ -78,7 +86,7 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
       Alert.alert("Please connect to the internet");
       return;
     }
-    if (upiId === '') {
+    if (!upiId || upiId === '') {
       Alert.alert("Coming Soon");
       return;
     }
@@ -134,6 +142,10 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
     }
   };
 
+  const styles = generateStyles(
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+  );
+
   return (
     <>
       <View style={styles.headerRightContainer}>
@@ -160,7 +172,7 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
             size={26}
             style={{
               ...styles.headerIcon,
-              color: darkmode ? 'orange' : '#fff'
+              color: darkmode ? '#f1e408' : COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
             }}
             library="Feather"
           />
@@ -179,98 +191,130 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
         visible={moneyModal}
         onClose={hideDialog}
         title="Contribute to Stothram">
-        {upidata && upidata?.upi_amounts.length > 0 ? (<>
-          <Text style={{ color: textColor }}>Choose amount</Text>
-          <View style={styles.radioButtons}>
-            {upidata?.upi_amounts?.map(amount => (
+        {upidata && upidata?.upi_amounts.length > 0 ? (
+          <>
+            <Text
+              style={{
+                color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+              }}>
+              Choose amount
+            </Text>
+            <View style={styles.radioButtons}>
+              {upidata?.upi_amounts?.map(amount => (
+                <TouchableOpacity
+                  key={amount}
+                  onPress={() => {
+                    setAmount(amount);
+                    setMoney(amount);
+                  }}>
+                  <CustomIcon
+                    name="circle"
+                    size={20}
+                    library="FontAwesome"
+                    color={amount === money ? '#007BFF' : '#ccc'}
+                  />
+                  <Text
+                    style={[
+                      styles.radioButtonLabel,
+                      {
+                        color:
+                          COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                      },
+                    ]}>
+                    ₹{amount}
+                  </Text>
+                </TouchableOpacity>
+              ))}
               <TouchableOpacity
-                key={amount}
                 onPress={() => {
-                  setAmount(amount);
-                  setMoney(amount);
+                  setAmount('custom');
+                  setMoney(null);
                 }}>
                 <CustomIcon
                   name="circle"
                   size={20}
                   library="FontAwesome"
-                  color={amount === money ? '#007BFF' : '#ccc'}
+                  color={amount === 'custom' ? '#007BFF' : '#ccc'}
                 />
-                <Text style={[styles.radioButtonLabel, { color: textColor }]}>
-                  ₹{amount}
+                <Text
+                  style={[
+                    styles.radioButtonLabel,
+                    {
+                      color:
+                        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                    },
+                  ]}>
+                  Custom ₹
                 </Text>
               </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              onPress={() => {
-                setAmount('custom');
-                setMoney(null);
-              }}>
-              <CustomIcon
-                name="circle"
-                size={20}
-                library="FontAwesome"
-                color={amount === 'custom' ? '#007BFF' : '#ccc'}
+            </View>
+            {amount === 'custom' && (
+              <TextInput
+                label="Choose amount"
+                placeholder="Enter amount"
+                placeholderTextColor={
+                  COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor
+                }
+                value={money ? money.toString() : ''}
+                keyboardType="numeric"
+                onChangeText={text => setMoney(text)}
+                style={{
+                  paddingVertical: 3,
+                  fontSize: 18,
+                  borderColor:
+                    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
+                  borderWidth: 2,
+                  color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                  marginBottom: 10,
+                }}
               />
-              <Text style={[styles.radioButtonLabel, { color: textColor }]}>
-                Custom ₹
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {amount === 'custom' && (
-            <TextInput
-              label="Choose amount"
-              placeholder="Enter amount"
-              placeholderTextColor={textColor}
-              value={money ? money.toString() : ''}
-              keyboardType="numeric"
-              onChangeText={text => setMoney(text)}
+            )}
+            <Text
               style={{
-                paddingVertical: 3,
-                fontSize: 18,
-                borderColor: '#ccc',
-                borderWidth: 2,
-                color: textColor,
-                marginBottom: 10,
-              }}
-            />
-          )}
-          <Text style={{ color: textColor, textAlign: 'center' }}>
-            Choose App to pay
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              marginTop: 10,
-            }}>
-            <ImageButton
-              onPress={() => openPaymentApp('PHONEPE', money)}
-              name={'PHONEPE'}
-            />
+                color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                textAlign: 'center',
+              }}>
+              Choose App to pay
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+                marginTop: 10,
+              }}>
+              <ImageButton
+                onPress={() => openPaymentApp('PHONEPE', money)}
+                name={'PHONEPE'}
+              />
 
-            <ImageButton
-              onPress={() => openPaymentApp('GPAY', money)}
-              name={'GPAY'}
-            />
+              <ImageButton
+                onPress={() => openPaymentApp('GPAY', money)}
+                name={'GPAY'}
+              />
 
-            <ImageButton
-              onPress={() => {
-                openPaymentApp('PAYTM', money);
-              }}
-              name={'PAYTM'}
-            />
+              <ImageButton
+                onPress={() => {
+                  openPaymentApp('PAYTM', money);
+                }}
+                name={'PAYTM'}
+              />
 
-            <ImageButton
-              onPress={() => openPaymentApp('BHIM', money)}
-              name={'BHIM'}
-            />
-          </View>
-        </>) : <>
-          <Text>Coming Soon</Text>
-        </>}
+              <ImageButton
+                onPress={() => openPaymentApp('BHIM', money)}
+                name={'BHIM'}
+              />
+            </View>
+          </>
+        ) : (
+          <>
+            <Text>Coming Soon</Text>
+          </>
+        )}
 
         <View style={styles.modalButtons}>
-          <Text style={commonStyles.textButton} onPress={hideDialog}>Cancel</Text>
+          <Text style={commonStyles.textButton} onPress={hideDialog}>
+            Cancel
+          </Text>
         </View>
       </CustomModal>
     </>

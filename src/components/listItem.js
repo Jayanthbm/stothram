@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { ThemeContext } from "../contexts/themeContext";
+import { COLOR_SCHEME } from "../styles/styles";
 
 const styles = StyleSheet.create({
   listItemContainer: {
@@ -31,11 +32,16 @@ const styles = StyleSheet.create({
 });
 
 const ListItem = ({ title, subtitle, toggle, state }) => {
-  const { textColor, darkmode } = useContext(ThemeContext);
+  const {darkmode} =
+    useContext(ThemeContext);
 
   // Provide default values for optional props
   const renderSubtitle = subtitle && (
-    <Text style={[styles.listItemSubtitle, { color: textColor }]}>
+    <Text
+      style={[
+        styles.listItemSubtitle,
+        {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor},
+      ]}>
       {subtitle}
     </Text>
   );
@@ -44,15 +50,22 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
     <TouchableOpacity
       onPress={toggle}
       style={styles.listItemContainer}
-      underlayColor={darkmode ? "#9e9b92" : "#b8b6ab"}
-    >
+      underlayColor={
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground
+      }>
       <View
         style={[
           styles.listItemContent,
-          { borderBottomColor: darkmode ? "#b8b6ab" : "#8f8f8f" },
-        ]}
-      >
-        <Text style={[styles.listItemTitle, { color: textColor }]}>
+          {
+            borderBottomColor:
+              COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].borderColor,
+          },
+        ]}>
+        <Text
+          style={[
+            styles.listItemTitle,
+            {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor},
+          ]}>
           {title}
         </Text>
         {renderSubtitle}
@@ -61,8 +74,15 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
         <Switch
           value={state}
           onValueChange={toggle}
-          trackColor={{ false: "#ccc", true: "#81b0ff" }}
-          thumbColor={state ? "#5098E6" : "#f4f3f4"}
+          trackColor={{
+            false: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
+            true: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+          }}
+          thumbColor={
+            state
+              ? COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground
+              : COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext
+          }
         />
       )}
     </TouchableOpacity>

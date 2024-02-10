@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { useContext } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 import { ThemeContext } from "../contexts/themeContext";
+import { COLOR_SCHEME } from "../styles/styles";
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
 });
 
 const CustomModal = ({ visible, onClose,title, children }) => {
-  const {darkmode, textColor, backgroundColor} = useContext(ThemeContext);
+  const {darkmode} = useContext(ThemeContext);
 
   return (
     <Modal
@@ -33,9 +34,15 @@ const CustomModal = ({ visible, onClose,title, children }) => {
       visible={visible}
       onRequestClose={onClose}>
       <View style={styles.modalContainer}>
-        <View style={[styles.modalContent, {backgroundColor: backgroundColor}]}>
+        <View style={[styles.modalContent, {backgroundColor: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor}]}>
           <>
-            <Text style={[styles.modalTitle, {color: textColor}]}>{title}</Text>
+            <Text
+              style={[
+                styles.modalTitle,
+                {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor},
+              ]}>
+              {title}
+            </Text>
             {children}
           </>
         </View>

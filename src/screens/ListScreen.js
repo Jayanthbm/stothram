@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -8,34 +8,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Admob from "../components/admob";
+import Admob from '../components/admob';
 import CustomIcon from '../components/customIcon';
-import CustomHeaderLeft from "../components/headerLeft";
-import CustomHeaderRight from "../components/headerRight";
-import { SCREEN_NAMES } from "../constants";
-import { ThemeContext } from "../contexts/themeContext";
-import { commonNavigationOptions } from "../navigationOptions";
-import { commonStyles } from "../styles/styles";
-import { dataHelper, preFetcher } from "../utils/dataUtils";
+import CustomHeaderLeft from '../components/headerLeft';
+import CustomHeaderRight from '../components/headerRight';
+import { SCREEN_NAMES } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { commonNavigationOptions } from '../navigationOptions';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import { dataHelper, preFetcher } from '../utils/dataUtils';
 // Function to generate styles dynamically based on context values
-const generateStyles = (
-  backgroundColor = "#FFF",
-  textColor,
-  darkmode = false
-) => {
+const generateStyles = (backgroundColor, textColor, borderColor) => {
   return StyleSheet.create({
     container: {
       ...commonStyles.container,
       backgroundColor: backgroundColor,
     },
     searchContainer: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingHorizontal: 15,
       marginBottom: 10,
       elevation: 2,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
+      shadowColor: backgroundColor,
+      shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.3,
       shadowRadius: 2,
       backgroundColor: backgroundColor,
@@ -56,36 +52,36 @@ const generateStyles = (
       paddingBottom: 5,
       paddingLeft: 5,
       borderBottomWidth: 2,
-      borderBottomColor: darkmode ? "#b8b6ab" : "#8f8f8f",
+      borderBottomColor: borderColor,
     },
     listTextStyle: {
       fontSize: 16,
-      fontWeight: "700",
+      fontWeight: '700',
       color: textColor,
     },
     cardContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       marginLeft: 2,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
     },
     card: {
-      width: "48%",
+      width: '48%',
       borderWidth: 1,
       borderRadius: 8,
       marginBottom: 10,
-      overflow: "hidden",
-      borderColor: darkmode ? "#b8b6ab" : "#8f8f8f",
+      overflow: 'hidden',
+      borderColor: borderColor,
     },
     cardImage: {
       width: 180,
       height: 100,
-      resizeMode: "cover",
+      resizeMode: 'cover',
     },
     cardTitle: {
       fontSize: 14,
-      fontWeight: "700",
-      textAlign: "center",
+      fontWeight: '700',
+      textAlign: 'center',
       padding: 5,
       color: textColor,
     },
@@ -96,22 +92,21 @@ const generateStyles = (
     },
     noDataText: {
       fontSize: 20,
-      textAlign: "center",
+      textAlign: 'center',
       color: textColor,
     },
     noDataTextButton: {
       fontSize: 20,
-      textAlign: "center",
-      color: "#ADD8E6",
+      textAlign: 'center',
+      color: '#ADD8E6',
     },
   });
 };
 // ListScreen Component
-const ListScreen = ({ navigation, route }) => {
+const ListScreen = ({navigation, route}) => {
   // Context and State
-  const { backgroundColor, headerBackground, textColor, darkmode, viewType } =
-    useContext(ThemeContext);
-  const { type } = route.params;
+  const {darkmode, viewType} = useContext(ThemeContext);
+  const {type} = route.params;
   const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
@@ -123,13 +118,16 @@ const ListScreen = ({ navigation, route }) => {
   useEffect(() => {
     navigation.setOptions({
       title: title,
-      ...commonNavigationOptions(headerBackground),
+      ...commonNavigationOptions(
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+      ),
       headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
       headerRight: () => (
         <CustomHeaderRight navigation={navigation} showViewToggle={true} />
       ),
     });
-  }, [navigation, title, headerBackground]);
+  }, [navigation, title, darkmode]);
 
   // Set Title and Data URL
   useEffect(() => {
@@ -180,20 +178,24 @@ const ListScreen = ({ navigation, route }) => {
   // Handle Item Click
   const handleItemClick = useCallback(
     item => {
-      navigation.navigate('Reader', { item });
+      navigation.navigate('Reader', {item});
     },
     [navigation],
   );
 
   // Generate styles based on current context values
-  const styles = generateStyles(backgroundColor, textColor, darkmode);
+  const styles = generateStyles(
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].borderColor,
+  );
 
   // Define a key extractor function
   const keyExtractor = useCallback((item, index) => index.toString(), []);
   // Define renderItem functions for list and card views
   // Memoized ListItem Component
-  const MemoizedListItem = React.memo(({ item }) => {
-    const { displayTitle } = item;
+  const MemoizedListItem = React.memo(({item}) => {
+    const {displayTitle} = item;
     return (
       <TouchableOpacity
         style={styles.listItem}
@@ -203,7 +205,7 @@ const ListScreen = ({ navigation, route }) => {
     );
   });
   // Memoized CardItem Component
-  const MemoizedCardItem = React.memo(({ item, index }) => (
+  const MemoizedCardItem = React.memo(({item, index}) => (
     <TouchableOpacity
       style={[
         styles.card,
@@ -231,13 +233,13 @@ const ListScreen = ({ navigation, route }) => {
         <CustomIcon
           name="search"
           size={26}
-          color={textColor}
+          color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
           style={styles.searchIcon}
           library="Feather"
         />
         <TextInput
           placeholder="Search"
-          placeholderTextColor={textColor}
+          placeholderTextColor={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
           onChangeText={handleSearch}
           value={searchValue}
           style={styles.searchInput}
@@ -246,7 +248,7 @@ const ListScreen = ({ navigation, route }) => {
       <FlatList
         data={filteredData}
         keyExtractor={keyExtractor}
-        renderItem={({ item, index }) =>
+        renderItem={({item, index}) =>
           viewType === 'list' ? (
             <MemoizedListItem item={item} />
           ) : (

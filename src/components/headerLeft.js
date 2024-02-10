@@ -1,14 +1,18 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet } from "react-native";
+import { ThemeContext } from "../contexts/themeContext";
+import { COLOR_SCHEME } from "../styles/styles";
 import CustomIcon from "./customIcon";
-const styles = StyleSheet.create({
-  headerIcon: {
-    marginLeft: 15,
-    color: "#fff",
-  },
-});
 const CustomHeaderLeft = ({ navigation }) => {
+  const { darkmode } = useContext(ThemeContext);
+  const styles = StyleSheet.create({
+    headerIcon: {
+      marginLeft: 15,
+      color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+    },
+  });
+
   const renderButton = navigation.goBack && (
     <CustomIcon
       onPress={() => navigation.goBack()}
@@ -21,6 +25,7 @@ const CustomHeaderLeft = ({ navigation }) => {
 
   return renderButton;
 };
+
 
 CustomHeaderLeft.propTypes = {
   navigation: PropTypes.object.isRequired,

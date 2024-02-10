@@ -2,6 +2,7 @@ import PropTypes from "prop-types"; // Import PropTypes
 import React, { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ThemeContext } from "../contexts/themeContext";
+import { COLOR_SCHEME } from "../styles/styles";
 import CustomIcon from './customIcon';
 
 const styles = StyleSheet.create({
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 const ListHeader = ({ title, icon }) => {
-  const { textColor } = useContext(ThemeContext);
+  const { darkmode } = useContext(ThemeContext);
 
   // Provide a default icon if not passed
   const iconName = icon || "info";
@@ -34,9 +35,9 @@ const ListHeader = ({ title, icon }) => {
         library="Feather"
         name={iconName}
         style={styles.listHeaderIcon}
-        color={textColor}
+        color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
       />
-      <Text style={[styles.listHeaderText, {color: textColor}]}>{title}</Text>
+      <Text style={[styles.listHeaderText, {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}]}>{title}</Text>
     </View>
   );
 };

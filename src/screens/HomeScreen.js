@@ -14,7 +14,7 @@ import CustomHeaderRight from "../components/headerRight";
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
 import { ThemeContext } from "../contexts/themeContext";
 import { commonNavigationOptions } from "../navigationOptions";
-import { commonStyles } from "../styles/styles";
+import { COLOR_SCHEME, commonStyles } from "../styles/styles";
 import {
   dataHelper,
   preFetcher,
@@ -22,7 +22,7 @@ import {
   storeJSON,
 } from "../utils/dataUtils";
 // Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor = "#FFF") => {
+const generateStyles = (backgroundColor) => {
   return StyleSheet.create({
     container: {
       ...commonStyles.container,
@@ -54,7 +54,7 @@ const generateStyles = (backgroundColor = "#FFF") => {
 };
 
 const HomeScreen = ({ navigation }) => {
-  const { darkmode, backgroundColor, headerBackground } =
+  const {darkmode} =
     useContext(ThemeContext);
 
   const [types, setTypes] = useState([]);
@@ -85,13 +85,17 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     // Set navigation options when the headerBackground changes
     navigation.setOptions({
-      title: "Stothram",
-      ...commonNavigationOptions(headerBackground),
+      title: 'Stothram',
+      ...commonNavigationOptions(COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground, COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext),
       headerRight: () => (
-        <CustomHeaderRight navigation={navigation} showSettings={true} reRender={loaded} />
+        <CustomHeaderRight
+          navigation={navigation}
+          showSettings={true}
+          reRender={loaded}
+        />
       ),
     });
-  }, [navigation, headerBackground, loaded]);
+  }, [navigation,darkmode,loaded]);
 
   const confirmExit = useCallback(() => {
     Alert.alert("Hold on!", "Do you want to Exit Stothram?", [
@@ -119,7 +123,7 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   // Generate styles based on current context values
-  const styles = generateStyles(backgroundColor);
+  const styles = generateStyles(COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor);
 
   const handleTypePress = useCallback(
     (type) => {
