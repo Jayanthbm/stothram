@@ -1,6 +1,6 @@
-import { useNetInfo } from "@react-native-community/netinfo";
+import {useNetInfo} from '@react-native-community/netinfo';
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Alert,
   Linking,
@@ -10,15 +10,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { CACHED_DATA_KEYS } from '../constants';
-import { ThemeContext } from '../contexts/themeContext';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import { getItem, getJSON } from '../utils/dataUtils';
+import {CACHED_DATA_KEYS} from '../constants';
+import {ThemeContext} from '../contexts/themeContext';
+import {COLOR_SCHEME, commonStyles} from '../styles/styles';
+import {
+  compareTimeDifference,
+  getItem,
+  getJSON,
+  storeItem,
+} from '../utils/dataUtils';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
 import ImageButton from './imageButton';
 
-const generateStyles = (headertext) => {
+const generateStyles = headertext => {
   return StyleSheet.create({
     headerRightContainer: {
       display: 'flex',
@@ -47,17 +52,16 @@ const generateStyles = (headertext) => {
       marginTop: 20,
     },
   });
-}
+};
 
-
-const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender }) => {
-  const {
-    darkmode,
-    toggleDarkMode,
-    darkSwitch,
-    viewType,
-    toggleViewType,
-  } = useContext(ThemeContext);
+const CustomHeaderRight = ({
+  navigation,
+  showSettings,
+  showViewToggle,
+  reRender,
+}) => {
+  const {darkmode, toggleDarkMode, darkSwitch, viewType, toggleViewType} =
+    useContext(ThemeContext);
   const [moneyModal, setMoneyModal] = useState(false);
 
   const netInfo = useNetInfo();
@@ -81,18 +85,42 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
     init();
   }, [reRender]);
 
-  const showDialog = () => {
+  const showDialog = async () => {
     if (!netInfo.isConnected) {
-      Alert.alert("Please connect to the internet");
+      Alert.alert('Please connect to the internet');
       return;
     }
     if (!upiId || upiId === '') {
-      Alert.alert("Coming Soon");
+      Alert.alert('Coming Soon');
       return;
     }
-    setMoneyModal(true)
+    setMoneyModal(true);
+    await storeItem(CACHED_DATA_KEYS.MONEY_POPUP, 'true');
+    await storeItem(
+      `${CACHED_DATA_KEYS.MONEY_POPUP}_lastFetchTime`,
+      new Date().getTime().toString(),
+    );
   };
 
+  useEffect(() => {
+    async function init() {
+      const lastFetchTime = await getItem(
+        `${CACHED_DATA_KEYS.MONEY_POPUP}_lastFetchTime`,
+      );
+      const currentTime = new Date().getTime();
+      const shouldShouldPopUp = compareTimeDifference(
+        currentTime,
+        lastFetchTime,
+        30 * 24 * 60 * 60 * 1000, // 30 days
+      );
+      if (shouldShouldPopUp) {
+        showDialog();
+      }
+    }
+    if (upiId && upiId !== '') {
+      init();
+    }
+  }, [upiId]);
   //generate 10 letter transaction id include letter and numbers
   function genearteTransactionId() {
     var text = '';
@@ -129,7 +157,8 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
 
     url =
       url +
-      `pay?pa=${upiId}&pn=${upidata?.payee_name}&tn=${upidata?.transaction_note
+      `pay?pa=${upiId}&pn=${upidata?.payee_name}&tn=${
+        upidata?.transaction_note
       }&am=${amnt}&cu=INR&mc=0000&tr=${genearteTransactionId()}`;
 
     hideDialog();
@@ -172,7 +201,9 @@ const CustomHeaderRight = ({ navigation, showSettings, showViewToggle, reRender 
             size={26}
             style={{
               ...styles.headerIcon,
-              color: darkmode ? '#f1e408' : COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+              color: darkmode
+                ? '#f1e408'
+                : COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
             }}
             library="Feather"
           />
