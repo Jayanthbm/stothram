@@ -1,6 +1,6 @@
-import {useNetInfo} from '@react-native-community/netinfo';
+import { useNetInfo } from '@react-native-community/netinfo';
 import PropTypes from 'prop-types';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Alert,
   Linking,
@@ -10,9 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {CACHED_DATA_KEYS} from '../constants';
-import {ThemeContext} from '../contexts/themeContext';
-import {COLOR_SCHEME, commonStyles} from '../styles/styles';
+import { CACHED_DATA_KEYS } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import {
   compareTimeDifference,
   getItem,
@@ -107,6 +107,9 @@ const CustomHeaderRight = ({
       const lastFetchTime = await getItem(
         `${CACHED_DATA_KEYS.MONEY_POPUP}_lastFetchTime`,
       );
+      if (!lastFetchTime) {
+        showDialog();
+      }
       const currentTime = new Date().getTime();
       const shouldShouldPopUp = compareTimeDifference(
         currentTime,
