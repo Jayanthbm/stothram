@@ -8,10 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* StothramTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* StothramTests.m */; };
+		09B0FB45A3F67AEC3CACFEFF /* libPods-Stothram.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 32940EA9326DFE3BA440F7CD /* libPods-Stothram.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		5EBEDD4D2B67F07400303C6F /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD4C2B67F07400303C6F /* AntDesign.ttf */; };
+		5EBEDD4E2B67F07400303C6F /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD4C2B67F07400303C6F /* AntDesign.ttf */; };
+		5EBEDD502B67F08300303C6F /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD4F2B67F08300303C6F /* Feather.ttf */; };
+		5EBEDD512B67F08300303C6F /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD4F2B67F08300303C6F /* Feather.ttf */; };
+		5EBEDD532B67F09100303C6F /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD522B67F09100303C6F /* FontAwesome.ttf */; };
+		5EBEDD542B67F09100303C6F /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD522B67F09100303C6F /* FontAwesome.ttf */; };
+		5EBEDD562B67F09F00303C6F /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD552B67F09F00303C6F /* MaterialCommunityIcons.ttf */; };
+		5EBEDD572B67F0A000303C6F /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EBEDD552B67F09F00303C6F /* MaterialCommunityIcons.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		AFC5986B3D77F1C2D32B8C10 /* libPods-Stothram-StothramTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9926B8BC335D81EFE15D025F /* libPods-Stothram-StothramTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,7 +44,17 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Stothram/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Stothram/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Stothram/main.m; sourceTree = "<group>"; };
+		29B016136BFDC4CC80F397C1 /* Pods-Stothram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stothram.release.xcconfig"; path = "Target Support Files/Pods-Stothram/Pods-Stothram.release.xcconfig"; sourceTree = "<group>"; };
+		32940EA9326DFE3BA440F7CD /* libPods-Stothram.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Stothram.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		56663478EE5FF03CF9F9A922 /* Pods-Stothram-StothramTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stothram-StothramTests.release.xcconfig"; path = "Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests.release.xcconfig"; sourceTree = "<group>"; };
+		5E95B49127B3B5AF2258815D /* Pods-Stothram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stothram.debug.xcconfig"; path = "Target Support Files/Pods-Stothram/Pods-Stothram.debug.xcconfig"; sourceTree = "<group>"; };
+		5EBEDD4C2B67F07400303C6F /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		5EBEDD4F2B67F08300303C6F /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		5EBEDD522B67F09100303C6F /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		5EBEDD552B67F09F00303C6F /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Stothram/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9926B8BC335D81EFE15D025F /* libPods-Stothram-StothramTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Stothram-StothramTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B0D2B738A028265EC22E013 /* Pods-Stothram-StothramTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stothram-StothramTests.debug.xcconfig"; path = "Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -43,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFC5986B3D77F1C2D32B8C10 /* libPods-Stothram-StothramTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09B0FB45A3F67AEC3CACFEFF /* libPods-Stothram.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +98,7 @@
 		13B07FAE1A68108700A75B9A /* Stothram */ = {
 			isa = PBXGroup;
 			children = (
+				5EBEDD4B2B67F04600303C6F /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -90,8 +113,21 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				32940EA9326DFE3BA440F7CD /* libPods-Stothram.a */,
+				9926B8BC335D81EFE15D025F /* libPods-Stothram-StothramTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5EBEDD4B2B67F04600303C6F /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				5EBEDD552B67F09F00303C6F /* MaterialCommunityIcons.ttf */,
+				5EBEDD522B67F09100303C6F /* FontAwesome.ttf */,
+				5EBEDD4F2B67F08300303C6F /* Feather.ttf */,
+				5EBEDD4C2B67F07400303C6F /* AntDesign.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -128,6 +164,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
+				5E95B49127B3B5AF2258815D /* Pods-Stothram.debug.xcconfig */,
+				29B016136BFDC4CC80F397C1 /* Pods-Stothram.release.xcconfig */,
+				9B0D2B738A028265EC22E013 /* Pods-Stothram-StothramTests.debug.xcconfig */,
+				56663478EE5FF03CF9F9A922 /* Pods-Stothram-StothramTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -139,9 +179,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "StothramTests" */;
 			buildPhases = (
+				4FB8C52A30C31A27A41E02AB /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				7FE5FE5F77C81540FC6A5C8A /* [CP] Embed Pods Frameworks */,
+				46C2E1F88BC410750C099F10 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -157,10 +200,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Stothram" */;
 			buildPhases = (
+				5BDDB67357330D77DB6F0B33 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				26F0F5DEFE37D88FAA698E04 /* [CP] Embed Pods Frameworks */,
+				66CD77D987080BF4FCF6B386 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -177,6 +223,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -212,6 +259,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EBEDD512B67F08300303C6F /* Feather.ttf in Resources */,
+				5EBEDD4E2B67F07400303C6F /* AntDesign.ttf in Resources */,
+				5EBEDD572B67F0A000303C6F /* MaterialCommunityIcons.ttf in Resources */,
+				5EBEDD542B67F09100303C6F /* FontAwesome.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,7 +270,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EBEDD4D2B67F07400303C6F /* AntDesign.ttf in Resources */,
+				5EBEDD532B67F09100303C6F /* FontAwesome.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				5EBEDD502B67F08300303C6F /* Feather.ttf in Resources */,
+				5EBEDD562B67F09F00303C6F /* MaterialCommunityIcons.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,6 +297,118 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		26F0F5DEFE37D88FAA698E04 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram/Pods-Stothram-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram/Pods-Stothram-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stothram/Pods-Stothram-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		46C2E1F88BC410750C099F10 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4FB8C52A30C31A27A41E02AB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Stothram-StothramTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5BDDB67357330D77DB6F0B33 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Stothram-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		66CD77D987080BF4FCF6B386 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram/Pods-Stothram-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram/Pods-Stothram-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stothram/Pods-Stothram-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7FE5FE5F77C81540FC6A5C8A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stothram-StothramTests/Pods-Stothram-StothramTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -276,6 +443,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9B0D2B738A028265EC22E013 /* Pods-Stothram-StothramTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -303,6 +471,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 56663478EE5FF03CF9F9A922 /* Pods-Stothram-StothramTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -327,6 +496,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5E95B49127B3B5AF2258815D /* Pods-Stothram.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -337,7 +507,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4;
+				MARKETING_VERSION = 2.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -353,6 +523,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 29B016136BFDC4CC80F397C1 /* Pods-Stothram.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -362,7 +533,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4;
+				MARKETING_VERSION = 2.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -436,6 +607,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -443,8 +615,13 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -481,6 +658,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -501,6 +679,8 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -508,8 +688,13 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

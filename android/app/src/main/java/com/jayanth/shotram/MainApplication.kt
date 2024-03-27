@@ -1,4 +1,4 @@
-package com.jayanth.shotram;
+package com.jayanth.shotram
 
 import android.app.Application
 import com.facebook.react.PackageList
