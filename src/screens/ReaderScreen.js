@@ -56,15 +56,20 @@ const generateStyles = (
 const ReaderScreen = ({ navigation, route }) => {
   // Extract theme-related context
   const { font, updateFont, darkmode } = useContext(ThemeContext);
-
   // Navigation State
   const { item } = route.params;
-
   // State variables for managing data and UI
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
   const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
+
+  const updateFontSize = useCallback(
+    value => {
+      updateFont(value);
+    },
+    [updateFont],
+  );
 
   // useEffect to set navigation options
   useEffect(() => {
@@ -131,33 +136,14 @@ const ReaderScreen = ({ navigation, route }) => {
     font,
   );
 
-  const MemoizedParagraph = React.memo(({ data }) => {
-    return (
-      <View style={styles.paragraphStyle}>
-        {data.lines.map((line, index) => (
-          <Text style={styles.lineStyle} key={index}>
-            {line}
-          </Text>
-        ))}
-      </View>
-    );
-  });
-
-  const MemoizedSubheading = React.memo(({ data }) => {
-    return (
-      <View style={styles.subHeadingContainer}>
-        <Text style={styles.subHeadingText}>{data.title}</Text>
-      </View>
-    );
-  });
   return (
     <View style={styles.container}>
       {readerData && (
         <Slider
           value={font}
-          onValueChange={value => updateFont(value)}
+          onValueChange={updateFontSize}
           minimumValue={15}
-          maximumValue={40}
+          maximumValue={30}
           step={1}
           style={{
             height: 40,
@@ -168,22 +154,31 @@ const ReaderScreen = ({ navigation, route }) => {
         />
       )}
 
-      {/* FlatList for displaying reader content */}
       <FlatList
         data={readerData?.content}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_item, index) => index.toString()}
         renderItem={({ item, index }) => {
           if (item?.type === 'paragraph') {
-            // Render paragraphs using MemoizedParagraph
-            return <MemoizedParagraph data={item} styles={styles} />;
+            return (
+              <View style={styles.paragraphStyle}>
+                {item.lines.map((line, index) => (
+                  <Text style={styles.lineStyle} key={index}>
+                    {line}
+                  </Text>
+                ))}
+              </View>
+            );
           }
           if (item.type === 'subheading') {
-            // Render subheadings using MemoizedSubheading
-            return <MemoizedSubheading data={item} styles={styles} />;
+            return (
+              <View style={styles.subHeadingContainer}>
+                <Text style={styles.subHeadingText}>{item.title}</Text>
+              </View>
+            );
           }
         }}
       />
-      {/* Display Admob component */}
+
       <Admob />
     </View>
   );
