@@ -38,7 +38,6 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
         styles.listItemSubtitle,
         {
           color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-
         },
       ]}>
       {subtitle}
@@ -65,7 +64,6 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
             styles.listItemTitle,
             {
               color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-
             },
           ]}>
           {title}

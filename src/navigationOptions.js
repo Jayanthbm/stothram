@@ -1,4 +1,8 @@
-export const commonNavigationOptions = (headerBackground, headertext,headerFont ='NotoSans')  => {
+export const commonNavigationOptions = (
+  headerBackground,
+  headertext,
+  headerFont = 'NotoSans',
+) => {
   return {
     headerStyle: {
       backgroundColor: headerBackground,
@@ -8,7 +12,6 @@ export const commonNavigationOptions = (headerBackground, headertext,headerFont 
       fontWeight: 'bold',
       fontSize: 20,
       fontFamily: headerFont,
-
     },
     cardStyleInterpolator: ({ current, layouts }) => {
       return {

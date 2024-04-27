@@ -6,7 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "prettify": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
