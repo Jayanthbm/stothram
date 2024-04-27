@@ -1,11 +1,11 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+
 import HomeScreen from './screens/HomeScreen';
 import ListScreen from './screens/ListScreen';
 import ReaderScreen from './screens/ReaderScreen';
 import SettingsScreen from './screens/SettingsScreen';
-
 
 const Stack = createStackNavigator();
 

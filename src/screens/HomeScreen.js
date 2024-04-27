@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Alert,
   BackHandler,
@@ -7,22 +7,23 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import Admob from "../components/admob";
+} from 'react-native';
+
+import Admob from '../components/admob';
 import CustomIcon from '../components/customIcon';
-import CustomHeaderRight from "../components/headerRight";
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
-import { ThemeContext } from "../contexts/themeContext";
-import { commonNavigationOptions } from "../navigationOptions";
-import { COLOR_SCHEME, commonStyles } from "../styles/styles";
+import CustomHeaderRight from '../components/headerRight';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { commonNavigationOptions } from '../navigationOptions';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import {
   dataHelper,
   preFetcher,
   storeItem,
   storeJSON,
-} from "../utils/dataUtils";
+} from '../utils/dataUtils';
 // Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor) => {
+const generateStyles = backgroundColor => {
   return StyleSheet.create({
     container: {
       ...commonStyles.container,
@@ -39,26 +40,26 @@ const generateStyles = (backgroundColor) => {
     },
     iconContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     typeIcon: {
-      color: "#fff",
+      color: '#fff',
       marginBottom: 10,
     },
     typeTitle: {
-      color: "#fff",
+      color: '#fff',
       fontSize: 18,
+      fontFamily: 'NotoSans',
     },
   });
 };
 
 const HomeScreen = ({ navigation }) => {
-  const {darkmode} =
-    useContext(ThemeContext);
+  const { darkmode } = useContext(ThemeContext);
 
   const [types, setTypes] = useState([]);
-  const [loaded,setLoaded] =useState(false)
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,9 +72,8 @@ const HomeScreen = ({ navigation }) => {
           setTypes(fetchedData?.data);
           await storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
           await storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
-          setLoaded(true)
+          setLoaded(true);
           preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
-
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -86,7 +86,10 @@ const HomeScreen = ({ navigation }) => {
     // Set navigation options when the headerBackground changes
     navigation.setOptions({
       title: 'Stothram',
-      ...commonNavigationOptions(COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground, COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext),
+      ...commonNavigationOptions(
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
+        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+      ),
       headerRight: () => (
         <CustomHeaderRight
           navigation={navigation}
@@ -95,16 +98,16 @@ const HomeScreen = ({ navigation }) => {
         />
       ),
     });
-  }, [navigation,darkmode,loaded]);
+  }, [navigation, darkmode, loaded]);
 
   const confirmExit = useCallback(() => {
-    Alert.alert("Hold on!", "Do you want to Exit Stothram?", [
+    Alert.alert('Hold on!', 'Do you want to Exit Stothram?', [
       {
-        text: "Cancel",
+        text: 'Cancel',
         onPress: () => null,
-        style: "cancel",
+        style: 'cancel',
       },
-      { text: "YES", onPress: () => BackHandler.exitApp() },
+      { text: 'YES', onPress: () => BackHandler.exitApp() },
     ]);
   }, []);
 
@@ -116,20 +119,22 @@ const HomeScreen = ({ navigation }) => {
       return true;
     };
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
     return () => backHandler.remove();
-  }, []);
+  }, [confirmExit]);
 
   // Generate styles based on current context values
-  const styles = generateStyles(COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor);
+  const styles = generateStyles(
+    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
+  );
 
   const handleTypePress = useCallback(
-    (type) => {
-      navigation.navigate("List", { type });
+    type => {
+      navigation.navigate('List', { type });
     },
-    [navigation]
+    [navigation],
   );
 
   // Render each type item in the FlatList
@@ -165,12 +170,12 @@ const HomeScreen = ({ navigation }) => {
       {/* Display types in a FlatList */}
       <FlatList
         data={types}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         renderItem={renderTypeItem}
         numColumns={2}
         style={{
           flexDirection: 'column-reverse',
-          marginBottom:50
+          marginBottom: 50,
         }}
       />
       {/* Display Admob component */}

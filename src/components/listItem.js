@@ -1,20 +1,15 @@
-import PropTypes from "prop-types";
-import React, { useContext } from "react";
-import {
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { ThemeContext } from "../contexts/themeContext";
-import { COLOR_SCHEME } from "../styles/styles";
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+
+import { ThemeContext } from '../contexts/themeContext';
+import { COLOR_SCHEME } from '../styles/styles';
 
 const styles = StyleSheet.create({
   listItemContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
@@ -25,22 +20,26 @@ const styles = StyleSheet.create({
   },
   listItemTitle: {
     fontSize: 14,
+    fontFamily: 'NotoSans',
   },
   listItemSubtitle: {
     fontSize: 12,
+    fontFamily: 'NotoSans',
   },
 });
 
 const ListItem = ({ title, subtitle, toggle, state }) => {
-  const {darkmode} =
-    useContext(ThemeContext);
+  const { darkmode } = useContext(ThemeContext);
 
   // Provide default values for optional props
   const renderSubtitle = subtitle && (
     <Text
       style={[
         styles.listItemSubtitle,
-        {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor},
+        {
+          color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+
+        },
       ]}>
       {subtitle}
     </Text>
@@ -64,7 +63,10 @@ const ListItem = ({ title, subtitle, toggle, state }) => {
         <Text
           style={[
             styles.listItemTitle,
-            {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor},
+            {
+              color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+
+            },
           ]}>
           {title}
         </Text>

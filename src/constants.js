@@ -28,4 +28,4 @@ export const GPAY_LOGO = `${BASE_IMAGE_URL}/gpay.webp`;
 
 export const PHONEPE_LOGO = `${BASE_IMAGE_URL}/phonepe.webp`;
 
-export const UPI_LOGO = `${BASE_IMAGE_URL}/upi.webp`
+export const UPI_LOGO = `${BASE_IMAGE_URL}/upi.webp`;

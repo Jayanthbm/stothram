@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import Admob from '../components/admob';
 import CustomIcon from '../components/customIcon';
 import CustomHeaderLeft from '../components/headerLeft';
@@ -32,7 +33,7 @@ const generateStyles = (backgroundColor, textColor, borderColor) => {
       marginBottom: 10,
       elevation: 2,
       shadowColor: backgroundColor,
-      shadowOffset: {width: 0, height: 2},
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 2,
       backgroundColor: backgroundColor,
@@ -59,6 +60,7 @@ const generateStyles = (backgroundColor, textColor, borderColor) => {
       fontSize: 16,
       fontWeight: '700',
       color: textColor,
+      fontFamily: 'NotoSerif',
     },
     cardContainer: {
       flexDirection: 'row',
@@ -85,6 +87,7 @@ const generateStyles = (backgroundColor, textColor, borderColor) => {
       textAlign: 'center',
       padding: 5,
       color: textColor,
+      fontFamily: 'NotoSerif',
     },
     noDataContainer: {
       marginTop: 20,
@@ -104,10 +107,10 @@ const generateStyles = (backgroundColor, textColor, borderColor) => {
   });
 };
 // ListScreen Component
-const ListScreen = ({navigation, route}) => {
+const ListScreen = ({ navigation, route }) => {
   // Context and State
-  const {darkmode, viewType} = useContext(ThemeContext);
-  const {type} = route.params;
+  const { darkmode, viewType } = useContext(ThemeContext);
+  const { type } = route.params;
   const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
@@ -130,23 +133,23 @@ const ListScreen = ({navigation, route}) => {
     });
   }, [navigation, title, darkmode]);
 
-   const confirmExit = useCallback(() => {
-     navigation.goBack();
-   }, [navigation]);
+  const confirmExit = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
-   useEffect(() => {
-     // Handle hardware back press event
-     const backAction = () => {
-       // Confirm exit when the hardware back button is pressed
-       confirmExit();
-       return true;
-     };
-     const backHandler = BackHandler.addEventListener(
-       'hardwareBackPress',
-       backAction,
-     );
-     return () => backHandler.remove();
-   }, []);
+  useEffect(() => {
+    // Handle hardware back press event
+    const backAction = () => {
+      // Confirm exit when the hardware back button is pressed
+      confirmExit();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [confirmExit]);
   // Set Title and Data URL
   useEffect(() => {
     setTitle(type?.title);
@@ -196,7 +199,7 @@ const ListScreen = ({navigation, route}) => {
   // Handle Item Click
   const handleItemClick = useCallback(
     item => {
-      navigation.navigate('Reader', {item});
+      navigation.navigate('Reader', { item });
     },
     [navigation],
   );
@@ -212,8 +215,8 @@ const ListScreen = ({navigation, route}) => {
   const keyExtractor = useCallback((item, index) => index.toString(), []);
   // Define renderItem functions for list and card views
   // Memoized ListItem Component
-  const MemoizedListItem = React.memo(({item}) => {
-    const {displayTitle} = item;
+  const MemoizedListItem = React.memo(({ item }) => {
+    const { displayTitle } = item;
     return (
       <TouchableOpacity
         style={styles.listItem}
@@ -223,7 +226,7 @@ const ListScreen = ({navigation, route}) => {
     );
   });
   // Memoized CardItem Component
-  const MemoizedCardItem = React.memo(({item, index}) => (
+  const MemoizedCardItem = React.memo(({ item, index }) => (
     <TouchableOpacity
       style={[
         styles.card,
@@ -257,7 +260,9 @@ const ListScreen = ({navigation, route}) => {
         />
         <TextInput
           placeholder="Search"
-          placeholderTextColor={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
+          placeholderTextColor={
+            COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor
+          }
           onChangeText={handleSearch}
           value={searchValue}
           style={styles.searchInput}
@@ -266,7 +271,7 @@ const ListScreen = ({navigation, route}) => {
       <FlatList
         data={filteredData}
         keyExtractor={keyExtractor}
-        renderItem={({item, index}) =>
+        renderItem={({ item, index }) =>
           viewType === 'list' ? (
             <MemoizedListItem item={item} />
           ) : (

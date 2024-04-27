@@ -1,9 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import {
-  BannerAdSize,
-  GAMBannerAd,
-} from 'react-native-google-mobile-ads';
+import { BannerAdSize, GAMBannerAd } from 'react-native-google-mobile-ads';
 let AD_UNITS = [
   'ca-app-pub-0714649342045057/8222174259',
   'ca-app-pub-0714649342045057/5615643477',

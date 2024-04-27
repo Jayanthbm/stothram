@@ -1,23 +1,16 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import {
-  Button,
-  ScrollView,
-  Share,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { ThemeContext } from "../contexts/themeContext";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import Admob from "../components/admob";
+import Admob from '../components/admob';
 import CustomIcon from '../components/customIcon';
-import CustomHeaderLeft from "../components/headerLeft";
-import ListHeader from "../components/listHeader";
-import ListItem from "../components/listItem";
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
-import { commonNavigationOptions } from "../navigationOptions";
-import { COLOR_SCHEME, commonStyles } from "../styles/styles";
-import { dataHelper } from "../utils/dataUtils";
+import CustomHeaderLeft from '../components/headerLeft';
+import ListHeader from '../components/listHeader';
+import ListItem from '../components/listItem';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
+import { ThemeContext } from '../contexts/themeContext';
+import { commonNavigationOptions } from '../navigationOptions';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import { dataHelper } from '../utils/dataUtils';
 
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor, textColor) => {
@@ -28,35 +21,32 @@ const generateStyles = (backgroundColor, textColor) => {
     },
     shareContainer: {
       marginTop: 10,
-      marginBottom:10,
-      alignItems: "center",
-      flexDirection: "row",
-      justifyContent: "center",
+      marginBottom: 10,
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'center',
     },
     madeInIndiaContainer: {
-      flexDirection: "row",
-      alignSelf: "center",
+      flexDirection: 'row',
+      alignSelf: 'center',
       marginBottom: 5,
     },
     madeInIndiaContainerIcon: {
-      color: "red",
+      color: 'red',
       fontSize: 25,
       marginTop: 1,
     },
     madeInIndiaContainerText: {
       color: textColor,
       fontSize: 20,
+      fontFamily: 'NotoSans',
     },
   });
 };
 
 const SettingsScreen = React.memo(({ navigation }) => {
-  const {
-    toggleDarkMode,
-    darkmode,
-    toggleDarkSwitch,
-    darkSwitch,
-  } = useContext(ThemeContext);
+  const { toggleDarkMode, darkmode, toggleDarkSwitch, darkSwitch } =
+    useContext(ThemeContext);
 
   const [contributions, setContributions] = useState([]);
 
@@ -65,14 +55,14 @@ const SettingsScreen = React.memo(({ navigation }) => {
       const fetchedData = await dataHelper(
         CACHED_DATA_KEYS.SETTINGS_SCREEN,
         DATA_URLS.SETTINGS_SCREEN,
-        SCREEN_NAMES.SETTINGS_SCREEN
+        SCREEN_NAMES.SETTINGS_SCREEN,
       );
       // Update state with fetched contributions
       if (fetchedData) {
         setContributions(fetchedData?.contributions);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   }, []);
 
@@ -97,7 +87,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
     try {
       await Share.share({
         message:
-          "https://play.google.com/store/apps/details?id=com.jayanth.shotram",
+          'https://play.google.com/store/apps/details?id=com.jayanth.shotram',
       });
     } catch (error) {
       console.log(error);
@@ -135,7 +125,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
 
         {/* Contributions */}
         <ListHeader title="Contributions" icon={'info'} />
-        {contributions?.map(({name, role}) => (
+        {contributions?.map(({ name, role }) => (
           <MemoizedListItem title={name} subtitle={role} key={name} />
         ))}
         <View style={styles.shareContainer}>

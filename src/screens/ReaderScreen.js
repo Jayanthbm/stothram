@@ -1,6 +1,7 @@
 import Slider from '@react-native-community/slider';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { BackHandler, FlatList, StyleSheet, Text, View } from 'react-native';
+
 import Admob from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
@@ -31,10 +32,11 @@ const generateStyles = (
       borderBottomColor: borderColor,
     },
     lineStyle: {
-      fontWeight: '500',
+      fontWeight: '700',
       marginBottom: 4,
       fontSize: fontSize,
       color: textColor,
+      fontFamily: 'NotoSerif',
     },
     subHeadingContainer: {
       marginBottom: 5,
@@ -51,12 +53,12 @@ const generateStyles = (
 };
 
 // Main ReaderScreen component
-const ReaderScreen = ({navigation, route}) => {
+const ReaderScreen = ({ navigation, route }) => {
   // Extract theme-related context
-  const {font, updateFont, darkmode} = useContext(ThemeContext);
+  const { font, updateFont, darkmode } = useContext(ThemeContext);
 
   // Navigation State
-  const {item} = route.params;
+  const { item } = route.params;
 
   // State variables for managing data and UI
   const [title, setTitle] = useState('');
@@ -71,6 +73,7 @@ const ReaderScreen = ({navigation, route}) => {
       ...commonNavigationOptions(
         COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
         COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
+        'NotoSerif',
       ),
       headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
       headerRight: () => <CustomHeaderRight navigation={navigation} />,
@@ -100,10 +103,8 @@ const ReaderScreen = ({navigation, route}) => {
     }
   }, [item]);
 
-
-
   const confirmExit = useCallback(() => {
-   navigation.goBack();
+    navigation.goBack();
   }, [navigation]);
 
   useEffect(() => {
@@ -130,7 +131,7 @@ const ReaderScreen = ({navigation, route}) => {
     font,
   );
 
-  const MemoizedParagraph = React.memo(({data, styles}) => {
+  const MemoizedParagraph = React.memo(({ data }) => {
     return (
       <View style={styles.paragraphStyle}>
         {data.lines.map((line, index) => (
@@ -142,7 +143,7 @@ const ReaderScreen = ({navigation, route}) => {
     );
   });
 
-  const MemoizedSubheading = React.memo(({data, styles}) => {
+  const MemoizedSubheading = React.memo(({ data }) => {
     return (
       <View style={styles.subHeadingContainer}>
         <Text style={styles.subHeadingText}>{data.title}</Text>
@@ -171,7 +172,7 @@ const ReaderScreen = ({navigation, route}) => {
       <FlatList
         data={readerData?.content}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({item, index}) => {
+        renderItem={({ item, index }) => {
           if (item?.type === 'paragraph') {
             // Render paragraphs using MemoizedParagraph
             return <MemoizedParagraph data={item} styles={styles} />;

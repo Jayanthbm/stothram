@@ -1,9 +1,4 @@
-import {
-  TransitionSpecs,
-  HeaderStyleInterpolators,
-} from '@react-navigation/stack';
-
-export const commonNavigationOptions = (headerBackground, headertext) => {
+export const commonNavigationOptions = (headerBackground, headertext,headerFont ='NotoSans')  => {
   return {
     headerStyle: {
       backgroundColor: headerBackground,
@@ -12,8 +7,10 @@ export const commonNavigationOptions = (headerBackground, headertext) => {
     headerTitleStyle: {
       fontWeight: 'bold',
       fontSize: 20,
+      fontFamily: headerFont,
+
     },
-    cardStyleInterpolator: ({current, layouts}) => {
+    cardStyleInterpolator: ({ current, layouts }) => {
       return {
         cardStyle: {
           transform: [

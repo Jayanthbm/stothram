@@ -1,9 +1,10 @@
-import PropTypes from "prop-types";
-import React, { useContext } from "react";
-import { StyleSheet } from "react-native";
-import { ThemeContext } from "../contexts/themeContext";
-import { COLOR_SCHEME } from "../styles/styles";
-import CustomIcon from "./customIcon";
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { StyleSheet } from 'react-native';
+
+import CustomIcon from './customIcon';
+import { ThemeContext } from '../contexts/themeContext';
+import { COLOR_SCHEME } from '../styles/styles';
 const CustomHeaderLeft = ({ navigation }) => {
   const { darkmode } = useContext(ThemeContext);
   const styles = StyleSheet.create({
@@ -25,7 +26,6 @@ const CustomHeaderLeft = ({ navigation }) => {
 
   return renderButton;
 };
-
 
 CustomHeaderLeft.propTypes = {
   navigation: PropTypes.object.isRequired,

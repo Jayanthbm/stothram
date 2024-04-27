@@ -20,7 +20,7 @@ export const ThemeContext = React.createContext({
 });
 
 // Theme provider component
-export const ThemeProvider = ({children}) => {
+export const ThemeProvider = ({ children }) => {
   const [darkmode, setDarkMode] = useState(false);
   const [darkSwitch, setDarkSwitch] = useState(false);
   const [viewType, setViewType] = useState('card');

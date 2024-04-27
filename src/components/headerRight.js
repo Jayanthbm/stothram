@@ -10,6 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import CustomIcon from './customIcon';
+import CustomModal from './customModal';
+import ImageButton from './imageButton';
 import { CACHED_DATA_KEYS } from '../constants';
 import { ThemeContext } from '../contexts/themeContext';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
@@ -19,9 +23,6 @@ import {
   getJSON,
   storeItem,
 } from '../utils/dataUtils';
-import CustomIcon from './customIcon';
-import CustomModal from './customModal';
-import ImageButton from './imageButton';
 
 const generateStyles = headertext => {
   return StyleSheet.create({
@@ -45,6 +46,7 @@ const generateStyles = headertext => {
     },
     radioButtonLabel: {
       marginTop: 5,
+      fontFamily: 'NotoSans',
     },
     modalButtons: {
       flexDirection: 'row',
@@ -60,7 +62,7 @@ const CustomHeaderRight = ({
   showViewToggle,
   reRender,
 }) => {
-  const {darkmode, toggleDarkMode, darkSwitch, viewType, toggleViewType} =
+  const { darkmode, toggleDarkMode, darkSwitch, viewType, toggleViewType } =
     useContext(ThemeContext);
   const [moneyModal, setMoneyModal] = useState(false);
 
@@ -129,8 +131,9 @@ const CustomHeaderRight = ({
     var text = '';
     var possible =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (var i = 0; i < 10; i++)
+    for (var i = 0; i < 10; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
     return text;
   }
 
@@ -230,22 +233,23 @@ const CustomHeaderRight = ({
             <Text
               style={{
                 color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                fontFamily: 'NotoSans',
               }}>
               Choose amount
             </Text>
             <View style={styles.radioButtons}>
-              {upidata?.upi_amounts?.map(amount => (
+              {upidata?.upi_amounts?.map(mappedAmount => (
                 <TouchableOpacity
-                  key={amount}
+                  key={mappedAmount}
                   onPress={() => {
-                    setAmount(amount);
-                    setMoney(amount);
+                    setAmount(mappedAmount);
+                    setMoney(mappedAmount);
                   }}>
                   <CustomIcon
                     name="circle"
                     size={20}
                     library="FontAwesome"
-                    color={amount === money ? '#007BFF' : '#ccc'}
+                    color={mappedAmount === money ? '#007BFF' : '#ccc'}
                   />
                   <Text
                     style={[
@@ -255,7 +259,7 @@ const CustomHeaderRight = ({
                           COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                       },
                     ]}>
-                    ₹{amount}
+                    ₹{mappedAmount}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -294,12 +298,13 @@ const CustomHeaderRight = ({
                 onChangeText={text => setMoney(text)}
                 style={{
                   paddingVertical: 3,
-                  fontSize: 18,
+                  fontSize: 16,
                   borderColor:
                     COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
                   borderWidth: 2,
                   color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                   marginBottom: 10,
+                  fontFamily: 'NotoSans',
                 }}
               />
             )}
@@ -307,6 +312,7 @@ const CustomHeaderRight = ({
               style={{
                 color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                 textAlign: 'center',
+                fontFamily: 'NotoSans',
               }}>
               Choose App to pay
             </Text>

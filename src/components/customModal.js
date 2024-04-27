@@ -1,8 +1,9 @@
-import PropTypes from "prop-types";
-import React, { useContext } from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
-import { ThemeContext } from "../contexts/themeContext";
-import { COLOR_SCHEME } from "../styles/styles";
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { Modal, StyleSheet, Text, View } from 'react-native';
+
+import { ThemeContext } from '../contexts/themeContext';
+import { COLOR_SCHEME } from '../styles/styles';
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -24,8 +25,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const CustomModal = ({ visible, onClose,title, children }) => {
-  const {darkmode} = useContext(ThemeContext);
+const CustomModal = ({ visible, onClose, title, children }) => {
+  const { darkmode } = useContext(ThemeContext);
 
   return (
     <Modal
@@ -34,12 +35,22 @@ const CustomModal = ({ visible, onClose,title, children }) => {
       visible={visible}
       onRequestClose={onClose}>
       <View style={styles.modalContainer}>
-        <View style={[styles.modalContent, {backgroundColor: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor}]}>
+        <View
+          style={[
+            styles.modalContent,
+            {
+              backgroundColor:
+                COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
+            },
+          ]}>
           <>
             <Text
               style={[
                 styles.modalTitle,
-                {color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor},
+                {
+                  color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                  fontFamily: 'NotoSans',
+                },
               ]}>
               {title}
             </Text>
@@ -50,12 +61,10 @@ const CustomModal = ({ visible, onClose,title, children }) => {
     </Modal>
   );
 };
-
 CustomModal.propTypes = {
   visible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
-
 export default CustomModal;
