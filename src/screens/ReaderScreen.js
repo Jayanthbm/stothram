@@ -58,8 +58,8 @@ const generateStyles = (
     highlightedItem: {
       borderLeftColor: borderColor,
       borderLeftWidth: 2,
-      paddingLeft:2
-    }
+      paddingLeft: 2,
+    },
   });
 };
 
