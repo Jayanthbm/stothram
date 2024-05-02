@@ -1,5 +1,11 @@
 import Slider from '@react-native-community/slider';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { BackHandler, FlatList, StyleSheet, Text, View } from 'react-native';
 
 import Admob from '../components/admob';
@@ -49,6 +55,11 @@ const generateStyles = (
       textAlign: 'center',
       fontWeight: '500',
     },
+    highlightedItem: {
+      borderLeftColor: borderColor,
+      borderLeftWidth: 2,
+      paddingLeft:2
+    }
   });
 };
 
@@ -63,10 +74,14 @@ const ReaderScreen = ({ navigation, route }) => {
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
   const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
-
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const flatListRef = useRef(null);
   const updateFontSize = useCallback(
     value => {
       updateFont(value);
+      setTimeout(() => {
+        scrollToHighlightedIndex(highlightedIndex);
+      }, 500);
     },
     [updateFont],
   );
@@ -126,6 +141,12 @@ const ReaderScreen = ({ navigation, route }) => {
     return () => backHandler.remove();
   }, []);
 
+  const scrollToHighlightedIndex = index => {
+    if (flatListRef.current && index >= 0) {
+      flatListRef.current.scrollToIndex({ index: index, animated: true });
+    }
+  };
+
   // Generate styles based on current context values
   const styles = generateStyles(
     COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
@@ -143,7 +164,7 @@ const ReaderScreen = ({ navigation, route }) => {
           value={font}
           onValueChange={updateFontSize}
           minimumValue={15}
-          maximumValue={30}
+          maximumValue={25}
           step={1}
           style={{
             height: 40,
@@ -155,12 +176,22 @@ const ReaderScreen = ({ navigation, route }) => {
       )}
 
       <FlatList
+        ref={flatListRef}
         data={readerData?.content}
         keyExtractor={(_item, index) => index.toString()}
         renderItem={({ item, index }) => {
           if (item?.type === 'paragraph') {
             return (
-              <View style={styles.paragraphStyle}>
+              <View
+                style={[
+                  styles.paragraphStyle,
+                  highlightedIndex === index && styles.highlightedItem,
+                ]}
+                onTouchStart={() => {
+                  if (highlightedIndex !== index) {
+                    setHighlightedIndex(index);
+                  }
+                }}>
                 {item.lines.map((line, index) => (
                   <Text style={styles.lineStyle} key={index}>
                     {line}
