@@ -35,11 +35,12 @@ const generateStyles = (
       marginRight: 2,
       marginBottom: 18,
       borderBottomWidth: 1,
+      paddingBottom: 5,
       borderBottomColor: borderColor,
     },
     lineStyle: {
       fontWeight: '700',
-      marginBottom: 4,
+      lineHeight: parseInt(fontSize) + 12,
       fontSize: fontSize,
       color: textColor,
       fontFamily: 'NotoSerif',
@@ -164,7 +165,7 @@ const ReaderScreen = ({ navigation, route }) => {
           value={font}
           onValueChange={updateFontSize}
           minimumValue={15}
-          maximumValue={25}
+          maximumValue={30}
           step={1}
           style={{
             height: 40,
