@@ -58,16 +58,22 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
     const isConnected = await isInternetConnected();
 
     if (isConnected) {
-      const response = await fetch(URL);
-      const data = await response.json();
+      if (URL.endsWith('.pdf')) {
+        // Handle PDF files differently
+        return fetchAndStorePDF(KEYNAME, URL);
+      } else {
+        // Handle JSON files as before
+        const response = await fetch(URL);
+        const data = await response.json();
 
-      // Update local storage with the new data and timestamp
-      await storeJSON(KEYNAME, data);
-      await storeItem(
-        `${KEYNAME}_lastFetchTime`,
-        new Date().getTime().toString(),
-      );
-      return data;
+        // Update local storage with the new data and timestamp
+        await storeJSON(KEYNAME, data);
+        await storeItem(
+          `${KEYNAME}_lastFetchTime`,
+          new Date().getTime().toString(),
+        );
+        return data;
+      }
     } else {
       console.log('No internet connection. Data fetching skipped.');
       return null;
@@ -186,6 +192,33 @@ export const getJSON = async key => {
     return JSON.parse(value);
   } catch (error) {
     console.log(error);
+    return null;
+  }
+};
+
+/**
+ * Helper function to fetch and store PDF URL in AsyncStorage
+ * @param {string} KEYNAME - The key under which PDF URL is stored.
+ * @param {string} URL - The URL to fetch the PDF from.
+ * @returns {string|null} - The PDF URL or null on error.
+ */
+export const fetchAndStorePDF = async (KEYNAME, URL) => {
+  try {
+    const isConnected = await isInternetConnected();
+
+    if (isConnected) {
+      await storeItem(KEYNAME, URL);
+      await storeItem(
+        `${KEYNAME}_lastFetchTime`,
+        new Date().getTime().toString(),
+      );
+      return URL;
+    } else {
+      console.log('No internet connection. Data fetching skipped.');
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching PDF URL from online (${KEYNAME}):`, error);
     return null;
   }
 };

@@ -6,8 +6,16 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { BackHandler, FlatList, StyleSheet, Text, View } from 'react-native';
+import {
+  BackHandler,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+} from 'react-native';
 
+import Pdf from 'react-native-pdf';
 import Admob from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
@@ -16,7 +24,6 @@ import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { dataHelper } from '../utils/dataUtils';
-
 const generateStyles = (
   backgroundColor,
   textColor,
@@ -43,7 +50,7 @@ const generateStyles = (
       lineHeight: parseInt(fontSize) + 12,
       fontSize: fontSize,
       color: textColor,
-      fontFamily: 'NotoSerif',
+      fontFamily: 'brhknde',
     },
     subHeadingContainer: {
       marginBottom: 5,
@@ -58,8 +65,13 @@ const generateStyles = (
     },
     highlightedItem: {
       borderLeftColor: borderColor,
-      borderLeftWidth: 2,
-      paddingLeft: 2,
+      borderLeftWidth: 0,
+      paddingLeft: 0,
+    },
+    pdf: {
+      flex: 1,
+      width: Dimensions.get('window').width,
+      height: Dimensions.get('window').height,
     },
   });
 };
@@ -74,6 +86,7 @@ const ReaderScreen = ({ navigation, route }) => {
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
+  const [pdfReader, setPdfReader] = useState(false);
   const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const flatListRef = useRef(null);
@@ -111,6 +124,9 @@ const ReaderScreen = ({ navigation, route }) => {
           SCREEN_NAMES.READER_SCREEN,
         );
         if (fetchedData) {
+          if (typeof fetchedData === 'string') {
+            setPdfReader(true);
+          }
           setReaderData(fetchedData);
         }
       } catch (error) {
@@ -160,57 +176,76 @@ const ReaderScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {readerData && (
-        <Slider
-          value={font}
-          onValueChange={updateFontSize}
-          minimumValue={15}
-          maximumValue={30}
-          step={1}
-          style={{
-            height: 40,
-          }}
-          thumbTintColor={sliderColor}
-          minimumTrackTintColor={sliderColor}
-          tapToSeek={true}
-        />
+      {pdfReader ? (
+        <>
+          {readerData && (
+            <Pdf
+              source={{
+                uri: readerData,
+                cache: true,
+              }}
+              trustAllCerts={false}
+              style={styles.pdf}
+              showsHorizontalScrollIndicator={false}
+              fitWidth={true}
+              scale={1}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          {readerData && (
+            <Slider
+              value={font}
+              onValueChange={updateFontSize}
+              minimumValue={15}
+              maximumValue={30}
+              step={1}
+              style={{
+                height: 40,
+              }}
+              thumbTintColor={sliderColor}
+              minimumTrackTintColor={sliderColor}
+              tapToSeek={true}
+            />
+          )}
+
+          <FlatList
+            ref={flatListRef}
+            data={readerData?.content}
+            keyExtractor={(_item, index) => index.toString()}
+            renderItem={({ item, index }) => {
+              if (item?.type === 'paragraph') {
+                return (
+                  <View
+                    style={[
+                      styles.paragraphStyle,
+                      highlightedIndex === index && styles.highlightedItem,
+                    ]}
+                    onTouchStart={() => {
+                      if (highlightedIndex !== index) {
+                        setHighlightedIndex(index);
+                      }
+                    }}>
+                    {item.lines.map((line, index) => (
+                      <Text style={styles.lineStyle} key={index}>
+                        {line}
+                      </Text>
+                    ))}
+                  </View>
+                );
+              }
+              if (item.type === 'subheading') {
+                return (
+                  <View style={styles.subHeadingContainer}>
+                    <Text style={styles.subHeadingText}>{item.title}</Text>
+                  </View>
+                );
+              }
+            }}
+          />
+        </>
       )}
-
-      <FlatList
-        ref={flatListRef}
-        data={readerData?.content}
-        keyExtractor={(_item, index) => index.toString()}
-        renderItem={({ item, index }) => {
-          if (item?.type === 'paragraph') {
-            return (
-              <View
-                style={[
-                  styles.paragraphStyle,
-                  highlightedIndex === index && styles.highlightedItem,
-                ]}
-                onTouchStart={() => {
-                  if (highlightedIndex !== index) {
-                    setHighlightedIndex(index);
-                  }
-                }}>
-                {item.lines.map((line, index) => (
-                  <Text style={styles.lineStyle} key={index}>
-                    {line}
-                  </Text>
-                ))}
-              </View>
-            );
-          }
-          if (item.type === 'subheading') {
-            return (
-              <View style={styles.subHeadingContainer}>
-                <Text style={styles.subHeadingText}>{item.title}</Text>
-              </View>
-            );
-          }
-        }}
-      />
-
       <Admob />
     </View>
   );
