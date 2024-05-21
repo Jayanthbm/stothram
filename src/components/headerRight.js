@@ -10,10 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import CustomIcon from './customIcon';
-import CustomModal from './customModal';
-import ImageButton from './imageButton';
 import { CACHED_DATA_KEYS } from '../constants';
 import { ThemeContext } from '../contexts/themeContext';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
@@ -23,6 +19,9 @@ import {
   getJSON,
   storeItem,
 } from '../utils/dataUtils';
+import CustomIcon from './customIcon';
+import CustomModal from './customModal';
+import ImageButton from './imageButton';
 
 const generateStyles = headertext => {
   return StyleSheet.create({
@@ -61,6 +60,8 @@ const CustomHeaderRight = ({
   showSettings,
   showViewToggle,
   reRender,
+  showLangPickerIcon,
+  openPicker,
 }) => {
   const { darkmode, toggleDarkMode, darkSwitch, viewType, toggleViewType } =
     useContext(ThemeContext);
@@ -184,13 +185,16 @@ const CustomHeaderRight = ({
   return (
     <>
       <View style={styles.headerRightContainer}>
-        <CustomIcon
-          onPress={showDialog}
-          name="rupee"
-          size={26}
-          library="FontAwesome"
-          style={styles.headerIcon}
-        />
+        {!showLangPickerIcon && (
+          <CustomIcon
+            onPress={showDialog}
+            name="rupee"
+            size={26}
+            library="FontAwesome"
+            style={styles.headerIcon}
+          />
+        )}
+
         {showViewToggle && (
           <CustomIcon
             onPress={toggleViewType}
@@ -220,6 +224,15 @@ const CustomHeaderRight = ({
             name="settings"
             size={26}
             library="Feather"
+            style={styles.headerIcon}
+          />
+        )}
+        {showLangPickerIcon && (
+          <CustomIcon
+            onPress={openPicker}
+            name={'language'}
+            size={26}
+            library="FontAwesome"
             style={styles.headerIcon}
           />
         )}

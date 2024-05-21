@@ -1,4 +1,5 @@
 import Slider from '@react-native-community/slider';
+import { Picker } from '@react-native-picker/picker';
 import React, {
   useCallback,
   useContext,
@@ -8,13 +9,12 @@ import React, {
 } from 'react';
 import {
   BackHandler,
+  Dimensions,
   FlatList,
   StyleSheet,
   Text,
   View,
-  Dimensions,
 } from 'react-native';
-
 import Pdf from 'react-native-pdf';
 import Admob from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
@@ -73,7 +73,15 @@ const generateStyles = (
       width: Dimensions.get('window').width,
       height: Dimensions.get('window').height,
     },
+    pickerContainer: {
+      display: 'none',
+    },
   });
+};
+
+const LANGUAGE_MAPPER = {
+  kn: 'Kannada',
+  en: 'English',
 };
 
 // Main ReaderScreen component
@@ -89,7 +97,11 @@ const ReaderScreen = ({ navigation, route }) => {
   const [pdfReader, setPdfReader] = useState(false);
   const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [fetchedData, setFetchedData] = useState(null);
+  const [languages, setLanguages] = useState(null);
+  const [currentLanguage, setCurrentLanguage] = useState(null);
   const flatListRef = useRef(null);
+  const pickerRef = useRef();
   const updateFontSize = useCallback(
     value => {
       updateFont(value);
@@ -100,6 +112,9 @@ const ReaderScreen = ({ navigation, route }) => {
     [updateFont],
   );
 
+  const openPicker = () => {
+    pickerRef.current.focus();
+  };
   // useEffect to set navigation options
   useEffect(() => {
     navigation.setOptions({
@@ -110,9 +125,15 @@ const ReaderScreen = ({ navigation, route }) => {
         'NotoSerif',
       ),
       headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-      headerRight: () => <CustomHeaderRight navigation={navigation} />,
+      headerRight: () => (
+        <CustomHeaderRight
+          navigation={navigation}
+          showLangPickerIcon={languages?.length > 0}
+          openPicker={openPicker}
+        />
+      ),
     });
-  }, [navigation, title, displayTitle, darkmode]);
+  }, [navigation, title, displayTitle, darkmode, languages]);
 
   // useEffect to fetch data on component mount
   useEffect(() => {
@@ -124,10 +145,18 @@ const ReaderScreen = ({ navigation, route }) => {
           SCREEN_NAMES.READER_SCREEN,
         );
         if (fetchedData) {
+          setFetchedData(fetchedData);
           if (typeof fetchedData === 'string') {
             setPdfReader(true);
           }
-          setReaderData(fetchedData);
+          if (fetchedData.translations) {
+            const languages = Object.keys(fetchedData.translations);
+            setLanguages(languages);
+            const currentLanguage = languages[0];
+            setCurrentLanguage(currentLanguage);
+          } else {
+            setReaderData(fetchedData);
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -139,6 +168,13 @@ const ReaderScreen = ({ navigation, route }) => {
       fetchData();
     }
   }, [item]);
+
+  useEffect(() => {
+    if (currentLanguage && fetchedData.translations !== undefined) {
+      setReaderData(fetchedData['translations'][currentLanguage]);
+      setDisplayTitle(fetchedData['translations'][currentLanguage].title);
+    }
+  }, [currentLanguage]);
 
   const confirmExit = useCallback(() => {
     navigation.goBack();
@@ -176,6 +212,28 @@ const ReaderScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+      {languages && languages.length > 0 && (
+        <View style={styles.pickerContainer}>
+          <Picker
+            ref={pickerRef}
+            selectedValue={currentLanguage}
+            onValueChange={(itemValue, _itemIndex) => {
+              setCurrentLanguage(itemValue);
+            }}>
+            {languages.map(language => (
+              <Picker.Item
+                key={language}
+                label={
+                  LANGUAGE_MAPPER[language]
+                    ? LANGUAGE_MAPPER[language]
+                    : language
+                }
+                value={language}
+              />
+            ))}
+          </Picker>
+        </View>
+      )}
       {pdfReader ? (
         <>
           {readerData && (
