@@ -2791,6 +2791,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.5.2.tgz#c3835788dbc1bd83d3778b83ca15533c805db149"
   integrity sha512-DbFyCyI7rwl0FkBkp0lzEVp+5mNfS5qU/nM2sK2aSguWhj0Odkt1aKHP2iW/ljruOhgS/O4dEixXlne4OdZJDQ==
 
+"@react-native-picker/picker@^2.7.6":
+  version "2.7.6"
+  resolved "https://registry.yarnpkg.com/@react-native-picker/picker/-/picker-2.7.6.tgz#fda996742f6878660277b995e878711641e778f4"
+  integrity sha512-Cs3PxRmE2vu6TofM9vt9TV8ZYFOtEPSupNxwoorH9lpkKM9HGG8QwK2i29KOEoODpUbtudKHUTtqhMZSuX9pgA==
+
 "@react-native/assets-registry@0.74.83":
   version "0.74.83"
   resolved "https://registry.yarnpkg.com/@react-native/assets-registry/-/assets-registry-0.74.83.tgz#c1815dc10f9e1075e0d03b4c8a9619145969522e"
@@ -7612,10 +7617,10 @@ react-native-gesture-handler@^2.16.2:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
-react-native-google-mobile-ads@^13.2.1:
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-google-mobile-ads/-/react-native-google-mobile-ads-13.2.1.tgz#9a381f9c71f6c3c9781bfb604a59cc161f16084a"
-  integrity sha512-71Cp2pX53oeHrdfbUq0BAJnBFHWVqM4S7YJETz0VU6b6tj9UV7vCdZhAdYdiq7L6MRMsbZxc3Ju1zYMPiEhgNg==
+react-native-google-mobile-ads@^13.5.0:
+  version "13.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-google-mobile-ads/-/react-native-google-mobile-ads-13.5.0.tgz#5cfbe1d2758b54bf4ebe165b77b296195bfc5d91"
+  integrity sha512-TNLXxS/HNoFVyG0q6RT5ZayG9NJbTo3LXXNKYrhp7AQuN/at6CGEdzMRkLWvzmDGLHmIiZ8XQ/50RTjWOEDFHg==
   dependencies:
     "@iabtcf/core" "^1.5.3"
     use-deep-compare-effect "^1.8.1"
