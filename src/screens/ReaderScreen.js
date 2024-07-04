@@ -73,9 +73,9 @@ const generateStyles = (
       width: Dimensions.get('window').width,
       height: Dimensions.get('window').height,
     },
-    pickerContainer: {
-      display: 'none',
-    },
+    // pickerContainer: {
+    //   display: 'none',
+    // },
   });
 };
 
@@ -112,8 +112,17 @@ const ReaderScreen = ({ navigation, route }) => {
     [updateFont],
   );
 
+  const [pickerStyle, setPickerStyle] = useState({
+    display: 'none',
+  });
   const openPicker = () => {
+    setPickerStyle({ display: 'flex' });
     pickerRef.current.focus();
+  };
+
+  const closePicker = () => {
+    setPickerStyle({ display: 'none' });
+    pickerRef.current.blur();
   };
   // useEffect to set navigation options
   useEffect(() => {
@@ -213,12 +222,16 @@ const ReaderScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       {languages && languages.length > 0 && (
-        <View style={styles.pickerContainer}>
+        <View style={pickerStyle}>
           <Picker
             ref={pickerRef}
             selectedValue={currentLanguage}
             onValueChange={(itemValue, _itemIndex) => {
               setCurrentLanguage(itemValue);
+              closePicker();
+            }}
+            style={{
+              color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
             }}>
             {languages.map(language => (
               <Picker.Item
