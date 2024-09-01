@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import AntDesign from '@react-native-vector-icons/ant-design';
+import Feather from '@react-native-vector-icons/feather';
+import FontAwesome from '@react-native-vector-icons/fontawesome';
 
 const CustomIcon = ({ onPress, name, size, library, color, style }) => {
   const iconLibraries = {
-    AntDesign: AntDesignIcon,
-    Feather: FeatherIcon,
-    FontAwesome: FontAwesomeIcon,
+    AntDesign: AntDesign,
+    Feather: Feather,
+    FontAwesome: FontAwesome,
   };
 
   const IconComponent = iconLibraries[library];
