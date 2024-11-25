@@ -46,11 +46,9 @@ const generateStyles = (
       borderBottomColor: borderColor,
     },
     lineStyle: {
-      fontWeight: '700',
-      lineHeight: parseInt(fontSize) + 12,
+      lineHeight: parseInt(fontSize) + 14,
       fontSize: fontSize,
       color: textColor,
-      fontFamily: 'brhknde',
     },
     subHeadingContainer: {
       marginBottom: 5,
@@ -219,6 +217,9 @@ const ReaderScreen = ({ navigation, route }) => {
     font,
   );
 
+  const fontWeights = {
+    brhknde: 600,
+  };
   return (
     <View style={styles.container}>
       {languages && languages.length > 0 && (
@@ -280,7 +281,6 @@ const ReaderScreen = ({ navigation, route }) => {
               tapToSeek={true}
             />
           )}
-
           <FlatList
             ref={flatListRef}
             data={readerData?.content}
@@ -299,7 +299,19 @@ const ReaderScreen = ({ navigation, route }) => {
                       }
                     }}>
                     {item.lines.map((line, index) => (
-                      <Text style={styles.lineStyle} key={index}>
+                      <Text
+                        style={[
+                          styles.lineStyle,
+                          {
+                            fontFamily: item?.fontFamily
+                              ? item?.fontFamily
+                              : 'NotoSerif',
+                            fontWeight: fontWeights[item.fontFamily]
+                              ? fontWeights[item.fontFamily]
+                              : '700',
+                          },
+                        ]}
+                        key={index}>
                         {line}
                       </Text>
                     ))}
@@ -309,7 +321,17 @@ const ReaderScreen = ({ navigation, route }) => {
               if (item.type === 'subheading') {
                 return (
                   <View style={styles.subHeadingContainer}>
-                    <Text style={styles.subHeadingText}>{item.title}</Text>
+                    <Text
+                      style={[
+                        styles.subHeadingText,
+                        {
+                          fontFamily: item?.fontFamily
+                            ? item?.fontFamily
+                            : 'NotoSans',
+                        },
+                      ]}>
+                      {item.title}
+                    </Text>
                   </View>
                 );
               }
