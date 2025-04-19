@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 
-import Admob from '../components/admob';
 import CustomIcon from '../components/customIcon';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
@@ -19,6 +18,7 @@ import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
+import { AdmobBanner, AdmobInterstitial } from '../components/admob';
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor, textColor, borderColor) => {
   return StyleSheet.create({
@@ -301,7 +301,8 @@ const ListScreen = ({ navigation, route }) => {
       />
 
       {/* Display Admob component */}
-      <Admob />
+      {/* <AdmobInterstitial page={SCREEN_NAMES.LIST_SCREEN} /> */}
+      <AdmobBanner />
     </View>
   );
 };

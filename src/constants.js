@@ -29,3 +29,18 @@ export const GPAY_LOGO = `${BASE_IMAGE_URL}/gpay.webp`;
 export const PHONEPE_LOGO = `${BASE_IMAGE_URL}/phonepe.webp`;
 
 export const UPI_LOGO = `${BASE_IMAGE_URL}/upi.webp`;
+
+export const AD_UNITS_BANNER = [
+  'ca-app-pub-0714649342045057/8222174259',
+  'ca-app-pub-0714649342045057/5615643477',
+  'ca-app-pub-0714649342045057/1676398465',
+  'ca-app-pub-0714649342045057/6338246941',
+  'ca-app-pub-0714649342045057~1333332271',
+];
+
+export const AD_UNITS_INTERSTITIAL = [
+  'ca-app-pub-0714649342045057/8255256979',
+  'ca-app-pub-0714649342045057/3334765499',
+  'ca-app-pub-0714649342045057/9600790948',
+  'ca-app-pub-0714649342045057/7412948594',
+];
