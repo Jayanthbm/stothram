@@ -10,7 +10,7 @@ export const commonNavigationOptions = (
     headerTintColor: headertext,
     headerTitleStyle: {
       fontWeight: 'bold',
-      fontSize: 20,
+      fontSize: 16,
       fontFamily: headerFont,
     },
     cardStyleInterpolator: ({ current, layouts }) => {

@@ -16,7 +16,6 @@ import {
   View,
 } from 'react-native';
 import Pdf from 'react-native-pdf';
-import Admob from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
 import { SCREEN_NAMES } from '../constants';
@@ -24,6 +23,7 @@ import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { dataHelper } from '../utils/dataUtils';
+import { AdmobBanner } from '../components/admob';
 const generateStyles = (
   backgroundColor,
   textColor,
@@ -46,8 +46,6 @@ const generateStyles = (
       borderBottomColor: borderColor,
     },
     lineStyle: {
-      lineHeight: parseInt(fontSize) + 14,
-      fontSize: fontSize,
       color: textColor,
     },
     subHeadingContainer: {
@@ -71,9 +69,9 @@ const generateStyles = (
       width: Dimensions.get('window').width,
       height: Dimensions.get('window').height,
     },
-    // pickerContainer: {
-    //   display: 'none',
-    // },
+    pickerContainer: {
+      display: 'none',
+    },
   });
 };
 
@@ -223,7 +221,7 @@ const ReaderScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       {languages && languages.length > 0 && (
-        <View style={pickerStyle}>
+        <View style={styles.pickerContainer}>
           <Picker
             ref={pickerRef}
             selectedValue={currentLanguage}
@@ -309,6 +307,12 @@ const ReaderScreen = ({ navigation, route }) => {
                             fontWeight: fontWeights[item.fontFamily]
                               ? fontWeights[item.fontFamily]
                               : '700',
+                            lineHeight:
+                              item.fontFamily === 'brhknde'
+                                ? parseInt(font) + 17
+                                : parseInt(font) + 14,
+                            fontSize:
+                              item.fontFamily === 'brhknde' ? font + 2 : font,
                           },
                         ]}
                         key={index}>
@@ -339,7 +343,7 @@ const ReaderScreen = ({ navigation, route }) => {
           />
         </>
       )}
-      <Admob />
+      <AdmobBanner />
     </View>
   );
 };

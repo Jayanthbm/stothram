@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import Admob from '../components/admob';
 import CustomIcon from '../components/customIcon';
 import CustomHeaderLeft from '../components/headerLeft';
 import ListHeader from '../components/listHeader';
@@ -11,6 +10,7 @@ import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { dataHelper } from '../utils/dataUtils';
+import { AdmobBanner, AdmobInterstitial } from '../components/admob';
 
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor, textColor) => {
@@ -153,7 +153,8 @@ const SettingsScreen = React.memo(({ navigation }) => {
           <Text style={styles.madeInIndiaContainerText}> In India</Text>
         </View>
         {/* Admob */}
-        <Admob />
+        {/* <AdmobInterstitial page={SCREEN_NAMES.SETTINGS_SCREEN} /> */}
+        <AdmobBanner />
       </React.Fragment>
     </View>
   );
