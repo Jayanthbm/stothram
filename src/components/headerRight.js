@@ -1,6 +1,3 @@
-import { useNetInfo } from '@react-native-community/netinfo';
-import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useState } from 'react';
 import {
   Alert,
   Linking,
@@ -10,18 +7,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { CACHED_DATA_KEYS } from '../constants';
-import { ThemeContext } from '../contexts/themeContext';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   compareTimeDifference,
   getItem,
   getJSON,
   storeItem,
 } from '../utils/dataUtils';
+
+import { AdmobInterstitialButton } from './admob';
+import { CACHED_DATA_KEYS } from '../constants';
 import CustomIcon from './customIcon';
 import CustomModal from './customModal';
 import ImageButton from './imageButton';
+import PropTypes from 'prop-types';
+import { ThemeContext } from '../contexts/themeContext';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const generateStyles = headertext => {
   return StyleSheet.create({
@@ -185,6 +187,17 @@ const CustomHeaderRight = ({
   return (
     <>
       <View style={styles.headerRightContainer}>
+        <AdmobInterstitialButton>
+          <Text
+            style={{
+              marginRight: 2,
+              color: '#fff',
+              fontVariant: 'bold',
+            }}
+          >
+            AD
+          </Text>
+        </AdmobInterstitialButton>
         {!showLangPickerIcon && (
           <CustomIcon
             onPress={showDialog}
@@ -240,14 +253,16 @@ const CustomHeaderRight = ({
       <CustomModal
         visible={moneyModal}
         onClose={hideDialog}
-        title="Contribute to Stothram">
+        title="Contribute to Stothram"
+      >
         {upidata && upidata?.upi_amounts.length > 0 ? (
           <>
             <Text
               style={{
                 color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                 fontFamily: 'NotoSans',
-              }}>
+              }}
+            >
               Choose amount
             </Text>
             <View style={styles.radioButtons}>
@@ -257,7 +272,8 @@ const CustomHeaderRight = ({
                   onPress={() => {
                     setAmount(mappedAmount);
                     setMoney(mappedAmount);
-                  }}>
+                  }}
+                >
                   <CustomIcon
                     name="circle"
                     size={20}
@@ -271,7 +287,8 @@ const CustomHeaderRight = ({
                         color:
                           COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                       },
-                    ]}>
+                    ]}
+                  >
                     ₹{mappedAmount}
                   </Text>
                 </TouchableOpacity>
@@ -280,7 +297,8 @@ const CustomHeaderRight = ({
                 onPress={() => {
                   setAmount('custom');
                   setMoney(null);
-                }}>
+                }}
+              >
                 <CustomIcon
                   name="circle"
                   size={20}
@@ -294,7 +312,8 @@ const CustomHeaderRight = ({
                       color:
                         COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                     },
-                  ]}>
+                  ]}
+                >
                   Custom ₹
                 </Text>
               </TouchableOpacity>
@@ -326,7 +345,8 @@ const CustomHeaderRight = ({
                 color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
                 textAlign: 'center',
                 fontFamily: 'NotoSans',
-              }}>
+              }}
+            >
               Choose App to pay
             </Text>
             <View
@@ -334,7 +354,8 @@ const CustomHeaderRight = ({
                 flexDirection: 'row',
                 justifyContent: 'space-evenly',
                 marginTop: 10,
-              }}>
+              }}
+            >
               <ImageButton
                 onPress={() => openPaymentApp('PHONEPE', money)}
                 name={'PHONEPE'}

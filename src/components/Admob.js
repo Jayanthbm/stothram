@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Button, Platform, StatusBar } from 'react-native';
+import { AD_UNITS_BANNER, AD_UNITS_INTERSTITIAL } from '../constants';
 import {
+  AdEventType,
   BannerAdSize,
   GAMBannerAd,
   InterstitialAd,
-  AdEventType,
   TestIds,
 } from 'react-native-google-mobile-ads';
-import { AD_UNITS_BANNER, AD_UNITS_INTERSTITIAL } from '../constants';
-import { getItem, storeItem } from '../utils/dataUtils';
+import {
+  Alert,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity
+} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 
 const __DEV__ = true;
 
@@ -45,18 +50,39 @@ export const AdmobBanner = () => {
   );
 };
 
-export const AdmobInterstitialButton = () => {
+export const AdmobInterstitialButton = ({children}) => {
   const [loaded, setLoaded] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
   // Ad Unit ID
   const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : generateId('interstitial');
-  const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
-    keywords: ['fashion', 'clothing'],
-  });
+
+  const interstitialRef = useRef(
+    InterstitialAd.createForAdRequest(adUnitId, {
+      keywords: [
+        'fashion',
+        'clothing',
+        'lifestyle',
+        'shopping',
+        'style',
+        'deals',
+        'offers',
+        'menswear',
+        'womenswear',
+        'trending',
+        'beauty',
+        'gadgets',
+        'mobile',
+        'electronics',
+        'online store',
+      ],
+    }),
+  );
 
   // Load the interstitial ad and set up event listeners
   useEffect(() => {
+    const interstitial = interstitialRef.current;
+
     const unsubscribeLoaded = interstitial.addAdEventListener(
       AdEventType.LOADED,
       () => {
@@ -97,8 +123,11 @@ export const AdmobInterstitialButton = () => {
     };
   }, []);
 
+
   // Retry logic for showing ad
   const showAdWithRetry = () => {
+    const interstitial = interstitialRef.current;
+
     if (retryCount >= 3) {
       Alert.alert('Ad Error', 'Failed to load the ad after multiple attempts.');
       return;
@@ -119,17 +148,25 @@ export const AdmobInterstitialButton = () => {
   };
 
   return (
-    <Button
-      title="Show Ad"
-      onPress={() => {
-        if (loaded) {
-          showAdWithRetry();
-        } else {
-          Alert.alert('Ad Not Ready', 'The ad is still loading. Please wait.');
-          console.log('Ad is not ready yet.');
-        }
-      }}
-      disabled={!loaded} // Disable the button if the ad is not loaded
-    />
+    <>
+      {loaded ? (
+        <TouchableOpacity
+          onPress={() => {
+            if (loaded) {
+              showAdWithRetry();
+            } else {
+              Alert.alert(
+                'Ad Not Ready',
+                'The ad is still loading. Please wait.',
+              );
+              console.log('Ad is not ready yet.');
+            }
+          }}
+          disabled={!loaded}
+        >
+          {children}
+        </TouchableOpacity>
+      ) : null}
+    </>
   );
 };
