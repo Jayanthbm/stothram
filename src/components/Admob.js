@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 
-const __DEV__ = true;
+const __DEV__ = false;
 
 function generateId(type = 'banner') {
   const AD_UNITS = type === 'banner' ? AD_UNITS_BANNER : AD_UNITS_INTERSTITIAL;
