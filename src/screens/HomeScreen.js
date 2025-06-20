@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { AdmobBanner, AdmobInterstitialButton } from '../components/admob';
 import {
   Alert,
   BackHandler,
@@ -8,20 +8,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import CustomIcon from '../components/customIcon';
-import CustomHeaderRight from '../components/headerRight';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
-import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   dataHelper,
   preFetcher,
   storeItem,
   storeJSON,
 } from '../utils/dataUtils';
-import { AdmobBanner, AdmobInterstitialButton } from '../components/admob';
+
+import CustomHeaderRight from '../components/headerRight';
+import CustomIcon from '../components/customIcon';
+import { ThemeContext } from '../contexts/themeContext';
+import { commonNavigationOptions } from '../navigationOptions';
+
 // Function to generate styles dynamically based on context values
 const generateStyles = backgroundColor => {
   return StyleSheet.create({
@@ -149,7 +150,8 @@ const HomeScreen = ({ navigation }) => {
     return (
       <TouchableOpacity
         onPress={() => handleTypePress(item)}
-        style={[styles.typeContainer, typeContainerStyle]}>
+        style={[styles.typeContainer, typeContainerStyle]}
+      >
         <View style={[styles.typeItem, typeItemStyle]}>
           <View style={styles.iconContainer}>
             <CustomIcon
@@ -179,7 +181,9 @@ const HomeScreen = ({ navigation }) => {
         }}
       />
       {/* Display Admob component */}
-      <AdmobInterstitialButton />
+      <AdmobInterstitialButton>
+        <Text style={{ color: '#fff' }}>Watch an Ad</Text>
+      </AdmobInterstitialButton>
       <AdmobBanner />
     </View>
   );

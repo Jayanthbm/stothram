@@ -1,4 +1,3 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   BackHandler,
   FlatList,
@@ -9,16 +8,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { dataHelper, preFetcher } from '../utils/dataUtils';
 
-import CustomIcon from '../components/customIcon';
+import { AdmobBanner } from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
+import CustomIcon from '../components/customIcon';
 import { SCREEN_NAMES } from '../constants';
 import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import { dataHelper, preFetcher } from '../utils/dataUtils';
-import { AdmobBanner, AdmobInterstitial } from '../components/admob';
+
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor, textColor, borderColor) => {
   return StyleSheet.create({
@@ -220,7 +221,8 @@ const ListScreen = ({ navigation, route }) => {
     return (
       <TouchableOpacity
         style={styles.listItem}
-        onPress={() => handleItemClick(item)}>
+        onPress={() => handleItemClick(item)}
+      >
         <Text style={styles.listTextStyle}>{displayTitle}</Text>
       </TouchableOpacity>
     );
@@ -235,7 +237,8 @@ const ListScreen = ({ navigation, route }) => {
           marginRight: index % 2 === 0 ? 0 : 4,
         },
       ]}
-      onPress={() => handleItemClick(item)}>
+      onPress={() => handleItemClick(item)}
+    >
       <Image
         source={require('../assets/images/god.webp')}
         style={styles.cardImage}
@@ -290,7 +293,8 @@ const ListScreen = ({ navigation, route }) => {
                   onPress={() => {
                     setSearchValue('');
                     handleSearch('');
-                  }}>
+                  }}
+                >
                   Clear
                 </Text>
               </>
@@ -301,7 +305,6 @@ const ListScreen = ({ navigation, route }) => {
       />
 
       {/* Display Admob component */}
-      {/* <AdmobInterstitial page={SCREEN_NAMES.LIST_SCREEN} /> */}
       <AdmobBanner />
     </View>
   );
