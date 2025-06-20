@@ -1,13 +1,5 @@
-import Slider from '@react-native-community/slider';
-import { Picker } from '@react-native-picker/picker';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
 import {
+  Alert,
   BackHandler,
   Dimensions,
   FlatList,
@@ -15,15 +7,28 @@ import {
   Text,
   View,
 } from 'react-native';
-import Pdf from 'react-native-pdf';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+
+import { AdmobBanner } from '../components/admob';
 import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
+import Pdf from 'react-native-pdf';
+import { Picker } from '@react-native-picker/picker';
 import { SCREEN_NAMES } from '../constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Slider from '@react-native-community/slider';
 import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { dataHelper } from '../utils/dataUtils';
-import { AdmobBanner } from '../components/admob';
+
 const generateStyles = (
   backgroundColor,
   textColor,
@@ -118,10 +123,12 @@ const ReaderScreen = ({ navigation, route }) => {
 
   const closePicker = () => {
     setPickerStyle({ display: 'none' });
-    pickerRef.current.blur();
+    if (pickerRef.current && typeof pickerRef.current.blur === 'function') {
+      pickerRef.current.blur();
+    }
   };
-  // useEffect to set navigation options
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     navigation.setOptions({
       title: displayTitle ? displayTitle : title,
       ...commonNavigationOptions(
@@ -182,7 +189,14 @@ const ReaderScreen = ({ navigation, route }) => {
   }, [currentLanguage]);
 
   const confirmExit = useCallback(() => {
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      Alert.alert('Hold on!', 'Do you want to exit Stothram?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'YES', onPress: () => BackHandler.exitApp() },
+      ]);
+    }
   }, [navigation]);
 
   useEffect(() => {
@@ -218,133 +232,151 @@ const ReaderScreen = ({ navigation, route }) => {
   const fontWeights = {
     brhknde: 600,
   };
+
+  useEffect(() => {
+    return () => {
+      if (pickerRef.current && typeof pickerRef.current.blur === 'function') {
+        pickerRef.current.blur();
+      }
+    };
+  }, []);
+
   return (
-    <View style={styles.container}>
-      {languages && languages.length > 0 && (
-        <View style={styles.pickerContainer}>
-          <Picker
-            ref={pickerRef}
-            selectedValue={currentLanguage}
-            onValueChange={(itemValue, _itemIndex) => {
-              setCurrentLanguage(itemValue);
-              closePicker();
-            }}
-            style={{
-              color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-            }}>
-            {languages.map(language => (
-              <Picker.Item
-                key={language}
-                label={
-                  LANGUAGE_MAPPER[language]
-                    ? LANGUAGE_MAPPER[language]
-                    : language
-                }
-                value={language}
-              />
-            ))}
-          </Picker>
-        </View>
-      )}
-      {pdfReader ? (
-        <>
-          {readerData && (
-            <Pdf
-              source={{
-                uri: readerData,
-                cache: true,
+    <>
+      <SafeAreaView
+        style={styles.container}
+        edges={['top', 'left', 'right', 'bottom']}
+      >
+        {languages && languages.length > 0 && (
+          <View style={styles.pickerContainer}>
+            <Picker
+              ref={pickerRef}
+              selectedValue={currentLanguage}
+              onValueChange={(itemValue, _itemIndex) => {
+                setCurrentLanguage(itemValue);
+                closePicker();
               }}
-              trustAllCerts={false}
-              style={styles.pdf}
-              showsHorizontalScrollIndicator={false}
-              fitWidth={true}
-              scale={1}
-            />
-          )}
-        </>
-      ) : (
-        <>
-          {readerData && (
-            <Slider
-              value={font}
-              onValueChange={updateFontSize}
-              minimumValue={15}
-              maximumValue={30}
-              step={1}
               style={{
-                height: 40,
+                color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
               }}
-              thumbTintColor={sliderColor}
-              minimumTrackTintColor={sliderColor}
-              tapToSeek={true}
-            />
-          )}
-          <FlatList
-            ref={flatListRef}
-            data={readerData?.content}
-            keyExtractor={(_item, index) => index.toString()}
-            renderItem={({ item, index }) => {
-              if (item?.type === 'paragraph') {
-                return (
-                  <View
-                    style={[
-                      styles.paragraphStyle,
-                      highlightedIndex === index && styles.highlightedItem,
-                    ]}
-                    onTouchStart={() => {
-                      if (highlightedIndex !== index) {
-                        setHighlightedIndex(index);
-                      }
-                    }}>
-                    {item.lines.map((line, index) => (
+            >
+              {languages.map(language => (
+                <Picker.Item
+                  key={language}
+                  label={
+                    LANGUAGE_MAPPER[language]
+                      ? LANGUAGE_MAPPER[language]
+                      : language
+                  }
+                  value={language}
+                />
+              ))}
+            </Picker>
+          </View>
+        )}
+        {pdfReader ? (
+          <>
+            {readerData && (
+              <Pdf
+                source={{
+                  uri: readerData,
+                  cache: true,
+                }}
+                trustAllCerts={false}
+                style={styles.pdf}
+                showsHorizontalScrollIndicator={false}
+                fitWidth={true}
+                scale={1}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            {readerData && (
+              <Slider
+                value={font}
+                onValueChange={updateFontSize}
+                minimumValue={15}
+                maximumValue={30}
+                step={1}
+                style={{
+                  height: 40,
+                }}
+                thumbTintColor={sliderColor}
+                minimumTrackTintColor={sliderColor}
+                tapToSeek={true}
+              />
+            )}
+            <FlatList
+              ref={flatListRef}
+              data={readerData?.content}
+              keyExtractor={(_item, index) => index.toString()}
+              renderItem={({ item, index }) => {
+                if (item?.type === 'paragraph') {
+                  return (
+                    <View
+                      style={[
+                        styles.paragraphStyle,
+                        highlightedIndex === index && styles.highlightedItem,
+                      ]}
+                      onTouchStart={() => {
+                        if (highlightedIndex !== index) {
+                          setHighlightedIndex(index);
+                        }
+                      }}
+                    >
+                      {item.lines.map((line, index) => (
+                        <Text
+                          style={[
+                            styles.lineStyle,
+                            {
+                              fontFamily: item?.fontFamily
+                                ? item?.fontFamily
+                                : 'NotoSerif',
+                              fontWeight: fontWeights[item.fontFamily]
+                                ? fontWeights[item.fontFamily]
+                                : '700',
+                              lineHeight:
+                                item.fontFamily === 'brhknde'
+                                  ? parseInt(font) + 17
+                                  : parseInt(font) + 14,
+                              fontSize:
+                                item.fontFamily === 'brhknde' ? font + 2 : font,
+                            },
+                          ]}
+                          key={index}
+                        >
+                          {line}
+                        </Text>
+                      ))}
+                    </View>
+                  );
+                }
+                if (item.type === 'subheading') {
+                  return (
+                    <View style={styles.subHeadingContainer}>
                       <Text
                         style={[
-                          styles.lineStyle,
+                          styles.subHeadingText,
                           {
                             fontFamily: item?.fontFamily
                               ? item?.fontFamily
-                              : 'NotoSerif',
-                            fontWeight: fontWeights[item.fontFamily]
-                              ? fontWeights[item.fontFamily]
-                              : '700',
-                            lineHeight:
-                              item.fontFamily === 'brhknde'
-                                ? parseInt(font) + 17
-                                : parseInt(font) + 14,
-                            fontSize:
-                              item.fontFamily === 'brhknde' ? font + 2 : font,
+                              : 'NotoSans',
                           },
                         ]}
-                        key={index}>
-                        {line}
+                      >
+                        {item.title}
                       </Text>
-                    ))}
-                  </View>
-                );
-              }
-              if (item.type === 'subheading') {
-                return (
-                  <View style={styles.subHeadingContainer}>
-                    <Text
-                      style={[
-                        styles.subHeadingText,
-                        {
-                          fontFamily: item?.fontFamily
-                            ? item?.fontFamily
-                            : 'NotoSans',
-                        },
-                      ]}>
-                      {item.title}
-                    </Text>
-                  </View>
-                );
-              }
-            }}
-          />
-        </>
-      )}
+                    </View>
+                  );
+                }
+              }}
+            />
+          </>
+        )}
+      </SafeAreaView>
       <AdmobBanner />
-    </View>
+    </>
   );
 };
 

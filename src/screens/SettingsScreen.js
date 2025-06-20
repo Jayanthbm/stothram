@@ -1,16 +1,23 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { AdmobBanner, AdmobInterstitial } from '../components/admob';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
+import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import CustomIcon from '../components/customIcon';
 import CustomHeaderLeft from '../components/headerLeft';
+import CustomIcon from '../components/customIcon';
 import ListHeader from '../components/listHeader';
 import ListItem from '../components/listItem';
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
 import { dataHelper } from '../utils/dataUtils';
-import { AdmobBanner, AdmobInterstitial } from '../components/admob';
 
 // Function to generate styles dynamically based on context values
 const generateStyles = (backgroundColor, textColor) => {
@@ -70,8 +77,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
-    // Set navigation options including the headerLeft component
+  useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Settings',
       ...commonNavigationOptions(
@@ -82,12 +88,13 @@ const SettingsScreen = React.memo(({ navigation }) => {
     });
   }, [navigation, darkmode]);
 
+  const PLAY_STORE_URL =
+    'https://play.google.com/store/apps/details?id=com.jayanth.shotram';
   // Function to handle sharing the app
   const onShare = async () => {
     try {
       await Share.share({
-        message:
-          'https://play.google.com/store/apps/details?id=com.jayanth.shotram',
+        message: `Check out this amazing Stothram app!\n\n${PLAY_STORE_URL}`,
       });
     } catch (error) {
       console.log(error);
@@ -104,59 +111,61 @@ const SettingsScreen = React.memo(({ navigation }) => {
   const MemoizedListItem = React.memo(ListItem);
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        {/* General Settings */}
-        <ListHeader title="General Settings" icon={'settings'} />
+    <>
+      <SafeAreaView
+        style={styles.container}
+        edges={['top', 'left', 'right', 'bottom']}
+      >
+        <ScrollView>
+          {/* General Settings */}
+          <ListHeader title="General Settings" icon={'settings'} />
 
-        {/* Memoized version of ListItem */}
-        <MemoizedListItem
-          title="Dark theme"
-          subtitle="Reduce glare and improve night viewing"
-          toggle={toggleDarkMode}
-          state={darkmode}
-        />
-        <MemoizedListItem
-          title="Toggle in Every Page"
-          subtitle="Show option to toggle dark mode in every screen"
-          toggle={toggleDarkSwitch}
-          state={darkSwitch}
-        />
+          {/* Memoized version of ListItem */}
+          <MemoizedListItem
+            title="Dark theme"
+            subtitle="Reduce glare and improve night viewing"
+            toggle={toggleDarkMode}
+            state={darkmode}
+          />
+          <MemoizedListItem
+            title="Toggle in Every Page"
+            subtitle="Show option to toggle dark mode in every screen"
+            toggle={toggleDarkSwitch}
+            state={darkSwitch}
+          />
 
-        {/* Contributions */}
-        <ListHeader title="Contributions" icon={'info'} />
-        {contributions?.map(({ name, role }) => (
-          <MemoizedListItem title={name} subtitle={role} key={name} />
-        ))}
-        <View style={styles.shareContainer}>
-          <CustomIcon
-            name="share"
-            library="Feather"
-            size={24}
-            color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
-          />
-          <Text style={commonStyles.textButton} onPress={onShare}>
-            Share App with friends/family
-          </Text>
-        </View>
-      </ScrollView>
-      {/* Share and Made in India section */}
-      <React.Fragment>
-        <View style={styles.madeInIndiaContainer}>
-          <Text style={styles.madeInIndiaContainerText}>Made With {''}</Text>
-          {/* CustomIcon component for heart icon */}
-          <CustomIcon
-            name="heart"
-            library="AntDesign"
-            style={styles.madeInIndiaContainerIcon}
-          />
-          <Text style={styles.madeInIndiaContainerText}> In India</Text>
-        </View>
-        {/* Admob */}
-        {/* <AdmobInterstitial page={SCREEN_NAMES.SETTINGS_SCREEN} /> */}
-        <AdmobBanner />
-      </React.Fragment>
-    </View>
+          {/* Contributions */}
+          <ListHeader title="Contributions" icon={'info'} />
+          {contributions?.map(({ name, role }) => (
+            <MemoizedListItem title={name} subtitle={role} key={name} />
+          ))}
+          <View style={styles.shareContainer}>
+            <CustomIcon
+              name="share"
+              library="Feather"
+              size={24}
+              color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
+            />
+            <Text style={commonStyles.textButton} onPress={onShare}>
+              Share App with friends/family
+            </Text>
+          </View>
+          {/* Share and Made in India section */}
+          <View style={styles.madeInIndiaContainer}>
+            <Text style={styles.madeInIndiaContainerText}>Made With {''}</Text>
+            {/* CustomIcon component for heart icon */}
+            <CustomIcon
+              name="heart"
+              library="AntDesign"
+              style={styles.madeInIndiaContainerIcon}
+            />
+            <Text style={styles.madeInIndiaContainerText}> In India</Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+      {/* Admob */}
+      <AdmobBanner />
+    </>
   );
 });
 

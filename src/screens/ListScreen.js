@@ -1,4 +1,5 @@
 import {
+  Alert,
   BackHandler,
   FlatList,
   Image,
@@ -9,7 +10,13 @@ import {
   View,
 } from 'react-native';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
 
 import { AdmobBanner } from '../components/admob';
@@ -17,6 +24,7 @@ import CustomHeaderLeft from '../components/headerLeft';
 import CustomHeaderRight from '../components/headerRight';
 import CustomIcon from '../components/customIcon';
 import { SCREEN_NAMES } from '../constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
 
@@ -120,7 +128,7 @@ const ListScreen = ({ navigation, route }) => {
   const [rendered, setRendered] = useState(false);
 
   // Set Navigation Options
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       title: title,
       ...commonNavigationOptions(
@@ -135,7 +143,14 @@ const ListScreen = ({ navigation, route }) => {
   }, [navigation, title, darkmode]);
 
   const confirmExit = useCallback(() => {
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      Alert.alert('Hold on!', 'Do you want to exit Stothram?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'YES', onPress: () => BackHandler.exitApp() },
+      ]);
+    }
   }, [navigation]);
 
   useEffect(() => {
@@ -151,6 +166,7 @@ const ListScreen = ({ navigation, route }) => {
     );
     return () => backHandler.remove();
   }, [confirmExit]);
+
   // Set Title and Data URL
   useEffect(() => {
     setTitle(type?.title);
@@ -251,62 +267,68 @@ const ListScreen = ({ navigation, route }) => {
 
   // Render Component
   return (
-    <View style={styles.container}>
-      {/* Search Input */}
-      <View style={styles.searchContainer}>
-        <CustomIcon
-          name="search"
-          size={26}
-          color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
-          style={styles.searchIcon}
-          library="Feather"
-        />
-        <TextInput
-          placeholder="Search"
-          placeholderTextColor={
-            COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor
+    <>
+      <SafeAreaView
+        style={styles.container}
+        edges={['top', 'left', 'right', 'bottom']}
+      >
+        {/* Search Input */}
+        <View style={styles.searchContainer}>
+          <CustomIcon
+            name="search"
+            size={26}
+            color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
+            style={styles.searchIcon}
+            library="Feather"
+          />
+          <TextInput
+            placeholder="Search"
+            placeholderTextColor={
+              COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor
+            }
+            onChangeText={handleSearch}
+            value={searchValue}
+            style={styles.searchInput}
+          />
+        </View>
+
+        <FlatList
+          data={filteredData}
+          keyExtractor={keyExtractor}
+          renderItem={({ item, index }) =>
+            viewType === 'list' ? (
+              <MemoizedListItem item={item} />
+            ) : (
+              <MemoizedCardItem item={item} index={index} />
+            )
           }
-          onChangeText={handleSearch}
-          value={searchValue}
-          style={styles.searchInput}
+          numColumns={viewType === 'list' ? 1 : 2}
+          extraData={viewType} // Add extraData to trigger a re-render when viewType changes
+          ListEmptyComponent={() => (
+            <View style={styles.noDataContainer}>
+              {rendered && (
+                <>
+                  <Text style={styles.noDataText}>No data found</Text>
+                  <Text
+                    style={styles.noDataTextButton}
+                    onPress={() => {
+                      setSearchValue('');
+                      handleSearch('');
+                    }}
+                  >
+                    Clear
+                  </Text>
+                </>
+              )}
+            </View>
+          )}
+          key={viewType}
         />
-      </View>
-      <FlatList
-        data={filteredData}
-        keyExtractor={keyExtractor}
-        renderItem={({ item, index }) =>
-          viewType === 'list' ? (
-            <MemoizedListItem item={item} />
-          ) : (
-            <MemoizedCardItem item={item} index={index} />
-          )
-        }
-        numColumns={viewType === 'list' ? 1 : 2}
-        extraData={viewType} // Add extraData to trigger a re-render when viewType changes
-        ListEmptyComponent={() => (
-          <View style={styles.noDataContainer}>
-            {rendered && (
-              <>
-                <Text style={styles.noDataText}>No data found</Text>
-                <Text
-                  style={styles.noDataTextButton}
-                  onPress={() => {
-                    setSearchValue('');
-                    handleSearch('');
-                  }}
-                >
-                  Clear
-                </Text>
-              </>
-            )}
-          </View>
-        )}
-        key={viewType}
-      />
+      </SafeAreaView>
 
       {/* Display Admob component */}
       <AdmobBanner />
-    </View>
+    </>
   );
 };
 

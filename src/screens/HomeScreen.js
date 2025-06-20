@@ -10,7 +10,13 @@ import {
 } from 'react-native';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
 import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
   dataHelper,
   preFetcher,
@@ -20,6 +26,7 @@ import {
 
 import CustomHeaderRight from '../components/headerRight';
 import CustomIcon from '../components/customIcon';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '../contexts/themeContext';
 import { commonNavigationOptions } from '../navigationOptions';
 
@@ -83,8 +90,7 @@ const HomeScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    // Set navigation options when the headerBackground changes
+  useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Stothram',
       ...commonNavigationOptions(
@@ -168,24 +174,32 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Display types in a FlatList */}
-      <FlatList
-        data={types}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderTypeItem}
-        numColumns={2}
-        style={{
-          flexDirection: 'column-reverse',
-          marginBottom: 50,
-        }}
-      />
+    <>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        {/* Display types in a FlatList */}
+        <FlatList
+          data={types}
+          keyExtractor={item => item.id.toString()}
+          renderItem={renderTypeItem}
+          numColumns={2}
+          style={{
+            flexDirection: 'column-reverse',
+            marginBottom: 50,
+          }}
+        />
+      </SafeAreaView>
       {/* Display Admob component */}
       <AdmobInterstitialButton>
-        <Text style={{ color: '#fff' }}>Watch an Ad</Text>
+        <View
+          style={{
+            backgroundColor: styles.container.backgroundColor,
+          }}
+        >
+          <Text style={{ color: '#fff', paddingBottom: 4 }}>Watch an Ad</Text>
+        </View>
       </AdmobInterstitialButton>
       <AdmobBanner />
-    </View>
+    </>
   );
 };
 
