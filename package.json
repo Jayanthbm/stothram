@@ -9,7 +9,8 @@
     "start": "react-native start",
     "test": "jest",
     "prettify": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
-    "aab": "cd android && ./gradlew bundleRelease -Pandroid.injected.signing.store.file=/Users/jayanthbharadwajm/development/stothram/jys -Pandroid.injected.signing.store.password=jayanth@123 -Pandroid.injected.signing.key.alias=jys -Pandroid.injected.signing.key.password=jayanth@123"
+    "apk": "cd android && ./gradlew assembleRelease",
+    "aab": "cd android && ./gradlew bundleRelease"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
