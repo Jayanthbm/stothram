@@ -15,6 +15,7 @@ export const commonNavigationOptions = (
       fontSize: 16,
       fontFamily: headerFont,
     },
+    headerTitleAlign: 'left',
     ...TransitionPresets.SlideFromRightIOS,
   };
 };
