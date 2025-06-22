@@ -16,7 +16,6 @@ import ListHeader from '../components/listHeader';
 import ListItem from '../components/listItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
 import { dataHelper } from '../utils/dataUtils';
 
 // Function to generate styles dynamically based on context values
@@ -80,13 +79,9 @@ const SettingsScreen = React.memo(({ navigation }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Settings',
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-      ),
       headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
     });
-  }, [navigation, darkmode]);
+  }, [navigation]);
 
   const PLAY_STORE_URL =
     'https://play.google.com/store/apps/details?id=com.jayanth.shotram';
@@ -114,7 +109,7 @@ const SettingsScreen = React.memo(({ navigation }) => {
     <>
       <SafeAreaView
         style={styles.container}
-        edges={['top', 'left', 'right', 'bottom']}
+        edges={['left', 'right', 'bottom']}
       >
         <ScrollView>
           {/* General Settings */}
