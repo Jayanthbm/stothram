@@ -1,73 +1,38 @@
-import { AdmobBanner, AdmobInterstitialButton } from '../components/admob';
-import {
-  Alert,
-  BackHandler,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
-import {
-  dataHelper,
-  preFetcher,
-  storeItem,
-  storeJSON,
-} from '../utils/dataUtils';
+// src/screens/HomeScreen.js
 
-import CustomHeaderRight from '../components/headerRight';
-import CustomIcon from '../components/customIcon';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../contexts/themeContext';
+import AppBar from '../components/AppBar';
+import { FlatList, View, Text, StyleSheet, Dimensions } from 'react-native';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
+import { dataHelper, preFetcher } from '../utils/dataUtils';
+import AntDesign from '@react-native-vector-icons/ant-design';
+import Card from '../components/Card';
 
-// Function to generate styles dynamically based on context values
-const generateStyles = backgroundColor => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    typeContainer: {
-      flex: 1,
-      margin: 8,
-      borderRadius: 10,
-      borderWidth: 1,
-    },
-    typeItem: {
-      padding: 20,
-    },
-    iconContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    typeIcon: {
-      color: '#fff',
-      marginBottom: 10,
-    },
-    typeTitle: {
-      color: '#fff',
-      fontSize: 18,
-      fontFamily: 'NotoSans',
-    },
-  });
-};
+const { width } = Dimensions.get('window');
+const CARD_MARGIN = 12;
+const CARD_WIDTH = (width - CARD_MARGIN * 3) / 2; // 2 per row
+const CARD_HEIGHT = 130; // ✅ fixed height for uniformity
 
-const HomeScreen = ({ navigation }) => {
-  const { darkmode } = useContext(ThemeContext);
-
+const HomeScreen = () => {
+  const { theme, toggleTheme, showDarkSwitch } = useTheme();
+  const navigation = useNavigation();
   const [types, setTypes] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+
+  // 🔹 Right icons (theme + toggle view)
+  const rightIcons = useMemo(() => {
+    const icons = [];
+    if (showDarkSwitch) {
+      icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
+    }
+    icons.push({
+      iconName: 'cog',
+      onPress: () => navigation.navigate('Settings'),
+    });
+    return icons;
+  }, [showDarkSwitch, toggleTheme, navigation]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -77,10 +42,7 @@ const HomeScreen = ({ navigation }) => {
           SCREEN_NAMES.HOME_SCREEN,
         );
         if (fetchedData) {
-          setTypes(fetchedData?.data);
-          await storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
-          await storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
-          setLoaded(true);
+          setTypes(fetchedData?.data || []);
           preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
         }
       } catch (error) {
@@ -90,117 +52,89 @@ const HomeScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Stothram',
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-      ),
-      headerRight: () => (
-        <CustomHeaderRight
-          navigation={navigation}
-          showSettings={true}
-          reRender={loaded}
-        />
-      ),
-    });
-  }, [navigation, darkmode, loaded]);
-
-  const confirmExit = useCallback(() => {
-    Alert.alert('Hold on!', 'Do you want to Exit Stothram?', [
-      {
-        text: 'Cancel',
-        onPress: () => null,
-        style: 'cancel',
-      },
-      { text: 'YES', onPress: () => BackHandler.exitApp() },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    // Handle hardware back press event
-    const backAction = () => {
-      // Confirm exit when the hardware back button is pressed
-      confirmExit();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [confirmExit]);
-
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-  );
-
   const handleTypePress = useCallback(
     type => {
-      navigation.navigate('List', { type });
+      navigation.navigate('List', { type, title: type.title });
     },
     [navigation],
   );
 
-  // Render each type item in the FlatList
-  const renderTypeItem = ({ item }) => {
-    const typeContainerStyle = {
-      borderColor: darkmode ? item.darkBackground : item.lightBackground,
-    };
+  const renderItem = ({ item, index }) => {
+    const isLastOdd = types.length % 2 !== 0 && index === types.length - 1; // last single card full width
 
-    const typeItemStyle = {
-      backgroundColor: darkmode ? item.darkBackground : item.lightBackground,
-    };
     return (
-      <TouchableOpacity
+      <Card
+        style={{
+          width: isLastOdd ? width - CARD_MARGIN * 2 : CARD_WIDTH,
+          height: CARD_HEIGHT,
+        }}
         onPress={() => handleTypePress(item)}
-        style={[styles.typeContainer, typeContainerStyle]}
       >
-        <View style={[styles.typeItem, typeItemStyle]}>
-          <View style={styles.iconContainer}>
-            <CustomIcon
-              name={item.icon}
-              library="AntDesign"
-              size={60}
-              style={styles.typeIcon}
-            />
-            <Text style={styles.typeTitle}>{item.title}</Text>
-          </View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <AntDesign name={item.icon} size={60} color={theme.colors.primary} />
+          <Text style={[styles.title, { color: theme.colors.onSurface }]}>
+            {item.title}
+          </Text>
         </View>
-      </TouchableOpacity>
+      </Card>
     );
   };
 
   return (
-    <>
-      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-        {/* Display types in a FlatList */}
-        <FlatList
-          data={types}
-          keyExtractor={item => item.id.toString()}
-          renderItem={renderTypeItem}
-          numColumns={2}
-          style={{
-            flexDirection: 'column-reverse',
-            marginBottom: 50,
-          }}
-        />
-      </SafeAreaView>
-      {/* Display Admob component */}
-      <AdmobInterstitialButton>
-        <View
-          style={{
-            backgroundColor: styles.container.backgroundColor,
-          }}
-        >
-          <Text style={{ color: '#fff', paddingBottom: 4 }}>Watch an Ad</Text>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <AppBar showBack={false} rightIcons={rightIcons} title="Stothram" />
+
+      <View style={styles.flexWrapper}>
+        <View style={styles.bottomAlign}>
+          <FlatList
+            data={types}
+            keyExtractor={item => item.id?.toString()}
+            renderItem={renderItem}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
         </View>
-      </AdmobInterstitialButton>
-      <AdmobBanner />
-    </>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  flexWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  bottomAlign: {
+    alignSelf: 'center',
+    width: '100%',
+    marginBottom: 20,
+  },
+  listContent: {
+    paddingHorizontal: CARD_MARGIN,
+  },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: CARD_MARGIN,
+  },
+  title: {
+    marginTop: 6,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+});
 
 export default HomeScreen;

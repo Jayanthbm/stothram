@@ -1,179 +1,70 @@
+// src/screens/ListScreen.js
+
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
-  BackHandler,
+  Dimensions,
   FlatList,
-  Image,
+  LayoutAnimation,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+
+import AppBar from '../components/AppBar';
+import Card from '../components/Card';
+import SearchBar from '../components/SearchBar';
+import NoDataCard from '../components/NoDataCard';
+import { useTheme } from '../contexts/themeContext';
+import { SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
+import IconList from '../components/IconList';
 
-import { AdmobBanner } from '../components/admob';
-import CustomHeaderLeft from '../components/headerLeft';
-import CustomHeaderRight from '../components/headerRight';
-import CustomIcon from '../components/customIcon';
-import { SCREEN_NAMES } from '../constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
+const { width } = Dimensions.get('window');
 
-// Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor, textColor, borderColor) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    searchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 15,
-      marginBottom: 10,
-      elevation: 2,
-      shadowColor: backgroundColor,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 2,
-      backgroundColor: backgroundColor,
-    },
-    searchIcon: {
-      marginRight: 10,
-    },
-    searchInput: {
-      paddingVertical: 10,
-      fontSize: 20,
-      marginLeft: 10,
-      backgroundColor: backgroundColor,
-      color: textColor,
-    },
-    listItem: {
-      marginLeft: 10,
-      paddingTop: 10,
-      paddingBottom: 5,
-      paddingLeft: 5,
-      borderBottomWidth: 2,
-      borderBottomColor: borderColor,
-    },
-    listTextStyle: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: textColor,
-      fontFamily: 'NotoSerif',
-    },
-    cardContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginLeft: 2,
-      justifyContent: 'space-between',
-    },
-    card: {
-      width: '48%',
-      borderWidth: 1,
-      borderRadius: 8,
-      marginBottom: 10,
-      overflow: 'hidden',
-      borderColor: borderColor,
-    },
-    cardImage: {
-      width: 180,
-      height: 100,
-      resizeMode: 'cover',
-    },
-    cardTitle: {
-      fontSize: 14,
-      fontWeight: '700',
-      textAlign: 'center',
-      padding: 5,
-      color: textColor,
-      fontFamily: 'NotoSerif',
-    },
-    noDataContainer: {
-      marginTop: 20,
-      marginLeft: 5,
-      marginRight: 5,
-    },
-    noDataText: {
-      fontSize: 20,
-      textAlign: 'center',
-      color: textColor,
-    },
-    noDataTextButton: {
-      fontSize: 20,
-      textAlign: 'center',
-      color: '#ADD8E6',
-    },
-  });
-};
-// ListScreen Component
-const ListScreen = ({ navigation, route }) => {
-  // Context and State
-  const { darkmode, viewType } = useContext(ThemeContext);
+// 🔹 Fixed, consistent dimensions
+const CARD_MARGIN = 12;
+const GRID_CARD_WIDTH = (width - CARD_MARGIN * 3) / 2;
+const GRID_CARD_HEIGHT = 130;
+
+const ListScreen = ({ route }) => {
   const { type } = route.params;
+  const { viewType, theme, toggleViewType, showDarkSwitch, toggleTheme } =
+    useTheme();
+  const navigation = useNavigation();
+
   const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  const [filteredData, setFilteredData] = useState(list);
   const [rendered, setRendered] = useState(false);
 
-  // Set Navigation Options
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: title,
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-      ),
-      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-      headerRight: () => (
-        <CustomHeaderRight navigation={navigation} showViewToggle={true} />
-      ),
-    });
-  }, [navigation, title, darkmode]);
-
-  const confirmExit = useCallback(() => {
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    } else {
-      Alert.alert('Hold on!', 'Do you want to exit Stothram?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'YES', onPress: () => BackHandler.exitApp() },
-      ]);
+  // 🔹 Right icons (theme + toggle view)
+  const rightIcons = useMemo(() => {
+    const icons = [];
+    if (showDarkSwitch) {
+      icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
     }
-  }, [navigation]);
+    icons.push({
+      iconName: viewType === 'list' ? 'view-grid' : 'view-list',
+      onPress: () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        toggleViewType();
+      },
+    });
+    return icons;
+  }, [showDarkSwitch, toggleTheme, viewType, toggleViewType]);
 
+  // 🔹 Set title and URL
   useEffect(() => {
-    // Handle hardware back press event
-    const backAction = () => {
-      // Confirm exit when the hardware back button is pressed
-      confirmExit();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [confirmExit]);
-
-  // Set Title and Data URL
-  useEffect(() => {
-    setTitle(type?.title);
-    setDataUrl(type?.dataUrl);
+    if (type) {
+      setTitle(type?.title || '');
+      setDataUrl(type?.dataUrl || null);
+    }
   }, [type]);
 
-  // Fetch Data
+  // 🔹 Fetch data
   useEffect(() => {
     const fetchData = async () => {
       const fetchedData = await dataHelper(
@@ -181,155 +72,134 @@ const ListScreen = ({ navigation, route }) => {
         dataUrl,
         SCREEN_NAMES.LIST_SCREEN,
       );
-      if (fetchedData) {
-        setList(fetchedData?.data);
-        // Prefetch data for the Reader screen
-        preFetcher(fetchedData?.data, SCREEN_NAMES.READER_SCREEN);
+      if (fetchedData?.data) {
+        setList(fetchedData.data);
+        preFetcher(fetchedData.data, SCREEN_NAMES.READER_SCREEN);
       }
     };
-
-    if (dataUrl) {
-      fetchData();
-    }
+    if (dataUrl) fetchData();
   }, [dataUrl]);
 
-  // Update Filtered Data when List Changes
-  useEffect(() => {
-    setFilteredData(list);
-  }, [list]);
-
-  // Filter Data based on Search Text
-  const filterData = (data, searchText) => {
-    return data.filter(item =>
-      item.title.toLowerCase().includes(searchText.toLowerCase()),
+  // 🔹 Search filter
+  const filteredData = useMemo(() => {
+    if (!searchValue.trim()) return list;
+    return list.filter(item =>
+      item?.title?.toLowerCase().includes(searchValue.toLowerCase()),
     );
-  };
+  }, [list, searchValue]);
 
-  // Handle Search Input
   const handleSearch = text => {
     setSearchValue(text);
-    const newData = filterData(list, text);
     setRendered(true);
-    setFilteredData(newData);
   };
 
-  // Handle Item Click
   const handleItemClick = useCallback(
-    item => {
-      navigation.navigate('Reader', { item });
-    },
+    item => navigation.navigate('Reader', { item }),
     [navigation],
   );
 
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].borderColor,
-  );
-
-  // Define a key extractor function
-  const keyExtractor = useCallback((item, index) => index.toString(), []);
-  // Define renderItem functions for list and card views
-  // Memoized ListItem Component
-  const MemoizedListItem = React.memo(({ item }) => {
-    const { displayTitle } = item;
-    return (
-      <TouchableOpacity
-        style={styles.listItem}
+  // 🔹 Render each item (switches between IconList and Card)
+  const renderItem = ({ item }) =>
+    viewType === 'list' ? (
+      <IconList
+        key={item.id}
+        leftIcon="note-text"
+        title={item.title}
         onPress={() => handleItemClick(item)}
-      >
-        <Text style={styles.listTextStyle}>{displayTitle}</Text>
-      </TouchableOpacity>
-    );
-  });
-  // Memoized CardItem Component
-  const MemoizedCardItem = React.memo(({ item, index }) => (
-    <TouchableOpacity
-      style={[
-        styles.card,
-        {
-          marginLeft: index % 2 === 0 ? 4 : 0,
-          marginRight: index % 2 === 0 ? 0 : 4,
-        },
-      ]}
-      onPress={() => handleItemClick(item)}
-    >
-      <Image
-        source={require('../assets/images/god.webp')}
-        style={styles.cardImage}
       />
-      <Text style={styles.cardTitle}>
-        {item.displayTitle ? item.displayTitle : item.title}
-      </Text>
-    </TouchableOpacity>
-  ));
-
-  // Render Component
+    ) : (
+      <Card
+        key={item.id}
+        onPress={() => handleItemClick(item)}
+        style={{
+          width: GRID_CARD_WIDTH,
+          height: GRID_CARD_HEIGHT,
+        }}
+      >
+        <View style={styles.cardGridContent}>
+          <MaterialDesignIcons
+            name="note-text"
+            size={60}
+            color={theme.colors.primary}
+          />
+          <Text
+            style={[styles.gridTitle, { color: theme.colors.onSurface }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {item.title}
+          </Text>
+        </View>
+      </Card>
+    );
   return (
     <>
-      <SafeAreaView
-        style={styles.container}
-        edges={['top', 'left', 'right', 'bottom']}
-      >
-        {/* Search Input */}
-        <View style={styles.searchContainer}>
-          <CustomIcon
-            name="search"
-            size={26}
-            color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
-            style={styles.searchIcon}
-            library="Feather"
-          />
-          <TextInput
-            placeholder="Search"
-            placeholderTextColor={
-              COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor
-            }
-            onChangeText={handleSearch}
-            value={searchValue}
-            style={styles.searchInput}
-          />
-        </View>
-
-        <FlatList
-          data={filteredData}
-          keyExtractor={keyExtractor}
-          renderItem={({ item, index }) =>
-            viewType === 'list' ? (
-              <MemoizedListItem item={item} />
-            ) : (
-              <MemoizedCardItem item={item} index={index} />
-            )
-          }
-          numColumns={viewType === 'list' ? 1 : 2}
-          extraData={viewType} // Add extraData to trigger a re-render when viewType changes
-          ListEmptyComponent={() => (
-            <View style={styles.noDataContainer}>
-              {rendered && (
-                <>
-                  <Text style={styles.noDataText}>No data found</Text>
-                  <Text
-                    style={styles.noDataTextButton}
-                    onPress={() => {
-                      setSearchValue('');
-                      handleSearch('');
-                    }}
-                  >
-                    Clear
-                  </Text>
-                </>
-              )}
-            </View>
-          )}
-          key={viewType}
+      <AppBar title={title} rightIcons={rightIcons} />
+      <View style={styles.searchWrapper}>
+        <SearchBar
+          placeholder={`Search ${title}`}
+          value={searchValue}
+          onChangeText={handleSearch}
+          onClear={() => setSearchValue('')}
+          disabled={false}
         />
-      </SafeAreaView>
-
-      {/* Display Admob component */}
-      <AdmobBanner />
+      </View>
+      {rendered && filteredData.length === 0 && (
+        <NoDataCard
+          title={`No data found in ${title}`}
+          onActionPress={() => {
+            setSearchValue('');
+            handleSearch('');
+          }}
+        />
+      )}
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item, index) =>
+          item.id?.toString() || `${item.title}-${index}`
+        }
+        numColumns={viewType === 'list' ? 1 : 2}
+        renderItem={renderItem}
+        columnWrapperStyle={viewType === 'list' ? null : styles.gridRow}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        key={viewType}
+        removeClippedSubviews
+        initialNumToRender={10}
+        windowSize={5}
+      />
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  listContent: {
+    paddingHorizontal: CARD_MARGIN,
+    paddingBottom: CARD_MARGIN * 2,
+  },
+
+  // Grid mode styles only
+  gridRow: {
+    justifyContent: 'space-between',
+    marginBottom: CARD_MARGIN,
+  },
+
+  cardGridContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gridTitle: {
+    marginTop: 6,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+
+  // Common
+  searchWrapper: {
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+});
 
 export default ListScreen;

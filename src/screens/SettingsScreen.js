@@ -1,59 +1,27 @@
-import { AdmobBanner, AdmobInterstitial } from '../components/admob';
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../constants';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
-import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+// src/screens/SettingsScreen.js
 
-import CustomHeaderLeft from '../components/headerLeft';
-import CustomIcon from '../components/customIcon';
-import ListHeader from '../components/listHeader';
-import ListItem from '../components/listItem';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeContext } from '../contexts/themeContext';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import AppBar from '../components/AppBar';
+import PageTitle from '../components/PageTitle';
+import IconList from '../components/IconList';
+import { useTheme } from '../contexts/themeContext';
+import MaterialSwitch from '../components/MaterialSwitch';
 import { dataHelper } from '../utils/dataUtils';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
+import {
+  Animated,
+  Pressable,
+  ScrollView,
+  Share,
+  Text,
+  View,
+  Easing,
+} from 'react-native';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import Card from '../components/Card';
 
-// Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor, textColor) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    shareContainer: {
-      marginTop: 10,
-      marginBottom: 10,
-      alignItems: 'center',
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
-    madeInIndiaContainer: {
-      flexDirection: 'row',
-      alignSelf: 'center',
-      marginBottom: 5,
-    },
-    madeInIndiaContainerIcon: {
-      color: 'red',
-      fontSize: 25,
-      marginTop: 1,
-    },
-    madeInIndiaContainerText: {
-      color: textColor,
-      fontSize: 20,
-      fontFamily: 'NotoSans',
-    },
-  });
-};
-
-const SettingsScreen = React.memo(({ navigation }) => {
-  const { toggleDarkMode, darkmode, toggleDarkSwitch, darkSwitch } =
-    useContext(ThemeContext);
-
+const SettingsScreen = () => {
+  const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
   const [contributions, setContributions] = useState([]);
 
   const fetchData = useCallback(async () => {
@@ -76,16 +44,9 @@ const SettingsScreen = React.memo(({ navigation }) => {
     fetchData();
   }, [fetchData]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Settings',
-      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-    });
-  }, [navigation]);
-
   const PLAY_STORE_URL =
     'https://play.google.com/store/apps/details?id=com.jayanth.shotram';
-  // Function to handle sharing the app
+
   const onShare = async () => {
     try {
       await Share.share({
@@ -96,72 +57,161 @@ const SettingsScreen = React.memo(({ navigation }) => {
     }
   };
 
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-  );
-
-  // Memoized version of ListItem component
-  const MemoizedListItem = React.memo(ListItem);
+  // ❤️ Heart animation setup
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.3,
+          duration: 600,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 600,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, [scaleAnim]);
 
   return (
     <>
-      <SafeAreaView
-        style={styles.container}
-        edges={['left', 'right', 'bottom']}
+      <AppBar title="Settings" />
+      <ScrollView
+        style={{
+          paddingHorizontal: 16,
+        }}
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView>
-          {/* General Settings */}
-          <ListHeader title="General Settings" icon={'settings'} />
-
-          {/* Memoized version of ListItem */}
-          <MemoizedListItem
-            title="Dark theme"
-            subtitle="Reduce glare and improve night viewing"
-            toggle={toggleDarkMode}
-            state={darkmode}
-          />
-          <MemoizedListItem
-            title="Toggle in Every Page"
-            subtitle="Show option to toggle dark mode in every screen"
-            toggle={toggleDarkSwitch}
-            state={darkSwitch}
-          />
-
-          {/* Contributions */}
-          <ListHeader title="Contributions" icon={'info'} />
-          {contributions?.map(({ name, role }) => (
-            <MemoizedListItem title={name} subtitle={role} key={name} />
-          ))}
-          <View style={styles.shareContainer}>
-            <CustomIcon
-              name="share"
-              library="Feather"
-              size={24}
-              color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
+        <PageTitle title="General Settings" />
+        <IconList
+          keyName="mode"
+          onPress={toggleTheme}
+          leftIcon="palette-outline"
+          title="Dark Theme"
+          subtitle="Reduce glare and improve night viewing"
+          rightContent={
+            <MaterialSwitch
+              value={theme.mode === 'dark'}
+              onValueChange={toggleTheme}
+              theme={theme}
             />
-            <Text style={commonStyles.textButton} onPress={onShare}>
-              Share App with friends/family
+          }
+        />
+        <IconList
+          keyName="toggle"
+          onPress={toggleDarkSwitch}
+          leftIcon="theme-light-dark"
+          title="Toggle in Every Page"
+          subtitle="Show option to toggle dark mode in every screen"
+          rightContent={
+            <MaterialSwitch
+              value={showDarkSwitch}
+              onValueChange={toggleDarkSwitch}
+              theme={theme}
+            />
+          }
+        />
+
+        <PageTitle title="Contributions" />
+        <Card disabled keyName="contributors">
+          {contributions?.map(({ name, role }, index) => (
+            <IconList
+              key={`${name}-${role}`}
+              disabled
+              keyName={`contributions-${name}`}
+              leftIcon={
+                role === 'Editor'
+                  ? 'pencil-outline'
+                  : role === 'Developer'
+                    ? 'code-tags'
+                    : 'account-outline'
+              }
+              title={name}
+              subtitle={role}
+            />
+          ))}
+        </Card>
+
+        {/* --- Redesigned Bottom Section --- */}
+        <View style={{ marginTop: 24, marginBottom: 40 }}>
+          <Pressable
+            onPress={onShare}
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.colors.surfaceVariant,
+              paddingVertical: 14,
+              borderRadius: 16,
+              flexDirection: 'row',
+            }}
+          >
+            <MaterialDesignIcons
+              name="share-variant"
+              size={22}
+              color={theme.colors.primary}
+            />
+            <Text
+              style={{
+                color: theme.colors.primary,
+                fontSize: 16,
+                fontWeight: '600',
+                marginLeft: 10,
+              }}
+            >
+              Share App with friends & family
+            </Text>
+          </Pressable>
+
+          <View
+            style={{
+              marginTop: 28,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+            }}
+          >
+            <Text
+              style={{
+                color: theme.colors.onSurfaceVariant,
+                fontSize: 16,
+                fontWeight: '600',
+              }}
+            >
+              Made with
+            </Text>
+
+            <Animated.View
+              style={{
+                transform: [{ scale: scaleAnim }],
+                marginHorizontal: 6,
+              }}
+            >
+              <MaterialDesignIcons
+                name="heart"
+                size={22}
+                color={theme.colors.error}
+              />
+            </Animated.View>
+
+            <Text
+              style={{
+                color: theme.colors.onSurfaceVariant,
+                fontSize: 16,
+                fontWeight: '600',
+              }}
+            >
+              in India 🇮🇳
             </Text>
           </View>
-          {/* Share and Made in India section */}
-          <View style={styles.madeInIndiaContainer}>
-            <Text style={styles.madeInIndiaContainerText}>Made With {''}</Text>
-            {/* CustomIcon component for heart icon */}
-            <CustomIcon
-              name="heart"
-              library="AntDesign"
-              style={styles.madeInIndiaContainerIcon}
-            />
-            <Text style={styles.madeInIndiaContainerText}> In India</Text>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-      {/* Admob */}
-      <AdmobBanner />
+        </View>
+      </ScrollView>
     </>
   );
-});
+};
 
 export default SettingsScreen;
