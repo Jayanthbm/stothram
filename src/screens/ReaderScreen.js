@@ -1,153 +1,37 @@
-import {
-  Alert,
-  BackHandler,
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+// src/screens/ReaderScreen.js
 
-import { AdmobBanner } from '../components/admob';
-import CustomHeaderLeft from '../components/headerLeft';
-import CustomHeaderRight from '../components/headerRight';
-import Pdf from 'react-native-pdf';
-import { Picker } from '@react-native-picker/picker';
-import { SCREEN_NAMES } from '../constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Slider from '@react-native-community/slider';
-import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
+import React, { useEffect, useMemo, useState } from 'react';
+import AppBar from '../components/AppBar';
+import { FlatList, Text } from 'react-native';
 import { dataHelper } from '../utils/dataUtils';
+import { SCREEN_NAMES } from '../utils/constants';
+import { useTheme } from '../contexts/themeContext';
+import Card from '../components/Card';
 
-const generateStyles = (
-  backgroundColor,
-  textColor,
-  borderColor,
-  headerBackground,
-  headertext,
-  fontSize = 18,
-) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    paragraphStyle: {
-      marginLeft: 7,
-      marginRight: 2,
-      marginBottom: 18,
-      borderBottomWidth: 1,
-      paddingBottom: 5,
-      borderBottomColor: borderColor,
-    },
-    lineStyle: {
-      color: textColor,
-    },
-    subHeadingContainer: {
-      marginBottom: 5,
-      padding: 5,
-      backgroundColor: headerBackground,
-    },
-    subHeadingText: {
-      color: headertext,
-      fontSize: 20,
-      textAlign: 'center',
-      fontWeight: '500',
-    },
-    highlightedItem: {
-      borderLeftColor: borderColor,
-      borderLeftWidth: 0,
-      paddingLeft: 0,
-    },
-    pdf: {
-      flex: 1,
-      width: Dimensions.get('window').width,
-      height: Dimensions.get('window').height,
-    },
-    pickerContainer: {
-      display: 'none',
-    },
-  });
+const fontWeights = {
+  brhknde: 600,
 };
 
-const LANGUAGE_MAPPER = {
-  kn: 'Kannada',
-  en: 'English',
-};
-
-// Main ReaderScreen component
-const ReaderScreen = ({ navigation, route }) => {
-  // Extract theme-related context
-  const { font, updateFont, darkmode } = useContext(ThemeContext);
-  // Navigation State
+const ReaderScreen = ({ route }) => {
   const { item } = route.params;
-  // State variables for managing data and UI
+  const { theme, toggleTheme, showDarkSwitch, font, setFont } = useTheme();
+
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
-  const [pdfReader, setPdfReader] = useState(false);
-  const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [fetchedData, setFetchedData] = useState(null);
   const [languages, setLanguages] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState(null);
-  const flatListRef = useRef(null);
-  const pickerRef = useRef();
-  const updateFontSize = useCallback(
-    value => {
-      updateFont(value);
-      setTimeout(() => {
-        scrollToHighlightedIndex(highlightedIndex);
-      }, 500);
-    },
-    [updateFont],
-  );
+  const [fetchedData, setFetchedData] = useState(null);
 
-  const [pickerStyle, setPickerStyle] = useState({
-    display: 'none',
-  });
-  const openPicker = () => {
-    setPickerStyle({ display: 'flex' });
-    pickerRef.current.focus();
-  };
-
-  const closePicker = () => {
-    setPickerStyle({ display: 'none' });
-    if (pickerRef.current && typeof pickerRef.current.blur === 'function') {
-      pickerRef.current.blur();
+ // 🔹 Right icons (theme + toggle view)
+  const rightIcons = useMemo(() => {
+    const icons = [];
+    if (showDarkSwitch) {
+      icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
     }
-  };
+    return icons;
+  }, [showDarkSwitch, toggleTheme]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: displayTitle ? displayTitle : title,
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-        'NotoSerif',
-      ),
-      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-      headerRight: () => (
-        <CustomHeaderRight
-          navigation={navigation}
-          showLangPickerIcon={languages?.length > 0}
-          openPicker={openPicker}
-        />
-      ),
-    });
-  }, [navigation, title, displayTitle, darkmode, languages]);
-
-  // useEffect to fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -157,10 +41,8 @@ const ReaderScreen = ({ navigation, route }) => {
           SCREEN_NAMES.READER_SCREEN,
         );
         if (fetchedData) {
+          console.log('fetchedData', fetchedData);
           setFetchedData(fetchedData);
-          if (typeof fetchedData === 'string') {
-            setPdfReader(true);
-          }
           if (fetchedData.translations) {
             const languages = Object.keys(fetchedData.translations);
             setLanguages(languages);
@@ -188,194 +70,72 @@ const ReaderScreen = ({ navigation, route }) => {
     }
   }, [currentLanguage]);
 
-  const confirmExit = useCallback(() => {
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    } else {
-      Alert.alert('Hold on!', 'Do you want to exit Stothram?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'YES', onPress: () => BackHandler.exitApp() },
-      ]);
-    }
-  }, [navigation]);
-
-  useEffect(() => {
-    // Handle hardware back press event
-    const backAction = () => {
-      // Confirm exit when the hardware back button is pressed
-      confirmExit();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, []);
-
-  const scrollToHighlightedIndex = index => {
-    if (flatListRef.current && index >= 0) {
-      flatListRef.current.scrollToIndex({ index: index, animated: true });
-    }
-  };
-
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].borderColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-    font,
-  );
-
-  const fontWeights = {
-    brhknde: 600,
-  };
-
-  useEffect(() => {
-    return () => {
-      if (pickerRef.current && typeof pickerRef.current.blur === 'function') {
-        pickerRef.current.blur();
-      }
-    };
-  }, []);
-
-  return (
-    <>
-      <SafeAreaView
-        style={styles.container}
-        edges={['top', 'left', 'right', 'bottom']}
-      >
-        {languages && languages.length > 0 && (
-          <View style={styles.pickerContainer}>
-            <Picker
-              ref={pickerRef}
-              selectedValue={currentLanguage}
-              onValueChange={(itemValue, _itemIndex) => {
-                setCurrentLanguage(itemValue);
-                closePicker();
-              }}
+  const renderItem = ({ item }) => {
+    if (item.type === 'paragraph') {
+      return (
+        <Card key={item.id} disabled>
+          {item.lines.map((line, index) => (
+            <Text
+              key={index}
               style={{
-                color: COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
+                color: theme.colors.onSurface,
+                fontFamily: item?.fontFamily ? item?.fontFamily : 'NotoSerif',
+                fontWeight: fontWeights[item.fontFamily]
+                  ? fontWeights[item.fontFamily]
+                  : '700',
+                lineHeight:
+                  item.fontFamily === 'brhknde'
+                    ? parseInt(font) + 17
+                    : parseInt(font) + 14,
+                fontSize: item.fontFamily === 'brhknde' ? font + 2 : font,
               }}
             >
-              {languages.map(language => (
-                <Picker.Item
-                  key={language}
-                  label={
-                    LANGUAGE_MAPPER[language]
-                      ? LANGUAGE_MAPPER[language]
-                      : language
-                  }
-                  value={language}
-                />
-              ))}
-            </Picker>
-          </View>
-        )}
-        {pdfReader ? (
-          <>
-            {readerData && (
-              <Pdf
-                source={{
-                  uri: readerData,
-                  cache: true,
-                }}
-                trustAllCerts={false}
-                style={styles.pdf}
-                showsHorizontalScrollIndicator={false}
-                fitWidth={true}
-                scale={1}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            {readerData && (
-              <Slider
-                value={font}
-                onValueChange={updateFontSize}
-                minimumValue={15}
-                maximumValue={30}
-                step={1}
-                style={{
-                  height: 40,
-                }}
-                thumbTintColor={sliderColor}
-                minimumTrackTintColor={sliderColor}
-                tapToSeek={true}
-              />
-            )}
-            <FlatList
-              ref={flatListRef}
-              data={readerData?.content}
-              keyExtractor={(_item, index) => index.toString()}
-              renderItem={({ item, index }) => {
-                if (item?.type === 'paragraph') {
-                  return (
-                    <View
-                      style={[
-                        styles.paragraphStyle,
-                        highlightedIndex === index && styles.highlightedItem,
-                      ]}
-                      onTouchStart={() => {
-                        if (highlightedIndex !== index) {
-                          setHighlightedIndex(index);
-                        }
-                      }}
-                    >
-                      {item.lines.map((line, index) => (
-                        <Text
-                          style={[
-                            styles.lineStyle,
-                            {
-                              fontFamily: item?.fontFamily
-                                ? item?.fontFamily
-                                : 'NotoSerif',
-                              fontWeight: fontWeights[item.fontFamily]
-                                ? fontWeights[item.fontFamily]
-                                : '700',
-                              lineHeight:
-                                item.fontFamily === 'brhknde'
-                                  ? parseInt(font) + 17
-                                  : parseInt(font) + 14,
-                              fontSize:
-                                item.fontFamily === 'brhknde' ? font + 2 : font,
-                            },
-                          ]}
-                          key={index}
-                        >
-                          {line}
-                        </Text>
-                      ))}
-                    </View>
-                  );
-                }
-                if (item.type === 'subheading') {
-                  return (
-                    <View style={styles.subHeadingContainer}>
-                      <Text
-                        style={[
-                          styles.subHeadingText,
-                          {
-                            fontFamily: item?.fontFamily
-                              ? item?.fontFamily
-                              : 'NotoSans',
-                          },
-                        ]}
-                      >
-                        {item.title}
-                      </Text>
-                    </View>
-                  );
-                }
-              }}
-            />
-          </>
-        )}
-      </SafeAreaView>
-      <AdmobBanner />
+              {line}
+            </Text>
+          ))}
+        </Card>
+      );
+    } else if (item.type === 'subheading') {
+      return (
+        <Card
+          disabled
+          key={item.id}
+          style={{
+            backgroundColor: theme.colors.activeIndicator,
+          }}
+        >
+          <Text
+            key={item.id}
+            style={{
+              color: theme.colors.onSurface,
+              fontFamily: item?.fontFamily ? item?.fontFamily : 'NotoSans',
+              fontSize: 20,
+              textAlign: 'center',
+              fontWeight: '500',
+            }}
+          >
+            {item.title}
+          </Text>
+        </Card>
+      );
+    }
+  };
+  return (
+    <>
+      <AppBar title={displayTitle} rightIcons={rightIcons} />
+      <FlatList
+        data={readerData?.content}
+        keyExtractor={(_item, index) => index.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+        }}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews
+        initialNumToRender={10}
+        windowSize={5}
+        key={title}
+      />
     </>
   );
 };

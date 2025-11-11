@@ -1,8 +1,4 @@
 {
   "name": "Stothram",
-  "displayName": "Stothram",
-  "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-0714649342045057~1333332271",
-    "ios_app_id": "ca-app-pub-0714649342045057~1333332271"
-  }
+  "displayName": "Stothram"
 }
