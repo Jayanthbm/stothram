@@ -14,7 +14,6 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/themeContext';
 import AppBar from '../components/AppBar';
 import Card from '../components/Card';
-import AntDesign from '@react-native-vector-icons/ant-design';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
 import BottomSheetModal from '../components/BottomSheetModal';
