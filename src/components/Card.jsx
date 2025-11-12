@@ -1,7 +1,7 @@
 // src/components/Card.jsx
 
+import React, { useState, useMemo } from 'react';
 import { Platform, Pressable, StyleSheet, View, Text } from 'react-native';
-import React, { useState } from 'react';
 import { useTheme } from '../contexts/themeContext';
 
 export default function Card({
@@ -13,18 +13,34 @@ export default function Card({
   onPressIn,
   onPressOut,
   disabled = false,
+  variant = 'elevated', // 'outlined' | 'elevated'
 }) {
   const { theme } = useTheme();
   const isAndroid = Platform.OS === 'android';
 
   const [pressed, setPressed] = useState(false);
 
-  const combinedStyle = [
-    styles.cardBase,
-    { backgroundColor: theme.colors.surface },
-    pressed && !isAndroid ? { transform: [{ scale: 0.98 }] } : null,
-    style,
-  ];
+  const combinedStyle = useMemo(
+    () => [
+      styles.cardBase,
+      {
+        backgroundColor: theme.colors.surface,
+        ...(variant === 'outlined'
+          ? {
+              elevation: 0,
+              borderWidth: 1,
+              borderColor: theme.colors.outlineVariant,
+            }
+          : {
+              elevation: pressed ? 4 : 2,
+            }),
+      },
+      pressed && !isAndroid ? { transform: [{ scale: 0.98 }] } : null,
+      disabled && { opacity: 0.6 },
+      style,
+    ],
+    [theme, pressed, isAndroid, disabled, variant, style],
+  );
 
   return (
     <Pressable
