@@ -1591,13 +1591,6 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-5.1.1.tgz#321c37da565b264fd8f96a4edcb55d3fe78f26aa"
   integrity sha512-W98If/LnTaziU3/0h5+G1LvJaRhMc6iLQBte6UWa4WBIHDMaDPglNBIFKcCXc9Dxp83W+f+5Wv22Olq9M2HJYA==
 
-"@react-native-vector-icons/ant-design@^12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@react-native-vector-icons/ant-design/-/ant-design-12.4.0.tgz#5b6c79f652a00ee17290fb413138dd054ff73550"
-  integrity sha512-MFuJu1TTKU+9TlGA9ZgkRCVkUG2qlkgKc2eldS+lYugWDWTmmYFX/Wuaw7iFROU030S4gBi2Yj6rZeM5tLOEMQ==
-  dependencies:
-    "@react-native-vector-icons/common" "^12.4.0"
-
 "@react-native-vector-icons/common@^12.4.0":
   version "12.4.0"
   resolved "https://registry.yarnpkg.com/@react-native-vector-icons/common/-/common-12.4.0.tgz#60fc6f4d9a0e7e7b06f7c3a996e320c72c588a15"
