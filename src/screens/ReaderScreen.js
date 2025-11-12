@@ -23,8 +23,7 @@ const LANGUAGE_MAPPER = {
 
 const ReaderScreen = ({ route }) => {
   const { item } = route.params;
-  const { theme, toggleTheme, showDarkSwitch, font, updateFont, showSlider } =
-    useTheme();
+  const { theme, toggleTheme, showDarkSwitch, font, updateFont } = useTheme();
 
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
@@ -156,7 +155,7 @@ const ReaderScreen = ({ route }) => {
     <>
       <AppBar title={displayTitle} rightIcons={rightIcons} />
       <MaterialSlider
-        font={font}
+        value={font}
         onValueChange={updateFont}
         min={15}
         max={30}
