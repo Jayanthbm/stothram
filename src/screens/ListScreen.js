@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  BackHandler,
   Dimensions,
   FlatList,
   LayoutAnimation,
@@ -9,7 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 import AppBar from '../components/AppBar';
@@ -67,14 +68,14 @@ const ListScreen = ({ route }) => {
   // 🔹 Fetch data
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData = await dataHelper(
-        title,
-        dataUrl,
-        SCREEN_NAMES.LIST,
-      );
-      if (fetchedData?.data) {
-        setList(fetchedData.data);
-        preFetcher(fetchedData.data, SCREEN_NAMES.READER_SCREEN);
+      try {
+        const fetchedData = await dataHelper(title, dataUrl, SCREEN_NAMES.LIST);
+        if (fetchedData?.data) {
+          setList(fetchedData.data);
+          preFetcher(fetchedData.data, SCREEN_NAMES.READER_SCREEN);
+        }
+      } catch (error) {
+        console.error('Error loading list:', error);
       }
     };
     if (dataUrl) fetchData();
@@ -94,7 +95,7 @@ const ListScreen = ({ route }) => {
   };
 
   const handleItemClick = useCallback(
-    item => navigation.navigate('Reader', { item }),
+    item => navigation.navigate('Reader', { item, type: type }),
     [navigation],
   );
 
@@ -134,6 +135,27 @@ const ListScreen = ({ route }) => {
       </Card>
     );
 
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.navigate(SCREEN_NAMES.HOME);
+        }
+        return true;
+      };
+
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => sub.remove();
+    }, [navigation]),
+  );
+
   return (
     <>
       <AppBar title={title} rightIcons={rightIcons} />
@@ -163,7 +185,7 @@ const ListScreen = ({ route }) => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         key={viewType}
-        removeClippedSubviews
+        removeClippedSubviews={false}
         initialNumToRender={10}
         windowSize={5}
       />

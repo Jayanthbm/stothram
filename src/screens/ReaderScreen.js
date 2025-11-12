@@ -1,8 +1,21 @@
 // src/screens/ReaderScreen.js
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import AppBar from '../components/AppBar';
-import { FlatList, Text, LayoutAnimation, Pressable, View } from 'react-native';
+import {
+  FlatList,
+  Text,
+  LayoutAnimation,
+  Pressable,
+  View,
+  BackHandler,
+} from 'react-native';
 import { dataHelper } from '../utils/dataUtils';
 import { SCREEN_NAMES } from '../utils/constants';
 import { useTheme } from '../contexts/themeContext';
@@ -12,6 +25,7 @@ import IconList from '../components/IconList';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import NoDataCard from '../components/NoDataCard';
 import MaterialSlider from '../components/MaterialSlider';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const fontWeights = {
   brhknde: 600,
@@ -22,7 +36,8 @@ const LANGUAGE_MAPPER = {
 };
 
 const ReaderScreen = ({ route }) => {
-  const { item } = route.params;
+  const { item, type } = route.params;
+  const navigation = useNavigation();
   const { theme, toggleTheme, showDarkSwitch, font, updateFont } = useTheme();
 
   const [title, setTitle] = useState('');
@@ -151,6 +166,27 @@ const ReaderScreen = ({ route }) => {
       );
     }
   };
+
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.navigate(SCREEN_NAMES.LIST, { type });
+        }
+        return true;
+      };
+
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => sub.remove();
+    }, [navigation, type]),
+  );
   return (
     <>
       <AppBar title={displayTitle} rightIcons={rightIcons} />
