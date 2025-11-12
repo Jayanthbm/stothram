@@ -1,5 +1,4 @@
 // src/screens/ReaderScreen.js
-
 import React, {
   useCallback,
   useEffect,
@@ -7,33 +6,29 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import AppBar from '../components/AppBar';
 import {
-  FlatList,
-  Text,
-  LayoutAnimation,
-  Pressable,
-  View,
+  Animated,
   BackHandler,
+  FlatList,
+  LayoutAnimation,
+  Text,
+  View,
 } from 'react-native';
-import { dataHelper } from '../utils/dataUtils';
-import { SCREEN_NAMES } from '../utils/constants';
-import { useTheme } from '../contexts/themeContext';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import AppBar from '../components/AppBar';
 import Card from '../components/Card';
 import BottomSheetModal from '../components/BottomSheetModal';
 import IconList from '../components/IconList';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import NoDataCard from '../components/NoDataCard';
 import MaterialSlider from '../components/MaterialSlider';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
+import { dataHelper } from '../utils/dataUtils';
+import { SCREEN_NAMES } from '../utils/constants';
+import { useTheme } from '../contexts/themeContext';
 
-const fontWeights = {
-  brhknde: 600,
-};
-const LANGUAGE_MAPPER = {
-  kn: 'Kannada',
-  en: 'English',
-};
+const fontWeights = { brhknde: 600 };
+const LANGUAGE_MAPPER = { kn: 'Kannada', en: 'English' };
 
 const ReaderScreen = ({ route }) => {
   const { item, type } = route.params;
@@ -46,34 +41,43 @@ const ReaderScreen = ({ route }) => {
   const [languages, setLanguages] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState(null);
   const [fetchedData, setFetchedData] = useState(null);
-
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showScrollIcon, setShowScrollIcon] = useState(false);
 
   const listRef = useRef(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
 
   const toTop = () => {
     listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 20,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowScrollIcon(false));
   };
 
   // 🔹 Right icons (theme + toggle view)
   const rightIcons = useMemo(() => {
     const icons = [];
-    icons.push({
-      iconName: 'arrow-up-thick',
-      onPress: toTop,
-    });
-    if (showDarkSwitch) {
+    if (showDarkSwitch)
       icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
-    }
-    if (languages && languages.length > 1) {
+    if (languages && languages.length > 1)
       icons.push({
         iconName: 'translate',
         onPress: () => setShowLanguageModal(true),
       });
-    }
     return icons;
   }, [showDarkSwitch, toggleTheme, languages]);
 
+  // 🔹 Fetch reader data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,10 +89,9 @@ const ReaderScreen = ({ route }) => {
         if (fetchedData) {
           setFetchedData(fetchedData);
           if (fetchedData.translations) {
-            const languages = Object.keys(fetchedData.translations);
-            setLanguages(languages);
-            const currentLanguage = languages[0];
-            setCurrentLanguage(currentLanguage);
+            const langs = Object.keys(fetchedData.translations);
+            setLanguages(langs);
+            setCurrentLanguage(langs[0]);
           } else {
             setReaderData(fetchedData);
           }
@@ -99,12 +102,10 @@ const ReaderScreen = ({ route }) => {
     };
     setDisplayTitle(item.displayTitle);
     setTitle(item?.title);
-    if (item?.dataUrl) {
-      fetchData();
-    }
+    if (item?.dataUrl) fetchData();
   }, [item]);
 
-  // Update when switching language
+  // 🔹 Update when switching language
   useEffect(() => {
     if (currentLanguage && fetchedData?.translations) {
       const nextData = fetchedData.translations[currentLanguage];
@@ -113,6 +114,58 @@ const ReaderScreen = ({ route }) => {
       setDisplayTitle(nextData.title);
     }
   }, [currentLanguage]);
+
+  // ✅ Scroll listener for scroll-to-top button
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const shouldShow = offsetY > 250;
+
+    if (shouldShow && !showScrollIcon) {
+      setShowScrollIcon(true);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else if (!shouldShow && showScrollIcon) {
+      setShowScrollIcon(false);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 20,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) navigation.goBack();
+        else navigation.navigate(SCREEN_NAMES.LIST, { type });
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+      return () => sub.remove();
+    }, [navigation, type]),
+  );
 
   const renderItem = ({ item }) => {
     if (item.type === 'paragraph') {
@@ -167,28 +220,8 @@ const ReaderScreen = ({ route }) => {
     }
   };
 
-  // ✅ Handle hardware back only when screen focused
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack();
-        } else {
-          navigation.navigate(SCREEN_NAMES.LIST, { type });
-        }
-        return true;
-      };
-
-      const sub = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-
-      return () => sub.remove();
-    }, [navigation, type]),
-  );
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <AppBar title={displayTitle} rightIcons={rightIcons} />
       <MaterialSlider
         value={font}
@@ -208,9 +241,25 @@ const ReaderScreen = ({ route }) => {
         removeClippedSubviews
         initialNumToRender={10}
         windowSize={5}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         key={`${title}-${currentLanguage}`}
         ListEmptyComponent={<NoDataCard title="No content available" />}
       />
+
+      {/* 🌟 Floating Scroll to Top Button */}
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+      >
+        <ScrolltoTopIcon
+          visible={showScrollIcon}
+          onPress={toTop}
+          align="right"
+        />
+      </Animated.View>
 
       <BottomSheetModal
         title={'Choose Language'}
@@ -222,7 +271,9 @@ const ReaderScreen = ({ route }) => {
             key={language}
             title={LANGUAGE_MAPPER[language] || language.toUpperCase()}
             leftIcon="translate-variant"
-            subtitle={`Change language to ${LANGUAGE_MAPPER[language] || language}`}
+            subtitle={`Change language to ${
+              LANGUAGE_MAPPER[language] || language
+            }`}
             onPress={() => {
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut,
@@ -231,22 +282,18 @@ const ReaderScreen = ({ route }) => {
               setShowLanguageModal(false);
             }}
             rightContent={
-              <>
-                {currentLanguage === language ? (
-                  <MaterialDesignIcons
-                    name="check-decagram"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                ) : (
-                  <></>
-                )}
-              </>
+              currentLanguage === language ? (
+                <MaterialDesignIcons
+                  name="check-decagram"
+                  size={24}
+                  color={theme.colors.primary}
+                />
+              ) : null
             }
           />
         ))}
       </BottomSheetModal>
-    </>
+    </View>
   );
 };
 
