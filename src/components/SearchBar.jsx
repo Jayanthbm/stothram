@@ -1,7 +1,13 @@
 // src/components/SearchBar.jsx
 
-import { Animated, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import {
+  Animated,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+} from 'react-native';
 
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useTheme } from '../contexts/themeContext';
@@ -17,9 +23,7 @@ const SearchBar = ({
 }) => {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
-
-  // Animated elevation for Material 3 focus effect
-  const elevation = new Animated.Value(0);
+  const elevation = useRef(new Animated.Value(0)).current;
 
   const animateFocus = toValue => {
     Animated.timing(elevation, {
@@ -31,36 +35,34 @@ const SearchBar = ({
 
   const handleFocus = () => {
     setIsFocused(true);
-    animateFocus(4); // raised when active
+    animateFocus(4);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    animateFocus(0); // flat when inactive
+    animateFocus(0);
   };
 
   const backgroundColor = isFocused
     ? theme.colors.surface
     : theme.colors.searchContainer;
-
   const textColor = theme.colors.onSurfaceVariant;
+  const ripple = theme.colors.onSurfaceVariant + '22';
 
   return (
     <Animated.View
       style={[
+        styles.container,
         {
-          flexDirection: 'row',
-          alignItems: 'center',
-          borderRadius: 24,
           backgroundColor,
-          paddingHorizontal: 12,
-          paddingVertical: 6,
-          marginVertical: 6,
           elevation: elevation,
-          shadowColor: theme.colors.shadow,
-          shadowOpacity: isFocused ? 0.2 : 0,
-          shadowOffset: { width: 0, height: 2 },
-          shadowRadius: isFocused ? 3 : 0,
+          shadowColor: Platform.OS === 'ios' ? theme.colors.shadow : undefined,
+          shadowOpacity: Platform.OS === 'ios' && isFocused ? 0.2 : 0,
+          shadowOffset:
+            Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+          shadowRadius: Platform.OS === 'ios' && isFocused ? 3 : 0,
+          borderWidth: isFocused ? 0 : 1,
+          borderColor: isFocused ? 'transparent' : theme.colors.outlineVariant,
         },
         style,
       ]}
@@ -78,17 +80,18 @@ const SearchBar = ({
         onChangeText={onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        readOnly={disabled}
-        style={{
-          flex: 1,
-          color: textColor,
-          fontSize: 16,
-          paddingVertical: 6,
-        }}
+        editable={!disabled}
+        accessibilityLabel="Search field"
+        accessibilityHint="Type to search"
+        style={[styles.input, { color: textColor }]}
         {...props}
       />
       {value?.length > 0 && (
-        <TouchableOpacity onPress={onClear}>
+        <TouchableOpacity
+          onPress={onClear}
+          accessibilityLabel="Clear search"
+          android_ripple={{ color: ripple, borderless: true }}
+        >
           <MaterialDesignIcons
             name="close-circle"
             size={18}
@@ -99,5 +102,22 @@ const SearchBar = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 24,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginVertical: 6,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 6,
+    fontFamily: 'NotoSans',
+  },
+});
 
 export default SearchBar;

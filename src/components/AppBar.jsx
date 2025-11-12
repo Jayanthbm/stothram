@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
-import AntDesign from '@react-native-vector-icons/ant-design';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/themeContext';
 
@@ -21,6 +20,7 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
   const iconColor = theme.colors.onSurface;
   const backgroundColor = theme.colors.surface;
   const textColor = theme.colors.onSurface;
+  const ripple = theme.colors.onSurfaceVariant + '22';
 
   return (
     <View
@@ -38,10 +38,7 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
         {showBack ? (
           <Pressable
             onPress={onBackPress}
-            android_ripple={{
-              color: theme.colors.onSurfaceVariant + '22',
-              borderless: true,
-            }}
+            android_ripple={{ color: ripple, borderless: true }}
             style={({ pressed }) => [
               styles.iconButton,
               { opacity: pressed ? 0.6 : 1 },
@@ -61,7 +58,11 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
         <Text
           style={[
             styles.title,
-            { color: textColor, marginLeft: showBack ? 4 : 0 },
+            {
+              color: textColor,
+              marginLeft: showBack ? 4 : 0,
+              fontFamily: 'NotoSans',
+            },
           ]}
           numberOfLines={1}
         >
@@ -73,12 +74,9 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
       <View style={styles.rightSection}>
         {rightIcons.map((item, index) => (
           <Pressable
-            key={index}
+            key={item.iconName || index}
             onPress={item.onPress}
-            android_ripple={{
-              color: theme.colors.onSurfaceVariant + '22',
-              borderless: true,
-            }}
+            android_ripple={{ color: ripple, borderless: true }}
             style={({ pressed }) => [
               styles.iconButton,
               { opacity: pressed ? 0.6 : 1 },

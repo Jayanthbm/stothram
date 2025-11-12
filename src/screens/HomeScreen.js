@@ -1,19 +1,26 @@
 // src/screens/HomeScreen.js
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  FlatList,
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  LayoutAnimation,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/themeContext';
 import AppBar from '../components/AppBar';
-import { FlatList, View, Text, StyleSheet, Dimensions } from 'react-native';
+import Card from '../components/Card';
+import AntDesign from '@react-native-vector-icons/ant-design';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
-import AntDesign from '@react-native-vector-icons/ant-design';
-import Card from '../components/Card';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 12;
-const CARD_WIDTH = (width - CARD_MARGIN * 3) / 2; // 2 per row
-const CARD_HEIGHT = 130; // ✅ fixed height for uniformity
+const CARD_WIDTH = (width - CARD_MARGIN * 3) / 2;
+const CARD_HEIGHT = 130;
 
 const HomeScreen = () => {
   const { theme, toggleTheme, showDarkSwitch } = useTheme();
@@ -28,7 +35,7 @@ const HomeScreen = () => {
     }
     icons.push({
       iconName: 'cog',
-      onPress: () => navigation.navigate('Settings'),
+      onPress: () => navigation.navigate(SCREEN_NAMES.SETTINGS),
     });
     return icons;
   }, [showDarkSwitch, toggleTheme, navigation]);
@@ -37,13 +44,14 @@ const HomeScreen = () => {
     const fetchData = async () => {
       try {
         const fetchedData = await dataHelper(
-          CACHED_DATA_KEYS.HOME_SCREEN,
-          DATA_URLS.HOME_SCREEN,
-          SCREEN_NAMES.HOME_SCREEN,
+          CACHED_DATA_KEYS.HOME,
+          DATA_URLS.HOME,
+          SCREEN_NAMES.HOME,
         );
         if (fetchedData) {
           setTypes(fetchedData?.data || []);
-          preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
+          preFetcher(fetchedData?.data, SCREEN_NAMES.LIST);
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -54,16 +62,19 @@ const HomeScreen = () => {
 
   const handleTypePress = useCallback(
     type => {
-      navigation.navigate('List', { type, title: type.title });
+      navigation.navigate(SCREEN_NAMES.LIST, { type, title: type.title });
     },
     [navigation],
   );
 
   const renderItem = ({ item, index }) => {
-    const isLastOdd = types.length % 2 !== 0 && index === types.length - 1; // last single card full width
+    const isLastOdd = types.length % 2 !== 0 && index === types.length - 1;
+    const ICON_SIZE = Math.min(CARD_WIDTH * 0.5, 60);
 
     return (
       <Card
+        accessibilityRole="button"
+        accessibilityLabel={item.title}
         style={{
           width: isLastOdd ? width - CARD_MARGIN * 2 : CARD_WIDTH,
           height: CARD_HEIGHT,
@@ -79,7 +90,12 @@ const HomeScreen = () => {
           }}
         >
           <AntDesign name={item.icon} size={60} color={theme.colors.primary} />
-          <Text style={[styles.title, { color: theme.colors.onSurface }]}>
+          <Text
+            style={[
+              styles.title,
+              { color: theme.colors.onSurface, fontFamily: 'NotoSans' },
+            ]}
+          >
             {item.title}
           </Text>
         </View>
@@ -97,12 +113,18 @@ const HomeScreen = () => {
         <View style={styles.bottomAlign}>
           <FlatList
             data={types}
-            keyExtractor={item => item.id?.toString()}
+            keyExtractor={(item, index) =>
+              item.id?.toString() || `key-${index}`
+            }
             renderItem={renderItem}
             numColumns={2}
             columnWrapperStyle={styles.row}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
+            initialNumToRender={6}
+            windowSize={10}
+            accessibilityLabel="Stothram category list"
+            accessible
           />
         </View>
       </View>
@@ -118,22 +140,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
+  listContent: { paddingHorizontal: CARD_MARGIN, paddingBottom: 60 },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: CARD_MARGIN,
+  },
   bottomAlign: {
     alignSelf: 'center',
     width: '100%',
     marginBottom: 20,
   },
-  listContent: {
-    paddingHorizontal: CARD_MARGIN,
-  },
-  row: {
-    justifyContent: 'space-between',
-    marginBottom: CARD_MARGIN,
+  cardInner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     marginTop: 6,
     fontSize: 15,
     fontWeight: '600',
+    fontFamily: 'NotoSans',
   },
 });
 

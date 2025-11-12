@@ -70,7 +70,7 @@ const ListScreen = ({ route }) => {
       const fetchedData = await dataHelper(
         title,
         dataUrl,
-        SCREEN_NAMES.LIST_SCREEN,
+        SCREEN_NAMES.LIST,
       );
       if (fetchedData?.data) {
         setList(fetchedData.data);
@@ -102,14 +102,12 @@ const ListScreen = ({ route }) => {
   const renderItem = ({ item }) =>
     viewType === 'list' ? (
       <IconList
-        key={item.id}
         leftIcon="note-text"
         title={item.title}
         onPress={() => handleItemClick(item)}
       />
     ) : (
       <Card
-        key={item.id}
         onPress={() => handleItemClick(item)}
         style={{
           width: GRID_CARD_WIDTH,
@@ -123,7 +121,10 @@ const ListScreen = ({ route }) => {
             color={theme.colors.primary}
           />
           <Text
-            style={[styles.gridTitle, { color: theme.colors.onSurface }]}
+            style={[
+              styles.gridTitle,
+              { color: theme.colors.onSurface, fontFamily: 'NotoSans' },
+            ]}
             numberOfLines={1}
             ellipsizeMode="tail"
           >
@@ -132,6 +133,7 @@ const ListScreen = ({ route }) => {
         </View>
       </Card>
     );
+
   return (
     <>
       <AppBar title={title} rightIcons={rightIcons} />
@@ -141,7 +143,6 @@ const ListScreen = ({ route }) => {
           value={searchValue}
           onChangeText={handleSearch}
           onClear={() => setSearchValue('')}
-          disabled={false}
         />
       </View>
       {rendered && filteredData.length === 0 && (
@@ -155,9 +156,7 @@ const ListScreen = ({ route }) => {
       )}
       <FlatList
         data={filteredData}
-        keyExtractor={(item, index) =>
-          item.id?.toString() || `${item.title}-${index}`
-        }
+        keyExtractor={(item, index) => `${item.id ?? item.title}-${index}`}
         numColumns={viewType === 'list' ? 1 : 2}
         renderItem={renderItem}
         columnWrapperStyle={viewType === 'list' ? null : styles.gridRow}

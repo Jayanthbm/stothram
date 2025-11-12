@@ -27,13 +27,17 @@ const SettingsScreen = () => {
   const fetchData = useCallback(async () => {
     try {
       const fetchedData = await dataHelper(
-        CACHED_DATA_KEYS.SETTINGS_SCREEN,
-        DATA_URLS.SETTINGS_SCREEN,
-        SCREEN_NAMES.SETTINGS_SCREEN,
+        CACHED_DATA_KEYS.SETTINGS,
+        DATA_URLS.SETTINGS,
+        SCREEN_NAMES.SETTINGS,
       );
       // Update state with fetched contributions
       if (fetchedData) {
-        setContributions(fetchedData?.contributions);
+        setContributions(
+          Array.isArray(fetchedData?.contributions)
+            ? fetchedData.contributions
+            : [],
+        );
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -57,10 +61,10 @@ const SettingsScreen = () => {
     }
   };
 
-  // ❤️ Heart animation setup
+  // ❤️ Heart animation
   const scaleAnim = useRef(new Animated.Value(1)).current;
   useEffect(() => {
-    Animated.loop(
+    const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(scaleAnim, {
           toValue: 1.3,
@@ -75,17 +79,18 @@ const SettingsScreen = () => {
           useNativeDriver: true,
         }),
       ]),
-    ).start();
+    );
+    loop.start();
+    return () => loop.stop();
   }, [scaleAnim]);
 
   return (
     <>
       <AppBar title="Settings" />
       <ScrollView
-        style={{
-          paddingHorizontal: 16,
-        }}
+        style={{ paddingHorizontal: 16 }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 60 }}
       >
         <PageTitle title="General Settings" />
         <IconList
@@ -95,11 +100,7 @@ const SettingsScreen = () => {
           title="Dark Theme"
           subtitle="Reduce glare and improve night viewing"
           rightContent={
-            <MaterialSwitch
-              value={theme.mode === 'dark'}
-              onValueChange={toggleTheme}
-              theme={theme}
-            />
+            <MaterialSwitch value={theme.isDark} onValueChange={toggleTheme} />
           }
         />
         <IconList
@@ -112,17 +113,16 @@ const SettingsScreen = () => {
             <MaterialSwitch
               value={showDarkSwitch}
               onValueChange={toggleDarkSwitch}
-              theme={theme}
             />
           }
         />
 
         <PageTitle title="Contributions" />
-        <Card disabled keyName="contributors">
+        <Card keyName="contributors">
           {contributions?.map(({ name, role }, index) => (
             <IconList
               key={`${name}-${role}`}
-              disabled
+              disabled={false}
               keyName={`contributions-${name}`}
               leftIcon={
                 role === 'Editor'
@@ -137,7 +137,7 @@ const SettingsScreen = () => {
           ))}
         </Card>
 
-        {/* --- Redesigned Bottom Section --- */}
+        {/* ---Bottom Section --- */}
         <View style={{ marginTop: 24, marginBottom: 40 }}>
           <Pressable
             onPress={onShare}
@@ -161,6 +161,7 @@ const SettingsScreen = () => {
                 fontSize: 16,
                 fontWeight: '600',
                 marginLeft: 10,
+                fontFamily: 'NotoSans',
               }}
             >
               Share App with friends & family

@@ -1,16 +1,23 @@
 // src/components/MaterialSwitch.jsx
 
-import { Animated, Pressable, StyleSheet } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { Animated, Pressable, StyleSheet, Easing } from 'react-native';
+import { useTheme } from '../contexts/themeContext';
 
-import React from 'react';
+export default function MaterialSwitch({
+  value,
+  onValueChange,
+  disabled = false,
+}) {
+  const { theme } = useTheme();
 
-export default function MaterialSwitch({ value, onValueChange, theme }) {
-  const anim = React.useRef(new Animated.Value(value ? 1 : 0)).current;
+  const anim = useRef(new Animated.Value(value ? 1 : 0)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.timing(anim, {
       toValue: value ? 1 : 0,
       duration: 180,
+      easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();
   }, [value]);
@@ -20,6 +27,11 @@ export default function MaterialSwitch({ value, onValueChange, theme }) {
     outputRange: [theme.colors.surfaceVariant, theme.colors.primaryContainer],
   });
 
+  const trackBorderColor = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.colors.outlineVariant, theme.colors.primary],
+  });
+
   const thumbTranslate = anim.interpolate({
     inputRange: [0, 1],
     outputRange: [2, 22],
@@ -27,10 +39,14 @@ export default function MaterialSwitch({ value, onValueChange, theme }) {
 
   return (
     <Pressable
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
+      disabled={disabled}
+      accessibilityLabel="Toggle setting"
       onPress={() => onValueChange(!value)}
       style={({ pressed }) => [
         styles.pressable,
-        { opacity: pressed ? 0.8 : 1 },
+        { opacity: disabled ? 0.4 : pressed ? 0.8 : 1 },
       ]}
     >
       <Animated.View
@@ -38,6 +54,7 @@ export default function MaterialSwitch({ value, onValueChange, theme }) {
           styles.track,
           {
             backgroundColor: trackColor,
+            borderColor: trackBorderColor,
           },
         ]}
       >
@@ -47,6 +64,7 @@ export default function MaterialSwitch({ value, onValueChange, theme }) {
             {
               transform: [{ translateX: thumbTranslate }],
               backgroundColor: theme.colors.primary,
+              shadowColor: theme.colors.shadow,
             },
           ]}
         />
@@ -65,11 +83,16 @@ const styles = StyleSheet.create({
     width: 48,
     height: 28,
     borderRadius: 20,
+    borderWidth: 1,
     justifyContent: 'center',
   },
   thumb: {
     width: 20,
     height: 20,
     borderRadius: 10,
+    elevation: 2,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 1.5,
   },
 });

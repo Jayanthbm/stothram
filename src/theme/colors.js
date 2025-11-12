@@ -11,6 +11,7 @@ export const lightColors = {
   // Accent / Focus
   focus: '#1A73E8',
   outline: '#C7C7C7',
+  outlineVariant: '#DADCE0',
 
   // Secondary & Surface
   secondary: '#535F70',
@@ -24,6 +25,7 @@ export const lightColors = {
   onSurface: '#191A1F',
   surfaceVariant: '#EFF3F8',
   onSurfaceVariant: '#444746',
+  surfaceContainerHighest: '#FFFFFF',
 
   // 🔹 Search bar background
   searchContainer: '#CBD8EB',
@@ -54,6 +56,9 @@ export const lightColors = {
   inverseOnSurface: '#F4EFF4',
   income: '#43a047',
   expense: '#e53935',
+
+  // Utility
+  transparent: 'transparent',
 };
 
 // Dark theme colors
@@ -67,6 +72,7 @@ export const darkColors = {
   // Accent / Focus
   focus: '#8AB4F8',
   outline: '#5F6368',
+  outlineVariant: '#8C9199',
 
   // Background & Surface
   background: '#1D1F24',
@@ -75,6 +81,7 @@ export const darkColors = {
   onSurface: '#E3E3E3',
   surfaceVariant: '#1E1E1E',
   onSurfaceVariant: '#C3C7CE',
+  surfaceContainerHighest: '#2A2C30',
 
   // 🔹 Search bar background
   searchContainer: '#2B2C30',
@@ -106,10 +113,17 @@ export const darkColors = {
   skeletonShimmer: '#3A3C40',
 
   // Misc
-  outlineVariant: '#8C9199',
   shadow: '#000000',
   inverseSurface: '#E3E3E3',
   inverseOnSurface: '#121212',
   income: '#66bb6a',
   expense: '#ef5350',
+
+  // Utility
+  transparent: 'transparent',
+};
+
+export const themes = {
+  light: lightColors,
+  dark: darkColors,
 };

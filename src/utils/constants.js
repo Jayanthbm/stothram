@@ -1,20 +1,19 @@
-export const SCREEN_NAMES = {
-  HOME_SCREEN: 'HOME',
-  LIST_SCREEN: 'LIST',
-  READER_SCREEN: 'READER',
-  SETTINGS_SCREEN: 'SETTING',
-};
+// src/utils/constants.js
 
-export const DATA_URLS = {
-  HOME_SCREEN:
-    'https://jayanthbm.github.io/stothram-data/home-screen-data.json',
-  SETTINGS_SCREEN:
+export const SCREEN_NAMES = Object.freeze({
+  HOME: 'Home',
+  LIST: 'List',
+  READER: 'Reader',
+  SETTINGS: 'Settings',
+});
+
+export const DATA_URLS = Object.freeze({
+  HOME: 'https://jayanthbm.github.io/stothram-data/home-screen-data.json',
+  SETTINGS:
     'https://jayanthbm.github.io/stothram-data/setting-screen-data.json',
-};
+});
 
-export const CACHED_DATA_KEYS = {
-  HOME_SCREEN: 'CACHED_HOME_SCREEN',
-  SETTINGS_SCREEN: 'CACHED_SETTINGS_SCREEN',
-};
-
-const BASE_IMAGE_URL = 'https://jayanthbm.github.io/stothram-data/images';
+export const CACHED_DATA_KEYS = Object.freeze({
+  HOME: 'CACHED_HOME_SCREEN',
+  SETTINGS: 'CACHED_SETTINGS_SCREEN',
+});
