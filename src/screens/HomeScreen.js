@@ -94,7 +94,11 @@ const HomeScreen = () => {
             justifyContent: 'center',
           }}
         >
-          <AntDesign name={item.icon} size={60} color={theme.colors.primary} />
+          <MaterialDesignIcons
+            name={item.icon_new}
+            size={ICON_SIZE}
+            color={theme.colors.primary}
+          />
           <Text
             style={[
               styles.title,
