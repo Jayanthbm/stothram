@@ -8,14 +8,18 @@ import {
   StyleSheet,
   Dimensions,
   LayoutAnimation,
+  BackHandler,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/themeContext';
 import AppBar from '../components/AppBar';
 import Card from '../components/Card';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
+import BottomSheetModal from '../components/BottomSheetModal';
+import IconList from '../components/IconList';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 12;
@@ -26,6 +30,7 @@ const HomeScreen = () => {
   const { theme, toggleTheme, showDarkSwitch } = useTheme();
   const navigation = useNavigation();
   const [types, setTypes] = useState([]);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   // 🔹 Right icons (theme + toggle view)
   const rightIcons = useMemo(() => {
@@ -103,6 +108,20 @@ const HomeScreen = () => {
     );
   };
 
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setShowExitModal(true);
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+      return () => sub.remove();
+    }, []),
+  );
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -128,6 +147,51 @@ const HomeScreen = () => {
           />
         </View>
       </View>
+      <BottomSheetModal
+        title={'Do you want to exit?'}
+        visible={showExitModal}
+        closeModal={() => setShowExitModal(false)}
+      >
+        <IconList
+          keyName="exit-yes"
+          leftIcon="exit-to-app"
+          title="Yes, Exit"
+          subtitle="Close the Stothram app"
+          onPress={() => {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
+            setShowExitModal(false);
+            setTimeout(() => BackHandler.exitApp(), 180);
+          }}
+          rightContent={
+            <MaterialDesignIcons
+              name="check-decagram"
+              size={24}
+              color={theme.colors.primary}
+            />
+          }
+        />
+        <IconList
+          keyName="exit-cancel"
+          leftIcon="close-circle-outline"
+          title="No, Stay"
+          subtitle="Stay on the Home screen"
+          onPress={() => {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
+            setShowExitModal(false);
+          }}
+          rightContent={
+            <MaterialDesignIcons
+              name="close"
+              size={22}
+              color={theme.colors.onSurfaceVariant}
+            />
+          }
+        />
+      </BottomSheetModal>
     </View>
   );
 };

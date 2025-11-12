@@ -16,12 +16,15 @@ import {
   Text,
   View,
   Easing,
+  BackHandler,
 } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import Card from '../components/Card';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const SettingsScreen = () => {
   const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
+  const navigation = useNavigation();
   const [contributions, setContributions] = useState([]);
 
   const fetchData = useCallback(async () => {
@@ -47,6 +50,27 @@ const SettingsScreen = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.navigate(SCREEN_NAMES.HOME);
+        }
+        return true;
+      };
+
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => sub.remove();
+    }, [navigation]),
+  );
 
   const PLAY_STORE_URL =
     'https://play.google.com/store/apps/details?id=com.jayanth.shotram';
@@ -88,7 +112,7 @@ const SettingsScreen = () => {
     <>
       <AppBar title="Settings" />
       <ScrollView
-        style={{ paddingHorizontal: 16 }}
+        style={{ paddingHorizontal: 16, paddingTop: 8 }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
       >
