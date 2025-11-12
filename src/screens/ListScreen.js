@@ -1,7 +1,13 @@
 // src/screens/ListScreen.js
-
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
+  Animated,
   BackHandler,
   Dimensions,
   FlatList,
@@ -12,7 +18,6 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
-
 import AppBar from '../components/AppBar';
 import Card from '../components/Card';
 import SearchBar from '../components/SearchBar';
@@ -21,10 +26,9 @@ import { useTheme } from '../contexts/themeContext';
 import { SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
 import IconList from '../components/IconList';
+import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
 
 const { width } = Dimensions.get('window');
-
-// 🔹 Fixed, consistent dimensions
 const CARD_MARGIN = 12;
 const GRID_CARD_WIDTH = (width - CARD_MARGIN * 3) / 2;
 const GRID_CARD_HEIGHT = 130;
@@ -34,12 +38,18 @@ const ListScreen = ({ route }) => {
   const { viewType, theme, toggleViewType, showDarkSwitch, toggleTheme } =
     useTheme();
   const navigation = useNavigation();
+  const listRef = useRef(null);
 
   const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [rendered, setRendered] = useState(false);
+  const [showScrollIcon, setShowScrollIcon] = useState(false);
+
+  // 🎞️ Animations: fade + slide
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current; // start slightly below
 
   // 🔹 Right icons (theme + toggle view)
   const rightIcons = useMemo(() => {
@@ -99,7 +109,6 @@ const ListScreen = ({ route }) => {
     [navigation],
   );
 
-  // 🔹 Render each item (switches between IconList and Card)
   const renderItem = ({ item }) =>
     viewType === 'list' ? (
       <IconList
@@ -110,10 +119,7 @@ const ListScreen = ({ route }) => {
     ) : (
       <Card
         onPress={() => handleItemClick(item)}
-        style={{
-          width: GRID_CARD_WIDTH,
-          height: GRID_CARD_HEIGHT,
-        }}
+        style={{ width: GRID_CARD_WIDTH, height: GRID_CARD_HEIGHT }}
       >
         <View style={styles.cardGridContent}>
           <MaterialDesignIcons
@@ -146,19 +152,71 @@ const ListScreen = ({ route }) => {
         }
         return true;
       };
-
       const sub = BackHandler.addEventListener(
         'hardwareBackPress',
         onBackPress,
       );
-
       return () => sub.remove();
     }, [navigation]),
   );
 
+  // ✅ Scroll listener to show/hide button with animation
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const shouldShow = offsetY > 250;
+
+    if (shouldShow && !showScrollIcon) {
+      setShowScrollIcon(true);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else if (!shouldShow && showScrollIcon) {
+      setShowScrollIcon(false);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 20,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  // ✅ Scroll to top function
+  const scrollToTop = () => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 20,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowScrollIcon(false));
+  };
+
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <AppBar title={title} rightIcons={rightIcons} />
+
       <View style={styles.searchWrapper}>
         <SearchBar
           placeholder={`Search ${title}`}
@@ -167,6 +225,7 @@ const ListScreen = ({ route }) => {
           onClear={() => setSearchValue('')}
         />
       </View>
+
       {rendered && filteredData.length === 0 && (
         <NoDataCard
           title={`No data found in ${title}`}
@@ -176,7 +235,9 @@ const ListScreen = ({ route }) => {
           }}
         />
       )}
+
       <FlatList
+        ref={listRef}
         data={filteredData}
         keyExtractor={(item, index) => `${item.id ?? item.title}-${index}`}
         numColumns={viewType === 'list' ? 1 : 2}
@@ -188,8 +249,24 @@ const ListScreen = ({ route }) => {
         removeClippedSubviews={false}
         initialNumToRender={10}
         windowSize={5}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       />
-    </>
+
+      {/* 🧭 Scroll to Top Button with Fade + Slide */}
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+      >
+        <ScrolltoTopIcon
+          visible={showScrollIcon}
+          onPress={scrollToTop}
+          align={viewType === 'list' ? 'right' : 'center'}
+        />
+      </Animated.View>
+    </View>
   );
 };
 
@@ -198,13 +275,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: CARD_MARGIN,
     paddingBottom: CARD_MARGIN * 2,
   },
-
-  // Grid mode styles only
   gridRow: {
     justifyContent: 'space-between',
     marginBottom: CARD_MARGIN,
   },
-
   cardGridContent: {
     flex: 1,
     alignItems: 'center',
@@ -215,8 +289,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
   },
-
-  // Common
   searchWrapper: {
     marginHorizontal: 10,
     marginVertical: 10,
