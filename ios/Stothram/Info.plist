@@ -37,11 +37,8 @@
 	<string/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>AntDesign.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
+		<string>MaterialDesign.ttf</string>
 		<string>NotoSerif.ttf</string>
-		<string>NotoSans.ttf</string>
 		<string>brhknde.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

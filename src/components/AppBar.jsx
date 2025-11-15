@@ -1,13 +1,15 @@
 // src/components/AppBar.jsx
 
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import { View, Pressable, StyleSheet, Platform } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/themeContext';
+import MyText from './MyText';
 
 const ICON_SIZE = 26;
 const ICON_TOUCH = 44;
+const RIGHT_WIDTH = ICON_TOUCH * 2;
 
 const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
   const navigation = useNavigation();
@@ -19,7 +21,6 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
 
   const iconColor = theme.colors.onSurface;
   const backgroundColor = theme.colors.surface;
-  const textColor = theme.colors.onSurface;
   const ripple = theme.colors.onSurfaceVariant + '22';
 
   return (
@@ -33,8 +34,8 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
         },
       ]}
     >
-      {/* LEFT: Back icon + Title */}
-      <View style={styles.leftSection}>
+      {/* LEFT SECTION */}
+      <View style={[styles.sideSection]}>
         {showBack ? (
           <Pressable
             onPress={onBackPress}
@@ -51,28 +52,37 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
             />
           </Pressable>
         ) : (
-          // placeholder to preserve layout
+          // Placeholder to keep layout consistent
           <View style={styles.iconButton} />
         )}
+      </View>
 
-        <Text
+      {/* TITLE */}
+      <View style={styles.titleContainer}>
+        <MyText
           style={[
             styles.title,
             {
-              color: textColor,
               marginLeft: showBack ? 4 : 0,
-              fontFamily: 'NotoSans',
             },
           ]}
-          numberOfLines={1}
+          ellipsizeMode="middle"
         >
           {title}
-        </Text>
+        </MyText>
       </View>
 
-      {/* RIGHT: Icons */}
-      <View style={styles.rightSection}>
-        {rightIcons.map((item, index) => (
+      {/* RIGHT SECTION (fixed width) */}
+      <View style={[styles.rightSection, { width: RIGHT_WIDTH }]}>
+        {/* LEFT placeholders to push icons to the right */}
+        {Array(2 - rightIcons.length)
+          .fill(0)
+          .map((_, i) => (
+            <View key={`ph-left-${i}`} style={styles.iconButton} />
+          ))}
+
+        {/* Actual icons */}
+        {rightIcons.slice(0, 2).map((item, index) => (
           <Pressable
             key={item.iconName || index}
             onPress={item.onPress}
@@ -107,16 +117,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     paddingHorizontal: 8,
   },
-  leftSection: {
-    flexDirection: 'row',
+
+  sideSection: {
+    width: ICON_TOUCH,
+    justifyContent: 'center',
     alignItems: 'center',
-    flex: 1, // takes available space
   },
+
   rightSection: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
+
   iconButton: {
     width: ICON_TOUCH,
     height: ICON_TOUCH,
@@ -125,6 +138,13 @@ const styles = StyleSheet.create({
     borderRadius: ICON_TOUCH / 2,
     overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
   },
+
+  titleContainer: {
+    flex: 1,
+    paddingHorizontal: 8,
+    flexShrink: 1, // allows text to truncate
+  },
+
   title: {
     fontSize: 20,
     fontWeight: '600',

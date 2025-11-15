@@ -11,7 +11,6 @@ import {
   BackHandler,
   FlatList,
   LayoutAnimation,
-  Text,
   View,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -26,6 +25,7 @@ import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
 import { dataHelper } from '../utils/dataUtils';
 import { SCREEN_NAMES } from '../utils/constants';
 import { useTheme } from '../contexts/themeContext';
+import MyText from '../components/MyText';
 
 const fontWeights = { brhknde: 600 };
 const LANGUAGE_MAPPER = { kn: 'Kannada', en: 'English' };
@@ -170,14 +170,13 @@ const ReaderScreen = ({ route }) => {
   const renderItem = ({ item }) => {
     if (item.type === 'paragraph') {
       return (
-        <Card key={item.id}>
+        <Card key={item.id} disableRipple={true}>
           {item.lines.map((line, index) =>
             line?.trim() ? (
-              <Text
+              <MyText
                 key={index}
                 style={{
-                  color: theme.colors.onSurface,
-                  fontFamily: item?.fontFamily || 'NotoSerif',
+                  fontFamily: item?.fontFamily,
                   fontWeight: fontWeights[item.fontFamily] || '700',
                   lineHeight:
                     item.fontFamily === 'brhknde'
@@ -187,9 +186,9 @@ const ReaderScreen = ({ route }) => {
                 }}
               >
                 {line}
-              </Text>
+              </MyText>
             ) : (
-              <Text key={`gap-${index}`} style={{ height: 8 }} />
+              <MyText key={`gap-${index}`} style={{ height: 8 }} />
             ),
           )}
         </Card>
@@ -203,18 +202,17 @@ const ReaderScreen = ({ route }) => {
             padding: 2,
           }}
         >
-          <Text
+          <MyText
             key={item.id}
             style={{
-              color: theme.colors.onSurface,
-              fontFamily: item?.fontFamily ? item?.fontFamily : 'NotoSans',
+              fontFamily: item?.fontFamily,
               fontSize: font + 2,
               textAlign: 'center',
               fontWeight: '500',
             }}
           >
             {item.title}
-          </Text>
+          </MyText>
         </Card>
       );
     }

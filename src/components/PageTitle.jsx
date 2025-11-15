@@ -3,28 +3,28 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../contexts/themeContext';
+import MyText from './MyText';
 
 const PageTitle = ({ title, subtitle }) => {
   const { theme } = useTheme();
 
   return (
     <View style={styles.container}>
-      <Text
+      <MyText
         accessibilityRole="header"
-        numberOfLines={1}
         ellipsizeMode="tail"
         style={[styles.title, { color: theme.colors.onSurfaceVariant }]}
       >
         {title}
-      </Text>
+      </MyText>
 
       {subtitle ? (
-        <Text
+        <MyText
           numberOfLines={2}
           style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
         >
           {subtitle}
-        </Text>
+        </MyText>
       ) : null}
     </View>
   );
@@ -39,12 +39,10 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: '600',
     fontSize: 18,
-    fontFamily: 'NotoSans',
   },
   subtitle: {
     fontSize: 14,
     fontWeight: '400',
     marginTop: 2,
-    fontFamily: 'NotoSans',
   },
 });

@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     paddingVertical: 6,
-    fontFamily: 'NotoSans',
   },
 });
 

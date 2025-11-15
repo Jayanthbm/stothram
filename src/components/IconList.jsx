@@ -1,9 +1,10 @@
 // src/components/IconList.jsx
 
 import React from 'react';
-import { View, Text, Platform, Pressable, StyleSheet } from 'react-native';
+import { View, Platform, Pressable, StyleSheet } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useTheme } from '../contexts/themeContext';
+import MyText from './MyText';
 
 const H_PADDING = 12;
 const V_PADDING = 14;
@@ -60,26 +61,18 @@ const IconList = ({
         )}
 
         <View style={styles.textContainer}>
-          <Text
-            style={[
-              styles.title,
-              { color: theme.colors.onSurface, fontFamily: 'NotoSans' },
-            ]}
-          >
-            {title}
-          </Text>
+          <MyText style={styles.title}>{title}</MyText>
           {subtitle ? (
-            <Text
+            <MyText
               style={[
                 styles.subtitle,
                 {
                   color: theme.colors.onSurfaceVariant,
-                  fontFamily: 'NotoSans',
                 },
               ]}
             >
               {subtitle}
-            </Text>
+            </MyText>
           ) : null}
         </View>
         {rightContent}
@@ -112,6 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     marginTop: 2,
+    marginBottom: 2,
   },
 });
 export default IconList;

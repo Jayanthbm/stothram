@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   View,
-  Text,
   StyleSheet,
   Dimensions,
   LayoutAnimation,
@@ -19,6 +18,7 @@ import { dataHelper, preFetcher } from '../utils/dataUtils';
 import BottomSheetModal from '../components/BottomSheetModal';
 import IconList from '../components/IconList';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import MyText from '../components/MyText';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 12;
@@ -98,14 +98,7 @@ const HomeScreen = () => {
             size={ICON_SIZE}
             color={theme.colors.primary}
           />
-          <Text
-            style={[
-              styles.title,
-              { color: theme.colors.onSurface, fontFamily: 'NotoSans' },
-            ]}
-          >
-            {item.title}
-          </Text>
+          <MyText style={styles.title}>{item.title}</MyText>
         </View>
       </Card>
     );
@@ -226,7 +219,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 15,
     fontWeight: '600',
-    fontFamily: 'NotoSans',
   },
 });
 

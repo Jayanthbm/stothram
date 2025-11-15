@@ -13,7 +13,6 @@ import {
   Pressable,
   ScrollView,
   Share,
-  Text,
   View,
   Easing,
   BackHandler,
@@ -21,6 +20,7 @@ import {
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import Card from '../components/Card';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import MyText from '../components/MyText';
 
 const SettingsScreen = () => {
   const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
@@ -142,22 +142,33 @@ const SettingsScreen = () => {
         />
 
         <PageTitle title="Contributions" />
-        <Card keyName="contributors">
+        <Card keyName="contributors" disableRipple={true}>
           {contributions?.map(({ name, role }, index) => (
-            <IconList
-              key={`${name}-${role}`}
-              disabled={false}
-              keyName={`contributions-${name}`}
-              leftIcon={
-                role === 'Editor'
-                  ? 'pencil-outline'
-                  : role === 'Developer'
-                    ? 'code-tags'
-                    : 'account-outline'
-              }
-              title={name}
-              subtitle={role}
-            />
+            <View key={index}>
+              <IconList
+                key={`${name}-${role}`}
+                disabled={false}
+                keyName={`contributions-${name}`}
+                leftIcon={
+                  role === 'Editor'
+                    ? 'pencil-outline'
+                    : role === 'Developer'
+                      ? 'code-tags'
+                      : 'account-outline'
+                }
+                title={name}
+                subtitle={role}
+              />
+              {index < contributions.length - 1 && (
+                <View
+                  style={{
+                    backgroundColor: theme.colors.skeletonBackground,
+                    width: '100%',
+                    height: 1,
+                  }}
+                />
+              )}
+            </View>
           ))}
         </Card>
 
@@ -179,17 +190,16 @@ const SettingsScreen = () => {
               size={22}
               color={theme.colors.primary}
             />
-            <Text
+            <MyText
               style={{
                 color: theme.colors.primary,
                 fontSize: 16,
                 fontWeight: '600',
                 marginLeft: 10,
-                fontFamily: 'NotoSans',
               }}
             >
               Share App with friends & family
-            </Text>
+            </MyText>
           </Pressable>
 
           <View
@@ -200,7 +210,7 @@ const SettingsScreen = () => {
               flexDirection: 'row',
             }}
           >
-            <Text
+            <MyText
               style={{
                 color: theme.colors.onSurfaceVariant,
                 fontSize: 16,
@@ -208,7 +218,7 @@ const SettingsScreen = () => {
               }}
             >
               Made with
-            </Text>
+            </MyText>
 
             <Animated.View
               style={{
@@ -223,7 +233,7 @@ const SettingsScreen = () => {
               />
             </Animated.View>
 
-            <Text
+            <MyText
               style={{
                 color: theme.colors.onSurfaceVariant,
                 fontSize: 16,
@@ -231,7 +241,7 @@ const SettingsScreen = () => {
               }}
             >
               in India 🇮🇳
-            </Text>
+            </MyText>
           </View>
         </View>
       </ScrollView>
