@@ -13,7 +13,6 @@ import {
   FlatList,
   LayoutAnimation,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -27,6 +26,7 @@ import { SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
 import IconList from '../components/IconList';
 import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
+import MyText from '../components/MyText';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 12;
@@ -127,16 +127,7 @@ const ListScreen = ({ route }) => {
             size={60}
             color={theme.colors.primary}
           />
-          <Text
-            style={[
-              styles.gridTitle,
-              { color: theme.colors.onSurface, fontFamily: 'NotoSans' },
-            ]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {item.title}
-          </Text>
+          <MyText style={styles.gridTitle}>{item.title}</MyText>
         </View>
       </Card>
     );

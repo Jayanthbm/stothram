@@ -1,9 +1,10 @@
 // src/components/NoDataCard.jsx
 
 import React from 'react';
-import { Pressable, StyleSheet, View, Text } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useTheme } from '../contexts/themeContext';
+import MyText from './MyText';
 
 const NoDataCard = ({
   title = 'No data available',
@@ -34,12 +35,12 @@ const NoDataCard = ({
         color={theme.colors.onSurfaceVariant}
         style={{ marginBottom: 8 }}
       />
-      <Text
+      <MyText
         numberOfLines={2}
         style={[styles.title, { color: theme.colors.onSurfaceVariant }]}
       >
         {title}
-      </Text>
+      </MyText>
 
       {onActionPress && (
         <Pressable
@@ -59,14 +60,14 @@ const NoDataCard = ({
             },
           ]}
         >
-          <Text
+          <MyText
             style={[
               styles.actionLabel,
               { color: actionColor || theme.colors.primary },
             ]}
           >
             {actionLabel}
-          </Text>
+          </MyText>
         </Pressable>
       )}
     </View>
@@ -89,7 +90,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
     marginBottom: 8,
-    fontFamily: 'NotoSans',
   },
   button: {
     paddingVertical: 6,
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   actionLabel: {
     fontSize: 14,
     fontWeight: '600',
-    fontFamily: 'NotoSans',
   },
 });
 

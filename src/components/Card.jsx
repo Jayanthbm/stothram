@@ -1,8 +1,9 @@
 // src/components/Card.jsx
 
 import React, { useState, useMemo } from 'react';
-import { Platform, Pressable, StyleSheet, View, Text } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '../contexts/themeContext';
+import MyText from './MyText';
 
 export default function Card({
   title,
@@ -14,6 +15,7 @@ export default function Card({
   onPressOut,
   disabled = false,
   variant = 'elevated', // 'outlined' | 'elevated'
+  disableRipple = false,
 }) {
   const { theme } = useTheme();
   const isAndroid = Platform.OS === 'android';
@@ -54,7 +56,7 @@ export default function Card({
         onPressOut?.(e);
       }}
       android_ripple={
-        isAndroid && !disabled
+        isAndroid && !disabled && !disableRipple
           ? {
               color: theme.colors.onSurfaceVariant + '22',
               borderless: false,
@@ -64,21 +66,13 @@ export default function Card({
       }
       style={combinedStyle}
     >
-      {title && (
-        <Text
-          style={[styles.title, { color: theme.colors.onSurface }]}
-          numberOfLines={1}
-        >
-          {title}
-        </Text>
-      )}
+      {title && <MyText style={styles.title}>{title}</MyText>}
       {subtitle && (
-        <Text
+        <MyText
           style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
-          numberOfLines={1}
         >
           {subtitle}
-        </Text>
+        </MyText>
       )}
       <View style={styles.body}>{children}</View>
     </Pressable>
