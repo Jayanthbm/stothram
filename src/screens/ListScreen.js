@@ -82,7 +82,7 @@ const ListScreen = ({ route }) => {
         const fetchedData = await dataHelper(title, dataUrl, SCREEN_NAMES.LIST);
         if (fetchedData?.data) {
           setList(fetchedData.data);
-          preFetcher(fetchedData.data, SCREEN_NAMES.READER_SCREEN);
+          preFetcher(fetchedData.data, SCREEN_NAMES.READER);
         }
       } catch (error) {
         console.error('Error loading list:', error);

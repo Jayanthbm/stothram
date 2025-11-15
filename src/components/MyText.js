@@ -18,9 +18,6 @@ const removeNotoSans = s => {
   return s;
 };
 
-// Extract fontFamily from a style object
-const getFontFromStyle = s => (s && s.fontFamily ? s.fontFamily : undefined);
-
 const MyText = ({
   style,
   numberOfLines = 1,
@@ -29,36 +26,40 @@ const MyText = ({
   children,
 }) => {
   const { theme } = useTheme();
-  const textValue = typeof children === 'string' ? children : '';
+
+  // Safely extract text from any children
+  const textValue = Array.isArray(children)
+    ? children.join('')
+    : children?.toString?.() || '';
 
   const shouldApplyFont = containsNonEnglish(textValue);
 
-  // Normalize styles array
+  // Normalize styles
   const styleArray = Array.isArray(style) ? style : [style];
-
-  // Clean NotoSans from all user styles
   const cleanedStyles = styleArray.map(removeNotoSans);
 
-  // Detect if the user supplied ANY fontFamily in any style
   const userPassedFontFamily = cleanedStyles.some(
     s => s && s.fontFamily !== undefined,
   );
 
-  // Detect if user passed a color
   const userPassedColor = cleanedStyles.some(s => s && s.color !== undefined);
+
+  const userPassedMarginBottom = cleanedStyles.some(
+    s => s && s.marginBottom !== undefined,
+  );
 
   const computedStyle = [
     ...cleanedStyles,
     !userPassedColor ? { color: theme.colors.onSurface } : null,
     shouldApplyFont && !userPassedFontFamily ? { fontFamily } : null,
+    !userPassedMarginBottom ? { marginBottom: shouldApplyFont ? 4 : 0 } : null,
   ];
 
+  const textProps =
+      ellipsizeMode === 'none' ? {} : { numberOfLines, ellipsizeMode };
+
   return (
-    <Text
-      style={computedStyle}
-      numberOfLines={numberOfLines}
-      ellipsizeMode={ellipsizeMode}
-    >
+    <Text style={computedStyle} {...textProps}>
       {children}
     </Text>
   );

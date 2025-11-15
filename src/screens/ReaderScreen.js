@@ -174,6 +174,7 @@ const ReaderScreen = ({ route }) => {
           {item.lines.map((line, index) =>
             line?.trim() ? (
               <MyText
+                ellipsizeMode="none"
                 key={index}
                 style={{
                   fontFamily: item?.fontFamily,
