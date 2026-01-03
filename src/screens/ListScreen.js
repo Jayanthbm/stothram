@@ -285,8 +285,8 @@ const styles = StyleSheet.create({
   },
   gridTitle: {
     marginTop: 6,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '700',
     textOverflow: 'ellipsis',
     fontFamily: 'NotoSerif',
   },
