@@ -21,6 +21,8 @@ import MaterialDesignIcons from '@react-native-vector-icons/material-design-icon
 import Card from '../components/Card';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import MyText from '../components/MyText';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 const SettingsScreen = () => {
   const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
@@ -108,6 +110,52 @@ const SettingsScreen = () => {
     return () => loop.stop();
   }, [scaleAnim]);
 
+  // ❤️ Secret cache clear
+  const heartTapCount = useRef(0);
+  const heartTapTimeout = useRef(null);
+
+  const clearLastFetchCache = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+
+      const keysToPreserve = [
+        CACHED_DATA_KEYS.SETTINGS,
+        `${CACHED_DATA_KEYS.SETTINGS}_lastFetchTime`,
+      ];
+
+      const keysToRemove = keys.filter(key => !keysToPreserve.includes(key));
+
+      if (keysToRemove.length > 0) {
+        await AsyncStorage.multiRemove(keysToRemove);
+      }
+
+      Alert.alert(
+        'Cache Cleared',
+        `${keysToRemove.length} entries removed (Settings preserved)`,
+      );
+    } catch (e) {
+      console.error('Cache clear failed', e);
+    }
+  };
+
+  const onHeartPress = () => {
+    heartTapCount.current += 1;
+
+    // reset timer
+    if (heartTapTimeout.current) {
+      clearTimeout(heartTapTimeout.current);
+    }
+
+    heartTapTimeout.current = setTimeout(() => {
+      heartTapCount.current = 0;
+    }, 2000); // 2 sec window
+
+    if (heartTapCount.current === 5) {
+      heartTapCount.current = 0;
+      clearLastFetchCache();
+    }
+  };
+
   return (
     <>
       <AppBar title="Settings" />
@@ -173,7 +221,7 @@ const SettingsScreen = () => {
         </Card>
 
         {/* ---Bottom Section --- */}
-        <View style={{ marginTop: 24, marginBottom: 40 }}>
+        <View style={{ marginTop: 10, marginBottom: 30 }}>
           <Pressable
             onPress={onShare}
             style={{
@@ -204,7 +252,7 @@ const SettingsScreen = () => {
 
           <View
             style={{
-              marginTop: 28,
+              marginTop: 20,
               alignItems: 'center',
               justifyContent: 'center',
               flexDirection: 'row',
@@ -220,18 +268,20 @@ const SettingsScreen = () => {
               Made with
             </MyText>
 
-            <Animated.View
-              style={{
-                transform: [{ scale: scaleAnim }],
-                marginHorizontal: 6,
-              }}
-            >
-              <MaterialDesignIcons
-                name="heart"
-                size={22}
-                color={theme.colors.error}
-              />
-            </Animated.View>
+            <Pressable onPress={onHeartPress} hitSlop={10}>
+              <Animated.View
+                style={{
+                  transform: [{ scale: scaleAnim }],
+                  marginHorizontal: 6,
+                }}
+              >
+                <MaterialDesignIcons
+                  name="heart"
+                  size={22}
+                  color={theme.colors.error}
+                />
+              </Animated.View>
+            </Pressable>
 
             <MyText
               style={{
