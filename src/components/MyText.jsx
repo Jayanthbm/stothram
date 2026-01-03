@@ -9,15 +9,6 @@ const containsNonEnglish = text => {
   return /[^A-Za-z0-9 .,!?'"@#$%^&*()_+\-=;:/\\|<>[\]{}~`]/.test(text);
 };
 
-// Remove NotoSans safely
-const removeNotoSans = s => {
-  if (s && s.fontFamily === 'NotoSans') {
-    const { fontFamily, ...rest } = s;
-    return rest;
-  }
-  return s;
-};
-
 const MyText = ({
   style,
   numberOfLines = 1,
@@ -36,7 +27,7 @@ const MyText = ({
 
   // Normalize styles
   const styleArray = Array.isArray(style) ? style : [style];
-  const cleanedStyles = styleArray.map(removeNotoSans);
+  const cleanedStyles = styleArray;
 
   const userPassedFontFamily = cleanedStyles.some(
     s => s && s.fontFamily !== undefined,
@@ -56,10 +47,21 @@ const MyText = ({
   ];
 
   const textProps =
-      ellipsizeMode === 'none' ? {} : { numberOfLines, ellipsizeMode };
+    ellipsizeMode === 'none' ? {} : { numberOfLines, ellipsizeMode };
 
+  const properStyles = {};
+  computedStyle.forEach(s => {
+    if (s) {
+      Object.assign(properStyles, s);
+    }
+  });
+
+  if (properStyles.fontFamily === 'NudiParijathaBold') {
+    properStyles.fontWeight =
+      properStyles.fontWeight < 600 ? properStyles.fontWeight : 600;
+  }
   return (
-    <Text style={computedStyle} {...textProps}>
+    <Text style={properStyles} {...textProps}>
       {children}
     </Text>
   );

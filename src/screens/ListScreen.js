@@ -113,8 +113,14 @@ const ListScreen = ({ route }) => {
     viewType === 'list' ? (
       <IconList
         leftIcon="note-text"
-        title={item.title}
+        title={item.displayTitle || item.title}
         onPress={() => handleItemClick(item)}
+        textStyle={{
+          fontSize: 18,
+          fontWeight: '600',
+          textOverflow: 'ellipsis',
+          fontFamily: 'NotoSerif',
+        }}
       />
     ) : (
       <Card
@@ -127,7 +133,9 @@ const ListScreen = ({ route }) => {
             size={60}
             color={theme.colors.primary}
           />
-          <MyText style={styles.gridTitle}>{item.title}</MyText>
+          <MyText style={styles.gridTitle}>
+            {item.displayTitle || item.title}
+          </MyText>
         </View>
       </Card>
     );
@@ -277,8 +285,10 @@ const styles = StyleSheet.create({
   },
   gridTitle: {
     marginTop: 6,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: '600',
+    textOverflow: 'ellipsis',
+    fontFamily: 'NotoSerif',
   },
   searchWrapper: {
     marginHorizontal: 10,

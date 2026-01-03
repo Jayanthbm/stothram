@@ -18,6 +18,7 @@ const IconList = ({
   onPress,
   rightContent,
   disabled = false,
+  textStyle = {},
 }) => {
   const { theme } = useTheme();
   const isAndroid = Platform.OS === 'android';
@@ -61,7 +62,7 @@ const IconList = ({
         )}
 
         <View style={styles.textContainer}>
-          <MyText style={styles.title}>{title}</MyText>
+          <MyText style={[styles.title, { ...textStyle }]}>{title}</MyText>
           {subtitle ? (
             <MyText
               style={[
