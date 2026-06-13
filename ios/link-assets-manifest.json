@@ -2,6 +2,10 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/assets/fonts/brhknde.ttf",
+      "sha1": "f519631cc70b8c63c955f9d3e4350a4514af6c46"
+    },
+    {
       "path": "src/assets/fonts/NotoSans.ttf",
       "sha1": "a89ea628b1ae1d370cb3bbf6cfa4841a6352a7da"
     },
@@ -10,8 +14,8 @@
       "sha1": "5a00d6653faa9ee0cbadf52357d0c469a871596b"
     },
     {
-      "path": "src/assets/fonts/brhknde.ttf",
-      "sha1": "f519631cc70b8c63c955f9d3e4350a4514af6c46"
+      "path": "src/assets/fonts/NudiParijathaBold.ttf",
+      "sha1": "076b1fd2d2c5e4979281cf1feedbe9303c6de8b0"
     }
   ]
 }

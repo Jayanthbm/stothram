@@ -5,6 +5,7 @@ import { View, Platform, Pressable, StyleSheet } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useTheme } from '../contexts/themeContext';
 import MyText from './MyText';
+import Chip from './Chip';
 
 const H_PADDING = 12;
 const V_PADDING = 14;
@@ -19,6 +20,7 @@ const IconList = ({
   rightContent,
   disabled = false,
   textStyle = {},
+  id,
 }) => {
   const { theme } = useTheme();
   const isAndroid = Platform.OS === 'android';
@@ -55,14 +57,21 @@ const IconList = ({
         {leftIcon && (
           <MaterialDesignIcons
             name={leftIcon}
-            size={22}
+            size={30}
             color={theme.colors.primary}
             style={styles.leftIcon}
           />
         )}
 
         <View style={styles.textContainer}>
-          <MyText style={[styles.title, { ...textStyle }]}>{title}</MyText>
+          {id ? (
+            <View style={styles.chipContainer}>
+              <Chip label={id} />
+            </View>
+          ) : null}
+
+          <MyText style={[styles.title, textStyle]}>{title}</MyText>
+
           {subtitle ? (
             <MyText
               style={[
@@ -107,6 +116,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginTop: 2,
     marginBottom: 2,
+  },
+  chipContainer: {
+    alignSelf: 'flex-start',
+    marginBottom: 6,
   },
 });
 export default IconList;

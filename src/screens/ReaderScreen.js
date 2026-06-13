@@ -178,7 +178,6 @@ const ReaderScreen = ({ route }) => {
                 key={index}
                 style={{
                   fontFamily: item?.fontFamily,
-                  fontWeight: fontWeights[item.fontFamily] || '700',
                   lineHeight:
                     item.fontFamily === 'brhknde'
                       ? parseInt(font) + 17

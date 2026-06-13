@@ -27,6 +27,7 @@ import { dataHelper, preFetcher } from '../utils/dataUtils';
 import IconList from '../components/IconList';
 import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
 import MyText from '../components/MyText';
+import Chip from '../components/Chip';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 12;
@@ -92,12 +93,21 @@ const ListScreen = ({ route }) => {
   }, [dataUrl]);
 
   // 🔹 Search filter
-  const filteredData = useMemo(() => {
-    if (!searchValue.trim()) return list;
-    return list.filter(item =>
-      item?.title?.toLowerCase().includes(searchValue.toLowerCase()),
-    );
-  }, [list, searchValue]);
+ const filteredData = useMemo(() => {
+   const query = searchValue.trim();
+
+   if (!query) return list;
+
+   // Numeric search by ID
+   if (/^\d+$/.test(query)) {
+     return list.filter(item => String(item?.id ?? '').includes(query));
+   }
+
+   // Original title search
+   return list.filter(item =>
+     item?.title?.toLowerCase().includes(query.toLowerCase()),
+   );
+ }, [list, searchValue]);
 
   const handleSearch = text => {
     setSearchValue(text);
@@ -112,6 +122,7 @@ const ListScreen = ({ route }) => {
   const renderItem = ({ item }) =>
     viewType === 'list' ? (
       <IconList
+        id={item.id}
         leftIcon="note-text"
         title={item.displayTitle || item.title}
         onPress={() => handleItemClick(item)}
@@ -128,6 +139,9 @@ const ListScreen = ({ route }) => {
         style={{ width: GRID_CARD_WIDTH, height: GRID_CARD_HEIGHT }}
       >
         <View style={styles.cardGridContent}>
+          <View style={styles.chipContainer}>
+            <Chip label={item.id} />
+          </View>
           <MaterialDesignIcons
             name="note-text"
             size={60}
@@ -282,6 +296,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  chipContainer: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
   },
   gridTitle: {
     marginTop: 6,
