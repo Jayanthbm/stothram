@@ -25,6 +25,14 @@
 		10D0BDA52E184FB2A8E09994 /* NotoSerif.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F687FA07ECF84266AD8C1B94 /* NotoSerif.ttf */; };
 		3328F9FC0D7F4775A918DF0D /* brhknde.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0741514BDDDF4820AAEB62DD /* brhknde.ttf */; };
 		BDCC506F85DF49829B1A7DE3 /* NotoSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1CD968648764D3587573149 /* NotoSans.ttf */; };
+		6838352D6FEF461AB485836E /* NudiVedicBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A27F427684C74291B8106DFC /* NudiVedicBold.ttf */; };
+		1D7BF0D63BE041AFA4685A64 /* NudiVedicBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A27F427684C74291B8106DFC /* NudiVedicBold.ttf */; };
+		2BE61BAD51BF4B789ACA2B87 /* NudiParijatha.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C16D9A79DBF469284EED778 /* NudiParijatha.ttf */; };
+		C681E2EB939E49E1B4BF57E4 /* NudiParijatha.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C16D9A79DBF469284EED778 /* NudiParijatha.ttf */; };
+		436F9188632B45D2B6A09651 /* NiudiVedic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 11DFA2F08C1141AC82058FA3 /* NiudiVedic.ttf */; };
+		0162AC06C3DE4CB3923AFB78 /* NiudiVedic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 11DFA2F08C1141AC82058FA3 /* NiudiVedic.ttf */; };
+		E8D825607D3440C0A097D50E /* NudiParijathaBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3A23D3EC40784438A6250A5A /* NudiParijathaBold.ttf */; };
+		E0624068D0F64EBCBFB09399 /* NudiParijathaBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3A23D3EC40784438A6250A5A /* NudiParijathaBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +70,10 @@
 		F687FA07ECF84266AD8C1B94 /* NotoSerif.ttf */ = {isa = PBXFileReference; name = "NotoSerif.ttf"; path = "../src/assets/fonts/NotoSerif.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		0741514BDDDF4820AAEB62DD /* brhknde.ttf */ = {isa = PBXFileReference; name = "brhknde.ttf"; path = "../src/assets/fonts/brhknde.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E1CD968648764D3587573149 /* NotoSans.ttf */ = {isa = PBXFileReference; name = "NotoSans.ttf"; path = "../src/assets/fonts/NotoSans.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A27F427684C74291B8106DFC /* NudiVedicBold.ttf */ = {isa = PBXFileReference; name = "NudiVedicBold.ttf"; path = "../src/assets/fonts/NudiVedicBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7C16D9A79DBF469284EED778 /* NudiParijatha.ttf */ = {isa = PBXFileReference; name = "NudiParijatha.ttf"; path = "../src/assets/fonts/NudiParijatha.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		11DFA2F08C1141AC82058FA3 /* NiudiVedic.ttf */ = {isa = PBXFileReference; name = "NiudiVedic.ttf"; path = "../src/assets/fonts/NiudiVedic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3A23D3EC40784438A6250A5A /* NudiParijathaBold.ttf */ = {isa = PBXFileReference; name = "NudiParijathaBold.ttf"; path = "../src/assets/fonts/NudiParijathaBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +197,10 @@
 				F687FA07ECF84266AD8C1B94 /* NotoSerif.ttf */,
 				0741514BDDDF4820AAEB62DD /* brhknde.ttf */,
 				E1CD968648764D3587573149 /* NotoSans.ttf */,
+				A27F427684C74291B8106DFC /* NudiVedicBold.ttf */,
+				7C16D9A79DBF469284EED778 /* NudiParijatha.ttf */,
+				11DFA2F08C1141AC82058FA3 /* NiudiVedic.ttf */,
+				3A23D3EC40784438A6250A5A /* NudiParijathaBold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -281,6 +297,10 @@
 				5EBEDD4E2B67F07400303C6F /* AntDesign.ttf in Resources */,
 				5EBEDD572B67F0A000303C6F /* MaterialCommunityIcons.ttf in Resources */,
 				5EBEDD542B67F09100303C6F /* FontAwesome.ttf in Resources */,
+				1D7BF0D63BE041AFA4685A64 /* NudiVedicBold.ttf in Resources */,
+				C681E2EB939E49E1B4BF57E4 /* NudiParijatha.ttf in Resources */,
+				0162AC06C3DE4CB3923AFB78 /* NiudiVedic.ttf in Resources */,
+				E0624068D0F64EBCBFB09399 /* NudiParijathaBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,6 +317,10 @@
 				10D0BDA52E184FB2A8E09994 /* NotoSerif.ttf in Resources */,
 				3328F9FC0D7F4775A918DF0D /* brhknde.ttf in Resources */,
 				BDCC506F85DF49829B1A7DE3 /* NotoSans.ttf in Resources */,
+				6838352D6FEF461AB485836E /* NudiVedicBold.ttf in Resources */,
+				2BE61BAD51BF4B789ACA2B87 /* NudiParijatha.ttf in Resources */,
+				436F9188632B45D2B6A09651 /* NiudiVedic.ttf in Resources */,
+				E8D825607D3440C0A097D50E /* NudiParijathaBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
