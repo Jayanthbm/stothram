@@ -167,7 +167,9 @@ const ReaderScreen = ({ route }) => {
     }, [navigation, type]),
   );
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item, fonts }) => {
+    const fontFamily = item?.fontFamily ?? fonts?.[item.type];
+
     if (item.type === 'paragraph') {
       return (
         <Card key={item.id} disableRipple={true}>
@@ -177,12 +179,12 @@ const ReaderScreen = ({ route }) => {
                 ellipsizeMode="none"
                 key={index}
                 style={{
-                  fontFamily: item?.fontFamily,
+                  ...(fontFamily && { fontFamily }),
                   lineHeight:
-                    item.fontFamily === 'brhknde'
+                    fontFamily === 'brhknde'
                       ? parseInt(font) + 17
                       : parseInt(font) + 14,
-                  fontSize: item.fontFamily === 'brhknde' ? font + 2 : font,
+                  fontSize: fontFamily === 'brhknde' ? font + 2 : font,
                 }}
               >
                 {line}
@@ -193,7 +195,9 @@ const ReaderScreen = ({ route }) => {
           )}
         </Card>
       );
-    } else if (item.type === 'subheading') {
+    }
+
+    if (item.type === 'subheading') {
       return (
         <Card
           key={item.id}
@@ -203,9 +207,8 @@ const ReaderScreen = ({ route }) => {
           }}
         >
           <MyText
-            key={item.id}
             style={{
-              fontFamily: item?.fontFamily,
+              ...(fontFamily && { fontFamily }),
               fontSize: font + 2,
               textAlign: 'center',
               fontWeight: '500',
@@ -233,7 +236,9 @@ const ReaderScreen = ({ route }) => {
         ref={listRef}
         data={readerData?.content}
         keyExtractor={(_item, index) => index.toString()}
-        renderItem={renderItem}
+        renderItem={({ item }) =>
+          renderItem({ item, fonts: readerData?.fonts })
+        }
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
         removeClippedSubviews
