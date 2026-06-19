@@ -11,7 +11,9 @@
     "apk": "cd android && ./gradlew assembleRelease",
     "aab": "cd android && ./gradlew bundleRelease",
     "postinstall": "echo '✅ Postinstall complete. Skipping custom install script.'",
-    "link": "npx react-native-asset"
+    "link": "npx react-native-asset",
+    "gapk": "VERSION=$(node -p \"require('./package.json').version\") && cd android && ./gradlew assembleRelease && cd .. && mv android/app/build/outputs/apk/release/app-release.apk ~/Downloads/stothram_${VERSION}.apk",
+    "gaab": "VERSION=$(node -p \"require('./package.json').version\") && cd android && ./gradlew bundleRelease && cd .. && mv android/app/build/outputs/bundle/release/app-release.aab ~/Downloads/stothram_${VERSION}.aab"
   },
   "codegenConfig": {
     "name": "stothram",
