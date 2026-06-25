@@ -1,304 +1,318 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+// src/screens/ListScreen.js
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
+  Animated,
   BackHandler,
+  Dimensions,
   FlatList,
-  Image,
+  LayoutAnimation,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import Admob from '../components/admob';
-import CustomIcon from '../components/customIcon';
-import CustomHeaderLeft from '../components/headerLeft';
-import CustomHeaderRight from '../components/headerRight';
-import { SCREEN_NAMES } from '../constants';
-import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import AppBar from '../components/AppBar';
+import Card from '../components/Card';
+import SearchBar from '../components/SearchBar';
+import NoDataCard from '../components/NoDataCard';
+import { useTheme } from '../contexts/themeContext';
+import { SCREEN_NAMES } from '../utils/constants';
 import { dataHelper, preFetcher } from '../utils/dataUtils';
-// Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor, textColor, borderColor) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    searchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 15,
-      marginBottom: 10,
-      elevation: 2,
-      shadowColor: backgroundColor,
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: 0.3,
-      shadowRadius: 2,
-      backgroundColor: backgroundColor,
-    },
-    searchIcon: {
-      marginRight: 10,
-    },
-    searchInput: {
-      paddingVertical: 10,
-      fontSize: 20,
-      marginLeft: 10,
-      backgroundColor: backgroundColor,
-      color: textColor,
-    },
-    listItem: {
-      marginLeft: 10,
-      paddingTop: 10,
-      paddingBottom: 5,
-      paddingLeft: 5,
-      borderBottomWidth: 2,
-      borderBottomColor: borderColor,
-    },
-    listTextStyle: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: textColor,
-    },
-    cardContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginLeft: 2,
-      justifyContent: 'space-between',
-    },
-    card: {
-      width: '48%',
-      borderWidth: 1,
-      borderRadius: 8,
-      marginBottom: 10,
-      overflow: 'hidden',
-      borderColor: borderColor,
-    },
-    cardImage: {
-      width: 180,
-      height: 100,
-      resizeMode: 'cover',
-    },
-    cardTitle: {
-      fontSize: 14,
-      fontWeight: '700',
-      textAlign: 'center',
-      padding: 5,
-      color: textColor,
-    },
-    noDataContainer: {
-      marginTop: 20,
-      marginLeft: 5,
-      marginRight: 5,
-    },
-    noDataText: {
-      fontSize: 20,
-      textAlign: 'center',
-      color: textColor,
-    },
-    noDataTextButton: {
-      fontSize: 20,
-      textAlign: 'center',
-      color: '#ADD8E6',
-    },
-  });
-};
-// ListScreen Component
-const ListScreen = ({navigation, route}) => {
-  // Context and State
-  const {darkmode, viewType} = useContext(ThemeContext);
-  const {type} = route.params;
+import IconList from '../components/IconList';
+import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
+import MyText from '../components/MyText';
+import Chip from '../components/Chip';
+
+const { width } = Dimensions.get('window');
+const CARD_MARGIN = 12;
+const GRID_CARD_WIDTH = (width - CARD_MARGIN * 3) / 2;
+const GRID_CARD_HEIGHT = 130;
+
+const ListScreen = ({ route }) => {
+  const { type } = route.params;
+  const { viewType, theme, toggleViewType, showDarkSwitch, toggleTheme } =
+    useTheme();
+  const navigation = useNavigation();
+  const listRef = useRef(null);
+
   const [title, setTitle] = useState('');
   const [dataUrl, setDataUrl] = useState(null);
   const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  const [filteredData, setFilteredData] = useState(list);
   const [rendered, setRendered] = useState(false);
+  const [showScrollIcon, setShowScrollIcon] = useState(false);
 
-  // Set Navigation Options
-  useEffect(() => {
-    navigation.setOptions({
-      title: title,
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-      ),
-      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-      headerRight: () => (
-        <CustomHeaderRight navigation={navigation} showViewToggle={true} />
-      ),
+  // 🎞️ Animations: fade + slide
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current; // start slightly below
+
+  // 🔹 Right icons (theme + toggle view)
+  const rightIcons = useMemo(() => {
+    const icons = [];
+    if (showDarkSwitch) {
+      icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
+    }
+    icons.push({
+      iconName: viewType === 'list' ? 'view-grid' : 'view-list',
+      onPress: () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        toggleViewType();
+      },
     });
-  }, [navigation, title, darkmode]);
+    return icons;
+  }, [showDarkSwitch, toggleTheme, viewType, toggleViewType]);
 
-   const confirmExit = useCallback(() => {
-     navigation.goBack();
-   }, [navigation]);
-
-   useEffect(() => {
-     // Handle hardware back press event
-     const backAction = () => {
-       // Confirm exit when the hardware back button is pressed
-       confirmExit();
-       return true;
-     };
-     const backHandler = BackHandler.addEventListener(
-       'hardwareBackPress',
-       backAction,
-     );
-     return () => backHandler.remove();
-   }, []);
-  // Set Title and Data URL
+  // 🔹 Set title and URL
   useEffect(() => {
-    setTitle(type?.title);
-    setDataUrl(type?.dataUrl);
+    if (type) {
+      setTitle(type?.title || '');
+      setDataUrl(type?.dataUrl || null);
+    }
   }, [type]);
 
-  // Fetch Data
+  // 🔹 Fetch data
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData = await dataHelper(
-        title,
-        dataUrl,
-        SCREEN_NAMES.LIST_SCREEN,
-      );
-      if (fetchedData) {
-        setList(fetchedData?.data);
-        // Prefetch data for the Reader screen
-        preFetcher(fetchedData?.data, SCREEN_NAMES.READER_SCREEN);
+      try {
+        const fetchedData = await dataHelper(title, dataUrl, SCREEN_NAMES.LIST);
+        if (fetchedData?.data) {
+          setList(fetchedData.data);
+          preFetcher(fetchedData.data, SCREEN_NAMES.READER);
+        }
+      } catch (error) {
+        console.error('Error loading list:', error);
       }
     };
-
-    if (dataUrl) {
-      fetchData();
-    }
+    if (dataUrl) fetchData();
   }, [dataUrl]);
 
-  // Update Filtered Data when List Changes
-  useEffect(() => {
-    setFilteredData(list);
-  }, [list]);
+  // 🔹 Search filter
+ const filteredData = useMemo(() => {
+   const query = searchValue.trim();
 
-  // Filter Data based on Search Text
-  const filterData = (data, searchText) => {
-    return data.filter(item =>
-      item.title.toLowerCase().includes(searchText.toLowerCase()),
-    );
-  };
+   if (!query) return list;
 
-  // Handle Search Input
+   // Numeric search by ID
+   if (/^\d+$/.test(query)) {
+     return list.filter(item => String(item?.id ?? '').includes(query));
+   }
+
+   // Original title search
+   return list.filter(item =>
+     item?.title?.toLowerCase().includes(query.toLowerCase()),
+   );
+ }, [list, searchValue]);
+
   const handleSearch = text => {
     setSearchValue(text);
-    const newData = filterData(list, text);
     setRendered(true);
-    setFilteredData(newData);
   };
 
-  // Handle Item Click
   const handleItemClick = useCallback(
-    item => {
-      navigation.navigate('Reader', {item});
-    },
+    item => navigation.navigate('Reader', { item, type: type }),
     [navigation],
   );
 
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].borderColor,
+  const renderItem = ({ item }) =>
+    viewType === 'list' ? (
+      <IconList
+        id={item.id}
+        leftIcon="note-text"
+        title={item.displayTitle || item.title}
+        onPress={() => handleItemClick(item)}
+        textStyle={{
+          fontSize: 18,
+          fontWeight: '600',
+          textOverflow: 'ellipsis',
+          fontFamily: 'NotoSerif',
+        }}
+      />
+    ) : (
+      <Card
+        onPress={() => handleItemClick(item)}
+        style={{ width: GRID_CARD_WIDTH, height: GRID_CARD_HEIGHT }}
+      >
+        <View style={styles.cardGridContent}>
+          <View style={styles.chipContainer}>
+            <Chip label={item.id} />
+          </View>
+          <MaterialDesignIcons
+            name="note-text"
+            size={60}
+            color={theme.colors.primary}
+          />
+          <MyText style={styles.gridTitle}>
+            {item.displayTitle || item.title}
+          </MyText>
+        </View>
+      </Card>
+    );
+
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.navigate(SCREEN_NAMES.HOME);
+        }
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+      return () => sub.remove();
+    }, [navigation]),
   );
 
-  // Define a key extractor function
-  const keyExtractor = useCallback((item, index) => index.toString(), []);
-  // Define renderItem functions for list and card views
-  // Memoized ListItem Component
-  const MemoizedListItem = React.memo(({item}) => {
-    const {displayTitle} = item;
-    return (
-      <TouchableOpacity
-        style={styles.listItem}
-        onPress={() => handleItemClick(item)}>
-        <Text style={styles.listTextStyle}>{displayTitle}</Text>
-      </TouchableOpacity>
-    );
-  });
-  // Memoized CardItem Component
-  const MemoizedCardItem = React.memo(({item, index}) => (
-    <TouchableOpacity
-      style={[
-        styles.card,
-        {
-          marginLeft: index % 2 === 0 ? 4 : 0,
-          marginRight: index % 2 === 0 ? 0 : 4,
-        },
-      ]}
-      onPress={() => handleItemClick(item)}>
-      <Image
-        source={require('../assets/images/god.webp')}
-        style={styles.cardImage}
-      />
-      <Text style={styles.cardTitle}>
-        {item.displayTitle ? item.displayTitle : item.title}
-      </Text>
-    </TouchableOpacity>
-  ));
+  // ✅ Scroll listener to show/hide button with animation
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const shouldShow = offsetY > 250;
 
-  // Render Component
+    if (shouldShow && !showScrollIcon) {
+      setShowScrollIcon(true);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else if (!shouldShow && showScrollIcon) {
+      setShowScrollIcon(false);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 20,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  // ✅ Scroll to top function
+  const scrollToTop = () => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 20,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowScrollIcon(false));
+  };
+
   return (
-    <View style={styles.container}>
-      {/* Search Input */}
-      <View style={styles.searchContainer}>
-        <CustomIcon
-          name="search"
-          size={26}
-          color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
-          style={styles.searchIcon}
-          library="Feather"
-        />
-        <TextInput
-          placeholder="Search"
-          placeholderTextColor={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
-          onChangeText={handleSearch}
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <AppBar title={title} rightIcons={rightIcons} />
+
+      <View style={styles.searchWrapper}>
+        <SearchBar
+          placeholder={`Search ${title}`}
           value={searchValue}
-          style={styles.searchInput}
+          onChangeText={handleSearch}
+          onClear={() => setSearchValue('')}
         />
       </View>
+
+      {rendered && filteredData.length === 0 && (
+        <NoDataCard
+          title={`No data found in ${title}`}
+          onActionPress={() => {
+            setSearchValue('');
+            handleSearch('');
+          }}
+        />
+      )}
+
       <FlatList
+        ref={listRef}
         data={filteredData}
-        keyExtractor={keyExtractor}
-        renderItem={({item, index}) =>
-          viewType === 'list' ? (
-            <MemoizedListItem item={item} />
-          ) : (
-            <MemoizedCardItem item={item} index={index} />
-          )
-        }
+        keyExtractor={(item, index) => `${item.id ?? item.title}-${index}`}
         numColumns={viewType === 'list' ? 1 : 2}
-        extraData={viewType} // Add extraData to trigger a re-render when viewType changes
-        ListEmptyComponent={() => (
-          <View style={styles.noDataContainer}>
-            {rendered && (
-              <>
-                <Text style={styles.noDataText}>No data found</Text>
-                <Text
-                  style={styles.noDataTextButton}
-                  onPress={() => {
-                    setSearchValue('');
-                    handleSearch('');
-                  }}>
-                  Clear
-                </Text>
-              </>
-            )}
-          </View>
-        )}
+        renderItem={renderItem}
+        columnWrapperStyle={viewType === 'list' ? null : styles.gridRow}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
         key={viewType}
+        removeClippedSubviews={false}
+        initialNumToRender={10}
+        windowSize={5}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       />
 
-      {/* Display Admob component */}
-      <Admob />
+      {/* 🧭 Scroll to Top Button with Fade + Slide */}
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+      >
+        <ScrolltoTopIcon
+          visible={showScrollIcon}
+          onPress={scrollToTop}
+          align={viewType === 'list' ? 'right' : 'center'}
+        />
+      </Animated.View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  listContent: {
+    paddingHorizontal: CARD_MARGIN,
+    paddingBottom: CARD_MARGIN * 2,
+  },
+  gridRow: {
+    justifyContent: 'space-between',
+    marginBottom: CARD_MARGIN,
+  },
+  cardGridContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chipContainer: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
+  },
+  gridTitle: {
+    marginTop: 6,
+    fontSize: 16,
+    fontWeight: '700',
+    textOverflow: 'ellipsis',
+    fontFamily: 'NotoSerif',
+  },
+  searchWrapper: {
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+});
 
 export default ListScreen;

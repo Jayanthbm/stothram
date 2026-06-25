@@ -1,93 +1,100 @@
-import Slider from '@react-native-community/slider';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { BackHandler, FlatList, StyleSheet, Text, View } from 'react-native';
-import Admob from '../components/admob';
-import CustomHeaderLeft from '../components/headerLeft';
-import CustomHeaderRight from '../components/headerRight';
-import { SCREEN_NAMES } from '../constants';
-import { ThemeContext } from '../contexts/themeContext';
-import { commonNavigationOptions } from '../navigationOptions';
-import { COLOR_SCHEME, commonStyles } from '../styles/styles';
+// src/screens/ReaderScreen.js
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  Animated,
+  BackHandler,
+  FlatList,
+  LayoutAnimation,
+  View,
+} from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import AppBar from '../components/AppBar';
+import Card from '../components/Card';
+import BottomSheetModal from '../components/BottomSheetModal';
+import IconList from '../components/IconList';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import NoDataCard from '../components/NoDataCard';
+import MaterialSlider from '../components/MaterialSlider';
+import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
 import { dataHelper } from '../utils/dataUtils';
+import { SCREEN_NAMES } from '../utils/constants';
+import { useTheme } from '../contexts/themeContext';
+import MyText from '../components/MyText';
 
-const generateStyles = (
-  backgroundColor,
-  textColor,
-  borderColor,
-  headerBackground,
-  headertext,
-  fontSize = 18,
-) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    paragraphStyle: {
-      marginLeft: 7,
-      marginRight: 2,
-      marginBottom: 18,
-      borderBottomWidth: 1,
-      borderBottomColor: borderColor,
-    },
-    lineStyle: {
-      fontWeight: '500',
-      marginBottom: 4,
-      fontSize: fontSize,
-      color: textColor,
-    },
-    subHeadingContainer: {
-      marginBottom: 5,
-      padding: 5,
-      backgroundColor: headerBackground,
-    },
-    subHeadingText: {
-      color: headertext,
-      fontSize: 20,
-      textAlign: 'center',
-      fontWeight: '500',
-    },
-  });
-};
+const fontWeights = { brhknde: 600 };
+const LANGUAGE_MAPPER = { kn: 'Kannada', en: 'English' };
 
-// Main ReaderScreen component
-const ReaderScreen = ({navigation, route}) => {
-  // Extract theme-related context
-  const {font, updateFont, darkmode} = useContext(ThemeContext);
+const ReaderScreen = ({ route }) => {
+  const { item, type } = route.params;
+  const navigation = useNavigation();
+  const { theme, toggleTheme, showDarkSwitch, font, updateFont } = useTheme();
 
-  // Navigation State
-  const {item} = route.params;
-
-  // State variables for managing data and UI
   const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
-  const sliderColor = darkmode ? '#ab8b2c' : '#6200EE';
+  const [languages, setLanguages] = useState(null);
+  const [currentLanguage, setCurrentLanguage] = useState(null);
+  const [fetchedData, setFetchedData] = useState(null);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showScrollIcon, setShowScrollIcon] = useState(false);
 
-  // useEffect to set navigation options
-  useEffect(() => {
-    navigation.setOptions({
-      title: displayTitle ? displayTitle : title,
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-      ),
-      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-      headerRight: () => <CustomHeaderRight navigation={navigation} />,
-    });
-  }, [navigation, title, displayTitle, darkmode]);
+  const listRef = useRef(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
 
-  // useEffect to fetch data on component mount
+  const toTop = () => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 20,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowScrollIcon(false));
+  };
+
+  // 🔹 Right icons (theme + toggle view)
+  const rightIcons = useMemo(() => {
+    const icons = [];
+    if (showDarkSwitch)
+      icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
+    if (languages && languages.length > 1)
+      icons.push({
+        iconName: 'translate',
+        onPress: () => setShowLanguageModal(true),
+      });
+    return icons;
+  }, [showDarkSwitch, toggleTheme, languages]);
+
+  // 🔹 Fetch reader data
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchedData = await dataHelper(
           item?.title,
           item?.dataUrl,
-          SCREEN_NAMES.READER_SCREEN,
+          SCREEN_NAMES.READER,
         );
         if (fetchedData) {
-          setReaderData(fetchedData);
+          setFetchedData(fetchedData);
+          if (fetchedData.translations) {
+            const langs = Object.keys(fetchedData.translations);
+            setLanguages(langs);
+            setCurrentLanguage(langs[0]);
+          } else {
+            setReaderData(fetchedData);
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -95,95 +102,200 @@ const ReaderScreen = ({navigation, route}) => {
     };
     setDisplayTitle(item.displayTitle);
     setTitle(item?.title);
-    if (item?.dataUrl) {
-      fetchData();
-    }
+    if (item?.dataUrl) fetchData();
   }, [item]);
 
-
-
-  const confirmExit = useCallback(() => {
-   navigation.goBack();
-  }, [navigation]);
-
+  // 🔹 Update when switching language
   useEffect(() => {
-    // Handle hardware back press event
-    const backAction = () => {
-      // Confirm exit when the hardware back button is pressed
-      confirmExit();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, []);
+    if (currentLanguage && fetchedData?.translations) {
+      const nextData = fetchedData.translations[currentLanguage];
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setReaderData(nextData);
+      setDisplayTitle(nextData.title);
+    }
+  }, [currentLanguage]);
 
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].borderColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-    font,
+  // ✅ Scroll listener for scroll-to-top button
+  const handleScroll = event => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const shouldShow = offsetY > 250;
+
+    if (shouldShow && !showScrollIcon) {
+      setShowScrollIcon(true);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else if (!shouldShow && showScrollIcon) {
+      setShowScrollIcon(false);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 20,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) navigation.goBack();
+        else navigation.navigate(SCREEN_NAMES.LIST, { type });
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+      return () => sub.remove();
+    }, [navigation, type]),
   );
 
-  const MemoizedParagraph = React.memo(({data, styles}) => {
-    return (
-      <View style={styles.paragraphStyle}>
-        {data.lines.map((line, index) => (
-          <Text style={styles.lineStyle} key={index}>
-            {line}
-          </Text>
-        ))}
-      </View>
-    );
-  });
+  const renderItem = ({ item, fonts }) => {
+    const fontFamily = item?.fontFamily ?? fonts?.[item.type];
 
-  const MemoizedSubheading = React.memo(({data, styles}) => {
-    return (
-      <View style={styles.subHeadingContainer}>
-        <Text style={styles.subHeadingText}>{data.title}</Text>
-      </View>
-    );
-  });
-  return (
-    <View style={styles.container}>
-      {readerData && (
-        <Slider
-          value={font}
-          onValueChange={value => updateFont(value)}
-          minimumValue={15}
-          maximumValue={40}
-          step={1}
+    if (item.type === 'paragraph') {
+      return (
+        <Card key={item.id} disableRipple={true}>
+          {item.lines.map((line, index) =>
+            line?.trim() ? (
+              <MyText
+                ellipsizeMode="none"
+                key={index}
+                style={{
+                  ...(fontFamily && { fontFamily }),
+                  lineHeight:
+                    fontFamily === 'brhknde'
+                      ? parseInt(font) + 17
+                      : parseInt(font) + 14,
+                  fontSize: fontFamily === 'brhknde' ? font + 2 : font,
+                }}
+              >
+                {line}
+              </MyText>
+            ) : (
+              <MyText key={`gap-${index}`} style={{ height: 8 }} />
+            ),
+          )}
+        </Card>
+      );
+    }
+
+    if (item.type === 'subheading') {
+      return (
+        <Card
+          key={item.id}
           style={{
-            height: 40,
+            backgroundColor: theme.colors.surfaceVariant,
+            padding: 2,
           }}
-          thumbTintColor={sliderColor}
-          minimumTrackTintColor={sliderColor}
-          tapToSeek={true}
-        />
-      )}
+        >
+          <MyText
+            style={{
+              ...(fontFamily && { fontFamily }),
+              fontSize: font + 2,
+              textAlign: 'center',
+              fontWeight: '500',
+            }}
+          >
+            {item.title}
+          </MyText>
+        </Card>
+      );
+    }
+  };
 
-      {/* FlatList for displaying reader content */}
-      <FlatList
-        data={readerData?.content}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item, index}) => {
-          if (item?.type === 'paragraph') {
-            // Render paragraphs using MemoizedParagraph
-            return <MemoizedParagraph data={item} styles={styles} />;
-          }
-          if (item.type === 'subheading') {
-            // Render subheadings using MemoizedSubheading
-            return <MemoizedSubheading data={item} styles={styles} />;
-          }
-        }}
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <AppBar title={displayTitle} rightIcons={rightIcons} />
+      <MaterialSlider
+        value={font}
+        onValueChange={updateFont}
+        min={15}
+        max={30}
+        step={1}
       />
-      {/* Display Admob component */}
-      <Admob />
+
+      <FlatList
+        ref={listRef}
+        data={readerData?.content}
+        keyExtractor={(_item, index) => index.toString()}
+        renderItem={({ item }) =>
+          renderItem({ item, fonts: readerData?.fonts })
+        }
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 60 }}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews
+        initialNumToRender={10}
+        windowSize={5}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        key={`${title}-${currentLanguage}`}
+        ListEmptyComponent={<NoDataCard title="No content available" />}
+      />
+
+      {/* 🌟 Floating Scroll to Top Button */}
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
+      >
+        <ScrolltoTopIcon
+          visible={showScrollIcon}
+          onPress={toTop}
+          align="right"
+        />
+      </Animated.View>
+
+      <BottomSheetModal
+        title={'Choose Language'}
+        visible={showLanguageModal}
+        closeModal={() => setShowLanguageModal(false)}
+      >
+        {languages?.map(language => (
+          <IconList
+            key={language}
+            title={LANGUAGE_MAPPER[language] || language.toUpperCase()}
+            leftIcon="translate-variant"
+            subtitle={`Change language to ${
+              LANGUAGE_MAPPER[language] || language
+            }`}
+            onPress={() => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut,
+              );
+              setCurrentLanguage(language);
+              setShowLanguageModal(false);
+            }}
+            rightContent={
+              currentLanguage === language ? (
+                <MaterialDesignIcons
+                  name="check-decagram"
+                  size={24}
+                  color={theme.colors.primary}
+                />
+              ) : null
+            }
+          />
+        ))}
+      </BottomSheetModal>
     </View>
   );
 };

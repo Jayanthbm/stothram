@@ -1,78 +1,51 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+// src/screens/SettingsScreen.js
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import AppBar from '../components/AppBar';
+import PageTitle from '../components/PageTitle';
+import IconList from '../components/IconList';
+import { useTheme } from '../contexts/themeContext';
+import MaterialSwitch from '../components/MaterialSwitch';
+import { dataHelper } from '../utils/dataUtils';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
 import {
-  Button,
+  Animated,
+  Pressable,
   ScrollView,
   Share,
-  StyleSheet,
-  Text,
   View,
-} from "react-native";
-import { ThemeContext } from "../contexts/themeContext";
+  Easing,
+  BackHandler,
+} from 'react-native';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import Card from '../components/Card';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import MyText from '../components/MyText';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
-import Admob from "../components/admob";
-import CustomIcon from '../components/customIcon';
-import CustomHeaderLeft from "../components/headerLeft";
-import ListHeader from "../components/listHeader";
-import ListItem from "../components/listItem";
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
-import { commonNavigationOptions } from "../navigationOptions";
-import { COLOR_SCHEME, commonStyles } from "../styles/styles";
-import { dataHelper } from "../utils/dataUtils";
-
-// Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor, textColor) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    shareContainer: {
-      marginTop: 10,
-      marginBottom:10,
-      alignItems: "center",
-      flexDirection: "row",
-      justifyContent: "center",
-    },
-    madeInIndiaContainer: {
-      flexDirection: "row",
-      alignSelf: "center",
-      marginBottom: 5,
-    },
-    madeInIndiaContainerIcon: {
-      color: "red",
-      fontSize: 25,
-      marginTop: 1,
-    },
-    madeInIndiaContainerText: {
-      color: textColor,
-      fontSize: 20,
-    },
-  });
-};
-
-const SettingsScreen = React.memo(({ navigation }) => {
-  const {
-    toggleDarkMode,
-    darkmode,
-    toggleDarkSwitch,
-    darkSwitch,
-  } = useContext(ThemeContext);
-
+const SettingsScreen = () => {
+  const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
+  const navigation = useNavigation();
   const [contributions, setContributions] = useState([]);
 
   const fetchData = useCallback(async () => {
     try {
       const fetchedData = await dataHelper(
-        CACHED_DATA_KEYS.SETTINGS_SCREEN,
-        DATA_URLS.SETTINGS_SCREEN,
-        SCREEN_NAMES.SETTINGS_SCREEN
+        CACHED_DATA_KEYS.SETTINGS,
+        DATA_URLS.SETTINGS,
+        SCREEN_NAMES.SETTINGS,
       );
       // Update state with fetched contributions
       if (fetchedData) {
-        setContributions(fetchedData?.contributions);
+        setContributions(
+          Array.isArray(fetchedData?.contributions)
+            ? fetchedData.contributions
+            : [],
+        );
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   }, []);
 
@@ -80,93 +53,250 @@ const SettingsScreen = React.memo(({ navigation }) => {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
-    // Set navigation options including the headerLeft component
-    navigation.setOptions({
-      title: 'Settings',
-      ...commonNavigationOptions(
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground,
-        COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext,
-      ),
-      headerLeft: () => <CustomHeaderLeft navigation={navigation} />,
-    });
-  }, [navigation, darkmode]);
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack();
+        } else {
+          navigation.navigate(SCREEN_NAMES.HOME);
+        }
+        return true;
+      };
 
-  // Function to handle sharing the app
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => sub.remove();
+    }, [navigation]),
+  );
+
+  const PLAY_STORE_URL =
+    'https://play.google.com/store/apps/details?id=com.jayanth.shotram';
+
   const onShare = async () => {
     try {
       await Share.share({
-        message:
-          "https://play.google.com/store/apps/details?id=com.jayanth.shotram",
+        message: `Check out this amazing Stothram app!\n\n${PLAY_STORE_URL}`,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Generate styles based on current context values
-  const styles = generateStyles(
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor,
-    COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor,
-  );
+  // ❤️ Heart animation
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.3,
+          duration: 600,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 600,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [scaleAnim]);
 
-  // Memoized version of ListItem component
-  const MemoizedListItem = React.memo(ListItem);
+  // ❤️ Secret cache clear
+  const heartTapCount = useRef(0);
+  const heartTapTimeout = useRef(null);
+
+  const clearLastFetchCache = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+
+      const keysToPreserve = [
+        CACHED_DATA_KEYS.SETTINGS,
+        `${CACHED_DATA_KEYS.SETTINGS}_lastFetchTime`,
+      ];
+
+      const keysToRemove = keys.filter(key => !keysToPreserve.includes(key));
+
+      if (keysToRemove.length > 0) {
+        await AsyncStorage.multiRemove(keysToRemove);
+      }
+
+      Alert.alert(
+        'Cache Cleared',
+        `${keysToRemove.length} entries removed (Settings preserved)`,
+      );
+    } catch (e) {
+      console.error('Cache clear failed', e);
+    }
+  };
+
+  const onHeartPress = () => {
+    heartTapCount.current += 1;
+
+    // reset timer
+    if (heartTapTimeout.current) {
+      clearTimeout(heartTapTimeout.current);
+    }
+
+    heartTapTimeout.current = setTimeout(() => {
+      heartTapCount.current = 0;
+    }, 2000); // 2 sec window
+
+    if (heartTapCount.current === 5) {
+      heartTapCount.current = 0;
+      clearLastFetchCache();
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        {/* General Settings */}
-        <ListHeader title="General Settings" icon={'settings'} />
-
-        {/* Memoized version of ListItem */}
-        <MemoizedListItem
-          title="Dark theme"
+    <>
+      <AppBar title="Settings" />
+      <ScrollView
+        style={{ paddingHorizontal: 16, paddingTop: 8 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 60 }}
+      >
+        <PageTitle title="General Settings" />
+        <IconList
+          keyName="mode"
+          onPress={toggleTheme}
+          leftIcon="palette-outline"
+          title="Dark Theme"
           subtitle="Reduce glare and improve night viewing"
-          toggle={toggleDarkMode}
-          state={darkmode}
+          rightContent={
+            <MaterialSwitch value={theme.isDark} onValueChange={toggleTheme} />
+          }
         />
-        <MemoizedListItem
+        <IconList
+          keyName="toggle"
+          onPress={toggleDarkSwitch}
+          leftIcon="theme-light-dark"
           title="Toggle in Every Page"
           subtitle="Show option to toggle dark mode in every screen"
-          toggle={toggleDarkSwitch}
-          state={darkSwitch}
+          rightContent={
+            <MaterialSwitch
+              value={showDarkSwitch}
+              onValueChange={toggleDarkSwitch}
+            />
+          }
         />
 
-        {/* Contributions */}
-        <ListHeader title="Contributions" icon={'info'} />
-        {contributions?.map(({name, role}) => (
-          <MemoizedListItem title={name} subtitle={role} key={name} />
-        ))}
-        <View style={styles.shareContainer}>
-          <CustomIcon
-            name="share"
-            library="Feather"
-            size={24}
-            color={COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].textColor}
-          />
-          <Text style={commonStyles.textButton} onPress={onShare}>
-            Share App with friends/family
-          </Text>
+        <PageTitle title="Contributions" />
+        <Card keyName="contributors" disableRipple={true}>
+          {contributions?.map(({ name, role }, index) => (
+            <View key={index}>
+              <IconList
+                key={`${name}-${role}`}
+                disabled={false}
+                keyName={`contributions-${name}`}
+                leftIcon={
+                  role === 'Editor'
+                    ? 'pencil-outline'
+                    : role === 'Developer'
+                      ? 'code-tags'
+                      : 'account-outline'
+                }
+                title={name}
+                subtitle={role}
+              />
+              {index < contributions.length - 1 && (
+                <View
+                  style={{
+                    backgroundColor: theme.colors.skeletonBackground,
+                    width: '100%',
+                    height: 1,
+                  }}
+                />
+              )}
+            </View>
+          ))}
+        </Card>
+
+        {/* ---Bottom Section --- */}
+        <View style={{ marginTop: 10, marginBottom: 30 }}>
+          <Pressable
+            onPress={onShare}
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.colors.surfaceVariant,
+              paddingVertical: 14,
+              borderRadius: 16,
+              flexDirection: 'row',
+            }}
+          >
+            <MaterialDesignIcons
+              name="share-variant"
+              size={22}
+              color={theme.colors.primary}
+            />
+            <MyText
+              style={{
+                color: theme.colors.primary,
+                fontSize: 16,
+                fontWeight: '600',
+                marginLeft: 10,
+              }}
+            >
+              Share App with friends & family
+            </MyText>
+          </Pressable>
+
+          <View
+            style={{
+              marginTop: 20,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+            }}
+          >
+            <MyText
+              style={{
+                color: theme.colors.onSurfaceVariant,
+                fontSize: 16,
+                fontWeight: '600',
+              }}
+            >
+              Made with
+            </MyText>
+
+            <Pressable onPress={onHeartPress} hitSlop={10}>
+              <Animated.View
+                style={{
+                  transform: [{ scale: scaleAnim }],
+                  marginHorizontal: 6,
+                }}
+              >
+                <MaterialDesignIcons
+                  name="heart"
+                  size={22}
+                  color={theme.colors.error}
+                />
+              </Animated.View>
+            </Pressable>
+
+            <MyText
+              style={{
+                color: theme.colors.onSurfaceVariant,
+                fontSize: 16,
+                fontWeight: '600',
+              }}
+            >
+              in India 🇮🇳
+            </MyText>
+          </View>
         </View>
       </ScrollView>
-      {/* Share and Made in India section */}
-      <React.Fragment>
-        <View style={styles.madeInIndiaContainer}>
-          <Text style={styles.madeInIndiaContainerText}>Made With {''}</Text>
-          {/* CustomIcon component for heart icon */}
-          <CustomIcon
-            name="heart"
-            library="AntDesign"
-            style={styles.madeInIndiaContainerIcon}
-          />
-          <Text style={styles.madeInIndiaContainerText}> In India</Text>
-        </View>
-        {/* Admob */}
-        <Admob />
-      </React.Fragment>
-    </View>
+    </>
   );
-});
+};
 
 export default SettingsScreen;

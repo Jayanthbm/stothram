@@ -1,79 +1,61 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+// src/screens/HomeScreen.js
+
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
-  BackHandler,
   FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
-} from "react-native";
-import Admob from "../components/admob";
-import CustomIcon from '../components/customIcon';
-import CustomHeaderRight from "../components/headerRight";
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from "../constants";
-import { ThemeContext } from "../contexts/themeContext";
-import { commonNavigationOptions } from "../navigationOptions";
-import { COLOR_SCHEME, commonStyles } from "../styles/styles";
-import {
-  dataHelper,
-  preFetcher,
-  storeItem,
-  storeJSON,
-} from "../utils/dataUtils";
-// Function to generate styles dynamically based on context values
-const generateStyles = (backgroundColor) => {
-  return StyleSheet.create({
-    container: {
-      ...commonStyles.container,
-      backgroundColor: backgroundColor,
-    },
-    typeContainer: {
-      flex: 1,
-      margin: 8,
-      borderRadius: 10,
-      borderWidth: 1,
-    },
-    typeItem: {
-      padding: 20,
-    },
-    iconContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    typeIcon: {
-      color: "#fff",
-      marginBottom: 10,
-    },
-    typeTitle: {
-      color: "#fff",
-      fontSize: 18,
-    },
-  });
-};
+  StyleSheet,
+  Dimensions,
+  LayoutAnimation,
+  BackHandler,
+} from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useTheme } from '../contexts/themeContext';
+import AppBar from '../components/AppBar';
+import Card from '../components/Card';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
+import { dataHelper, preFetcher } from '../utils/dataUtils';
+import BottomSheetModal from '../components/BottomSheetModal';
+import IconList from '../components/IconList';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import MyText from '../components/MyText';
 
-const HomeScreen = ({ navigation }) => {
-  const {darkmode} =
-    useContext(ThemeContext);
+const { width } = Dimensions.get('window');
+const CARD_MARGIN = 12;
+const CARD_WIDTH = (width - CARD_MARGIN * 3) / 2;
+const CARD_HEIGHT = 130;
 
+const HomeScreen = () => {
+  const { theme, toggleTheme, showDarkSwitch } = useTheme();
+  const navigation = useNavigation();
   const [types, setTypes] = useState([]);
-  const [loaded,setLoaded] =useState(false)
+  const [showExitModal, setShowExitModal] = useState(false);
+
+  // 🔹 Right icons (theme + toggle view)
+  const rightIcons = useMemo(() => {
+    const icons = [];
+    if (showDarkSwitch) {
+      icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
+    }
+    icons.push({
+      iconName: 'cog',
+      onPress: () => navigation.navigate(SCREEN_NAMES.SETTINGS),
+    });
+    return icons;
+  }, [showDarkSwitch, toggleTheme, navigation]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchedData = await dataHelper(
-          CACHED_DATA_KEYS.HOME_SCREEN,
-          DATA_URLS.HOME_SCREEN,
-          SCREEN_NAMES.HOME_SCREEN,
+          CACHED_DATA_KEYS.HOME,
+          DATA_URLS.HOME,
+          SCREEN_NAMES.HOME,
         );
         if (fetchedData) {
-          setTypes(fetchedData?.data);
-          await storeItem(CACHED_DATA_KEYS.UPI_ID, fetchedData?.UPI_ID);
-          await storeJSON(CACHED_DATA_KEYS.UPI_DATA, fetchedData?.upi_data);
-          setLoaded(true)
-          preFetcher(fetchedData?.data, SCREEN_NAMES.LIST_SCREEN);
-
+          setTypes(fetchedData?.data || []);
+          preFetcher(fetchedData?.data, SCREEN_NAMES.LIST);
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -82,101 +64,162 @@ const HomeScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    // Set navigation options when the headerBackground changes
-    navigation.setOptions({
-      title: 'Stothram',
-      ...commonNavigationOptions(COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headerBackground, COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].headertext),
-      headerRight: () => (
-        <CustomHeaderRight
-          navigation={navigation}
-          showSettings={true}
-          reRender={loaded}
-        />
-      ),
-    });
-  }, [navigation,darkmode,loaded]);
-
-  const confirmExit = useCallback(() => {
-    Alert.alert("Hold on!", "Do you want to Exit Stothram?", [
-      {
-        text: "Cancel",
-        onPress: () => null,
-        style: "cancel",
-      },
-      { text: "YES", onPress: () => BackHandler.exitApp() },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    // Handle hardware back press event
-    const backAction = () => {
-      // Confirm exit when the hardware back button is pressed
-      confirmExit();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
-
-  // Generate styles based on current context values
-  const styles = generateStyles(COLOR_SCHEME[darkmode ? 'DARK' : 'LIGHT'].backgroundColor);
-
   const handleTypePress = useCallback(
-    (type) => {
-      navigation.navigate("List", { type });
+    type => {
+      navigation.navigate(SCREEN_NAMES.LIST, { type, title: type.title });
     },
-    [navigation]
+    [navigation],
   );
 
-  // Render each type item in the FlatList
-  const renderTypeItem = ({ item }) => {
-    const typeContainerStyle = {
-      borderColor: darkmode ? item.darkBackground : item.lightBackground,
-    };
+  const renderItem = ({ item, index }) => {
+    const isLastOdd = types.length % 2 !== 0 && index === types.length - 1;
+    const ICON_SIZE = Math.min(CARD_WIDTH * 0.5, 60);
 
-    const typeItemStyle = {
-      backgroundColor: darkmode ? item.darkBackground : item.lightBackground,
-    };
     return (
-      <TouchableOpacity
+      <Card
+        accessibilityRole="button"
+        accessibilityLabel={item.title}
+        style={{
+          width: isLastOdd ? width - CARD_MARGIN * 2 : CARD_WIDTH,
+          height: CARD_HEIGHT,
+        }}
         onPress={() => handleTypePress(item)}
-        style={[styles.typeContainer, typeContainerStyle]}>
-        <View style={[styles.typeItem, typeItemStyle]}>
-          <View style={styles.iconContainer}>
-            <CustomIcon
-              name={item.icon}
-              library="AntDesign"
-              size={60}
-              style={styles.typeIcon}
-            />
-            <Text style={styles.typeTitle}>{item.title}</Text>
-          </View>
+      >
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <MaterialDesignIcons
+            name={item.icon_new}
+            size={ICON_SIZE}
+            color={theme.colors.primary}
+          />
+          <MyText style={styles.title}>{item.title}</MyText>
         </View>
-      </TouchableOpacity>
+      </Card>
     );
   };
 
+  // ✅ Handle hardware back only when screen focused
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setShowExitModal(true);
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+      return () => sub.remove();
+    }, []),
+  );
   return (
-    <View style={styles.container}>
-      {/* Display types in a FlatList */}
-      <FlatList
-        data={types}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderTypeItem}
-        numColumns={2}
-        style={{
-          flexDirection: 'column-reverse',
-          marginBottom:50
-        }}
-      />
-      {/* Display Admob component */}
-      <Admob />
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <AppBar showBack={false} rightIcons={rightIcons} title="Stothram" />
+
+      <View style={styles.flexWrapper}>
+        <View style={styles.bottomAlign}>
+          <FlatList
+            data={types}
+            keyExtractor={(item, index) =>
+              item.id?.toString() || `key-${index}`
+            }
+            renderItem={renderItem}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={6}
+            windowSize={10}
+            accessibilityLabel="Stothram category list"
+            accessible
+          />
+        </View>
+      </View>
+      <BottomSheetModal
+        title={'Do you want to exit?'}
+        visible={showExitModal}
+        closeModal={() => setShowExitModal(false)}
+      >
+        <IconList
+          keyName="exit-yes"
+          leftIcon="exit-to-app"
+          title="Yes, Exit"
+          subtitle="Close the Stothram app"
+          onPress={() => {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
+            setShowExitModal(false);
+            setTimeout(() => BackHandler.exitApp(), 180);
+          }}
+          rightContent={
+            <MaterialDesignIcons
+              name="check-decagram"
+              size={24}
+              color={theme.colors.primary}
+            />
+          }
+        />
+        <IconList
+          keyName="exit-cancel"
+          leftIcon="close-circle-outline"
+          title="No, Stay"
+          subtitle="Stay on the Home screen"
+          onPress={() => {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut,
+            );
+            setShowExitModal(false);
+          }}
+          rightContent={
+            <MaterialDesignIcons
+              name="close"
+              size={22}
+              color={theme.colors.onSurfaceVariant}
+            />
+          }
+        />
+      </BottomSheetModal>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  flexWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  listContent: { paddingHorizontal: CARD_MARGIN, paddingBottom: 60 },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: CARD_MARGIN,
+  },
+  bottomAlign: {
+    alignSelf: 'center',
+    width: '100%',
+    marginBottom: 20,
+  },
+  cardInner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    marginTop: 6,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+});
 
 export default HomeScreen;

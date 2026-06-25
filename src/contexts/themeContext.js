@@ -1,130 +1,185 @@
+// src/contexts/themeContext.js
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { Appearance } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Appearance, Platform, ToastAndroid } from 'react-native';
+import { darkColors, lightColors } from '../theme/colors';
 
-// AsyncStorage keys
-const DARK_MODE_KEY = '@darkmode';
-const DARK_MODE_TOGGLE_KEY = '@darkmodetoggle';
-const FONT_SIZE_KEY = '@fontSize';
+const ThemeContext = createContext();
 
-// Theme context creation
-export const ThemeContext = React.createContext({
-  darkmode: false,
-  toggleDarkMode: () => {},
-  darkSwitch: false,
-  toggleDarkSwitch: () => {},
-  viewType: 'card',
-  toggleViewType: () => {},
-  font: 24,
-  updateFont: () => {},
-});
+export const ThemeProvider = ({ children }) => {
+  // 🔹 System & defaults
+  const systemScheme = Appearance.getColorScheme() || 'light';
+  const [themeMode, setThemeMode] = useState(systemScheme);
+  const [theme, setTheme] = useState({
+    colors: systemScheme === 'dark' ? darkColors : lightColors,
+    mode: systemScheme,
+    isDark: systemScheme === 'dark',
+  });
 
-// Theme provider component
-export const ThemeProvider = ({children}) => {
-  const [darkmode, setDarkMode] = useState(false);
-  const [darkSwitch, setDarkSwitch] = useState(false);
-  const [viewType, setViewType] = useState('card');
-  const [font, setFont] = useState(24);
+  // 🔹 Additional user preferences
+  const [viewType, setViewType] = useState('card'); // 'card' | 'list'
+  const [font, setFont] = useState(24); // default 24
+  const [showDarkSwitch, setShowDarkSwitch] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [showSlider, setShowSlider] = useState(true);
 
-  // useEffect to initialize theme-related state
+  // Load saved preferences
   useEffect(() => {
-    function init() {
-      // Retrieve dark mode setting from AsyncStorage or use device color scheme
-      AsyncStorage.getItem(DARK_MODE_KEY).then(r => {
-        if (r) {
-          if (r === 'true') {
-            setDarkMode(true);
-          } else {
-            setDarkMode(false);
-          }
-        } else {
-          let colorScheme = Appearance.getColorScheme();
-          if (colorScheme === 'dark') {
-            AsyncStorage.setItem(DARK_MODE_KEY, JSON.stringify(true));
-            setDarkMode(true);
-          } else {
-            AsyncStorage.setItem(DARK_MODE_KEY, JSON.stringify(false));
-            setDarkMode(false);
-          }
+    (async () => {
+      try {
+        const [savedMode, savedView, savedFont, savedSwitch, savedSlider] =
+          await Promise.all([
+            AsyncStorage.getItem('themeMode'),
+            AsyncStorage.getItem('viewType'),
+            AsyncStorage.getItem('fontSize'),
+            AsyncStorage.getItem('showDarkSwitch'),
+            AsyncStorage.getItem('showSlider'),
+          ]);
+
+        if (savedMode) {
+          const colorScheme =
+            savedMode === 'system'
+              ? Appearance.getColorScheme() || 'light'
+              : savedMode;
+          setTheme({
+            colors: colorScheme === 'dark' ? darkColors : lightColors,
+            mode: colorScheme,
+            isDark: colorScheme === 'dark',
+          });
+          setThemeMode(savedMode);
         }
-      });
-      // Retrieve dark mode toggle setting from AsyncStorage
-      AsyncStorage.getItem(DARK_MODE_TOGGLE_KEY).then(r => {
-        if (r) {
-          if (r === 'true') {
-            setDarkSwitch(true);
-          } else {
-            setDarkSwitch(false);
-          }
-        } else {
-          AsyncStorage.setItem(DARK_MODE_TOGGLE_KEY, JSON.stringify(true));
-          setDarkSwitch(true);
-        }
-      });
-      // Retrieve font size setting from AsyncStorage
-      AsyncStorage.getItem(FONT_SIZE_KEY).then(r => {
-        if (r) {
-          let f = parseInt(r, 10);
-          setFont(f);
-        } else {
-          AsyncStorage.setItem(FONT_SIZE_KEY, '24');
-          setFont(24);
-        }
-      });
-    }
-    // Initialize on component mount
-    init();
+        if (savedView) setViewType(savedView);
+        if (savedFont) setFont(Number(savedFont));
+        if (savedSwitch) setShowDarkSwitch(savedSwitch === 'true');
+        if (savedSlider) setShowSlider(savedSlider === 'true');
+      } catch (err) {
+        console.warn('Error loading theme settings:', err);
+      } finally {
+        setIsLoaded(true);
+      }
+    })();
   }, []);
 
-  // Helper function to show Android toast message
-  const showToast = message => {
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(message, ToastAndroid.SHORT);
+  // 🔹 React to system theme changes (if using system)
+  useEffect(() => {
+    const listener = Appearance.addChangeListener(({ colorScheme }) => {
+      if (themeMode === 'system') {
+        setTheme({
+          colors: colorScheme === 'dark' ? darkColors : lightColors,
+          mode: colorScheme,
+          isDark: colorScheme === 'dark',
+        });
+      }
+    });
+    return () => listener.remove();
+  }, [themeMode]);
+
+  // ====== THEME MODE HANDLERS ======
+  const toggleTheme = async () => {
+    const nextMode = themeMode === 'light' ? 'dark' : 'light';
+    setThemeMode(nextMode);
+    setTheme({
+      colors: nextMode === 'dark' ? darkColors : lightColors,
+      mode: nextMode,
+      isDark: nextMode === 'dark',
+    });
+    try {
+      await AsyncStorage.setItem('themeMode', nextMode);
+    } catch (err) {
+      console.warn('Error saving theme mode:', err);
     }
   };
 
-  // Context provider with theme-related values and functions
+  const setThemePreference = async mode => {
+    const colorScheme =
+      mode === 'system' ? Appearance.getColorScheme() || 'light' : mode;
+    setTheme({
+      colors: colorScheme === 'dark' ? darkColors : lightColors,
+      mode: colorScheme,
+      isDark: colorScheme === 'dark',
+    });
+    setThemeMode(mode);
+    try {
+      await AsyncStorage.setItem('themeMode', mode);
+    } catch (err) {
+      console.warn('Error saving theme mode:', err);
+    }
+  };
+
+  // ====== VIEW TYPE ======
+  const toggleViewType = async () => {
+    try {
+      const next = viewType === 'card' ? 'list' : 'card';
+      setViewType(next);
+      await AsyncStorage.setItem('viewType', next);
+    } catch (err) {
+      console.warn('Error saving view type:', err);
+    }
+  };
+
+  // ====== FONT ======
+  const updateFont = async size => {
+    try {
+      setFont(size);
+      await AsyncStorage.setItem('fontSize', size.toString());
+    } catch (err) {
+      console.warn('Error saving font size:', err);
+    }
+  };
+
+  // ====== SHOW DARK SWITCH ======
+  const toggleDarkSwitch = async () => {
+    try {
+      const next = !showDarkSwitch;
+      setShowDarkSwitch(next);
+      await AsyncStorage.setItem('showDarkSwitch', next.toString());
+    } catch (err) {
+      console.warn('Error saving dark switch setting:', err);
+    }
+  };
+
+  // ====== SHOW SLIDER ======
+  const toggleSlider = async () => {
+    try {
+      const next = !showSlider;
+      setShowSlider(next);
+      await AsyncStorage.setItem('showSlider', next.toString());
+    } catch (err) {
+      console.warn('Error saving slider setting:', err);
+    }
+  };
+
+  // ====== CONTEXT VALUE ======
+
+  const value = useMemo(
+    () => ({
+      theme,
+      themeMode,
+      toggleTheme,
+      setThemePreference,
+      viewType,
+      toggleViewType,
+      font,
+      updateFont,
+      showDarkSwitch,
+      toggleDarkSwitch,
+      showSlider,
+      toggleSlider,
+    }),
+    [theme, themeMode, viewType, font, showDarkSwitch, showSlider],
+  );
+
+  if (!isLoaded) return null;
   return (
-    <ThemeContext.Provider
-      value={{
-        darkmode,
-        toggleDarkMode: async () => {
-          setDarkMode(!darkmode);
-          // Toggle dark mode and save to AsyncStorage
-          await AsyncStorage.setItem(DARK_MODE_KEY, JSON.stringify(!darkmode));
-          showToast(!darkmode ? 'Dark Mode Enabled' : 'Light Mode Enabled');
-        },
-        darkSwitch,
-        toggleDarkSwitch: () => {
-          // Toggle dark mode switch and save to AsyncStorage
-          AsyncStorage.setItem(
-            DARK_MODE_TOGGLE_KEY,
-            JSON.stringify(!darkSwitch),
-          );
-          setDarkSwitch(!darkSwitch);
-          showToast(
-            !darkSwitch
-              ? 'Toggle in Every Page Enabled'
-              : 'Toggle in Every Page Disabled',
-          );
-        },
-        viewType,
-        toggleViewType: () => {
-          // Toggle view type between 'card' and 'list'
-          if (viewType === 'card') {
-            setViewType('list');
-          } else {
-            setViewType('card');
-          }
-        },
-        font,
-        updateFont: size => {
-          // Update font size and save to AsyncStorage
-          AsyncStorage.setItem(FONT_SIZE_KEY, size.toString());
-          setFont(size);
-        },
-      }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };
+
+// 🔹 Custom hook
+export const useTheme = () => useContext(ThemeContext);

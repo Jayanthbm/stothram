@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo from '@react-native-community/netinfo';
 // Constants for data thresholds
 export const DATA_THRESHOLDS = {
   HOME: 1 * 60 * 60 * 1000, // 1 hours in milliseconds
-  LIST: 2 * 60 * 60 * 1000, // 3 hours in milliseconds
+  LIST: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
   READER: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
   SETTING: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
-}
+};
 
 /**
  * Helper function to handle data fetching and caching.
@@ -20,6 +20,7 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
     const cachedData = await getJSON(KEYNAME);
     const lastFetchTime = await getItem(`${KEYNAME}_lastFetchTime`);
 
+    SCREEN_TYPE = SCREEN_TYPE.toUpperCase();
     if (cachedData) {
       // console.log(`Fetching ${KEYNAME} data from cache`);
       // Check if it's time to fetch from online
@@ -63,7 +64,10 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
 
       // Update local storage with the new data and timestamp
       await storeJSON(KEYNAME, data);
-      await storeItem(`${KEYNAME}_lastFetchTime`, new Date().getTime().toString());
+      await storeItem(
+        `${KEYNAME}_lastFetchTime`,
+        new Date().getTime().toString(),
+      );
       return data;
     } else {
       console.log('No internet connection. Data fetching skipped.');
@@ -85,7 +89,7 @@ export const isInternetConnected = async () => {
     // Check if the device is connected to the internet
     return state.isConnected;
   } catch (error) {
-    console.error("Error checking internet connection:", error);
+    console.error('Error checking internet connection:', error);
     return false; // Handle the error appropriately based on your application's needs
   }
 };
@@ -158,7 +162,6 @@ export const getItem = async key => {
     return null;
   }
 };
-
 
 /**
  * Store a key-value pair as JSON in AsyncStorage.

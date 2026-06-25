@@ -1,45 +1,66 @@
 {
   "name": "stothram",
-  "version": "0.0.1",
+  "version": "4.0.5",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --active-arch-only",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "prettify": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss}'",
+    "apk": "cd android && ./gradlew assembleRelease",
+    "aab": "cd android && ./gradlew bundleRelease",
+    "postinstall": "echo '✅ Postinstall complete. Skipping custom install script.'",
+    "link": "npx react-native-asset",
+    "gapk": "VERSION=$(node -p \"require('./package.json').version\") && cd android && ./gradlew assembleRelease && cd .. && mv android/app/build/outputs/apk/release/app-release.apk ~/Downloads/stothram_${VERSION}.apk",
+    "gaab": "VERSION=$(node -p \"require('./package.json').version\") && cd android && ./gradlew bundleRelease && cd .. && mv android/app/build/outputs/bundle/release/app-release.aab ~/Downloads/stothram_${VERSION}.aab"
+  },
+  "codegenConfig": {
+    "name": "stothram",
+    "type": "app",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.jayanth.shotram"
+    }
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.21.0",
-    "@react-native-community/netinfo": "^11.2.1",
-    "@react-native-community/slider": "^4.5.0",
-    "@react-navigation/native": "^6.1.10",
-    "@react-navigation/stack": "^6.3.21",
-    "react": "18.2.0",
-    "react-native": "0.73.4",
-    "react-native-gesture-handler": "^2.15.0",
-    "react-native-google-mobile-ads": "^12.10.0",
-    "react-native-safe-area-context": "^4.9.0",
-    "react-native-screens": "^3.29.0",
-    "react-native-vector-icons": "^10.0.3"
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/netinfo": "12.0.1",
+    "@react-native-community/slider": "5.2.0",
+    "@react-native-vector-icons/common": "13.0.1",
+    "@react-native-vector-icons/material-design-icons": "13.1.2",
+    "@react-navigation/native": "7.3.1",
+    "@react-navigation/native-stack": "7.17.3",
+    "react": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-safe-area-context": "5.8.0",
+    "react-native-screens": "4.25.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-env": "^7.20.0",
-    "@babel/runtime": "^7.20.0",
-    "@react-native/babel-preset": "0.73.21",
-    "@react-native/eslint-config": "0.73.2",
-    "@react-native/metro-config": "0.73.5",
-    "@react-native/typescript-config": "0.73.1",
-    "@types/react": "^18.2.6",
-    "@types/react-test-renderer": "^18.0.0",
-    "babel-jest": "^29.6.3",
-    "eslint": "^8.19.0",
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/runtime": "^7.25.0",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native-community/cli-platform-android": "20.1.0",
+    "@react-native-community/cli-platform-ios": "20.1.0",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/eslint-config": "0.86.0",
+    "@react-native/jest-preset": "0.85.3",
+    "@react-native/metro-config": "0.86.0",
+    "@react-native/typescript-config": "0.86.0",
+    "@types/jest": "^29.5.13",
+    "@types/react": "^19.1.1",
+    "@types/react-test-renderer": "19.1.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "jest": "^29.6.3",
-    "prettier": "2.8.8",
-    "react-test-renderer": "18.2.0",
-    "typescript": "5.0.4"
+    "prettier": "^3.6.2",
+    "react-test-renderer": "19.2.3",
+    "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">= 22.11.0"
   }
 }
