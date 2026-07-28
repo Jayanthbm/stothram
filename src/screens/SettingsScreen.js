@@ -6,7 +6,7 @@ import PageTitle from '../components/PageTitle';
 import IconList from '../components/IconList';
 import { useTheme } from '../contexts/themeContext';
 import MaterialSwitch from '../components/MaterialSwitch';
-import { dataHelper } from '../utils/dataUtils';
+import { dataHelper, getItem, storeItem } from '../utils/dataUtils';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
 import {
   Animated,
@@ -16,6 +16,9 @@ import {
   View,
   Easing,
   BackHandler,
+  LayoutAnimation,
+  ToastAndroid,
+  Platform,
 } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import Card from '../components/Card';
@@ -23,12 +26,28 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import MyText from '../components/MyText';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import BottomSheetModal from '../components/BottomSheetModal';
 
+const ENVS = ['dev', 'stage', 'prod'];
+const ENV_ICONS = {
+  dev: 'hammer-wrench',
+  stage: 'flask-outline',
+  prod: 'rocket-launch',
+};
+
+const ENV_LABELS = {
+  dev: 'Development',
+  stage: 'Staging',
+  prod: 'Production',
+};
 const SettingsScreen = () => {
   const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
   const navigation = useNavigation();
   const [contributions, setContributions] = useState([]);
 
+  const [devMenu, setDevMenu] = useState(false);
+  const [showEnvModal, setShowEnvModal] = useState(false);
+  const [selectedEnv, setSelectedEnv] = useState('prod');
   const fetchData = useCallback(async () => {
     try {
       const fetchedData = await dataHelper(
@@ -44,6 +63,10 @@ const SettingsScreen = () => {
             : [],
         );
       }
+      const devValue = await getItem(CACHED_DATA_KEYS.DEVMENU) || '0';
+      setDevMenu(devValue === '1');
+      const env = (await getItem(CACHED_DATA_KEYS.ENV)) || 'prod';
+      setSelectedEnv(env);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -114,29 +137,69 @@ const SettingsScreen = () => {
   const heartTapCount = useRef(0);
   const heartTapTimeout = useRef(null);
 
-  const clearLastFetchCache = async () => {
+  const clearLastFetchCache = async (force = false) => {
     try {
       const keys = await AsyncStorage.getAllKeys();
 
-      const keysToPreserve = [
-        CACHED_DATA_KEYS.SETTINGS,
-        `${CACHED_DATA_KEYS.SETTINGS}_lastFetchTime`,
+      let keysToPreserve = [
+        CACHED_DATA_KEYS.DEVMENU,
+        CACHED_DATA_KEYS.ENV
       ];
 
+     if (!force) {
+       keysToPreserve.push(CACHED_DATA_KEYS.SETTINGS);
+       keysToPreserve.push(`${CACHED_DATA_KEYS.SETTINGS}_lastFetchTime`);
+     }
       const keysToRemove = keys.filter(key => !keysToPreserve.includes(key));
 
       if (keysToRemove.length > 0) {
         await AsyncStorage.multiRemove(keysToRemove);
       }
+      const message = force
+        ? `${keysToRemove.length} entries removed`
+        : `${keysToRemove.length} entries removed (Settings preserved)`;
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+      } else {
+        Alert.alert('Cache Cleared', message);
+      }
 
-      Alert.alert(
-        'Cache Cleared',
-        `${keysToRemove.length} entries removed (Settings preserved)`,
-      );
+      
     } catch (e) {
       console.error('Cache clear failed', e);
     }
   };
+
+
+  const toggleDevMenu = async () => {
+     let devValue = devMenu ? '0' : '1';
+    try {
+      if (heartTapTimeout.current) {
+        clearTimeout(heartTapTimeout.current);
+      }
+      await storeItem(CACHED_DATA_KEYS.DEVMENU, devValue);
+
+      // If dev. menu is disabled, clear cache and set the env to prod
+
+      if (devValue === '0') {
+        await storeItem(CACHED_DATA_KEYS.ENV, 'prod');
+        await clearLastFetchCache(true);
+        await fetchData();
+      }
+    } finally {
+      setDevMenu(devValue === '1');
+    }
+  };
+
+ const switchEnv = async env => {
+   if (env === selectedEnv) {
+     return;
+   }
+   await storeItem(CACHED_DATA_KEYS.ENV, env);
+   setSelectedEnv(env);
+   await clearLastFetchCache(true);
+   await fetchData();
+ };
 
   const onHeartPress = () => {
     heartTapCount.current += 1;
@@ -152,7 +215,7 @@ const SettingsScreen = () => {
 
     if (heartTapCount.current === 5) {
       heartTapCount.current = 0;
-      clearLastFetchCache();
+      toggleDevMenu();
     }
   };
 
@@ -219,6 +282,30 @@ const SettingsScreen = () => {
             </View>
           ))}
         </Card>
+
+        {devMenu && (
+          <>
+            <PageTitle title="Dev Menu" />
+
+            <IconList
+              keyName="environment"
+              leftIcon={ENV_ICONS[selectedEnv]}
+              title="Environment"
+              subtitle={`Selected environment ${selectedEnv}`}
+              onPress={() => setShowEnvModal(true)}
+            />
+
+            <IconList
+              key={`clear-cache`}
+              disabled={false}
+              keyName={`clear-cache`}
+              leftIcon={'cached'}
+              title={'Clear Cache'}
+              subtitle={'Clear app cache'}
+              onPress={clearLastFetchCache}
+            />
+          </>
+        )}
 
         {/* ---Bottom Section --- */}
         <View style={{ marginTop: 10, marginBottom: 30 }}>
@@ -294,6 +381,47 @@ const SettingsScreen = () => {
             </MyText>
           </View>
         </View>
+
+        <BottomSheetModal
+          title="Select Environment"
+          visible={showEnvModal}
+          closeModal={() => setShowEnvModal(false)}
+        >
+          {ENVS.map(item => (
+            <IconList
+              keyName={`env-${item}`}
+              key={`env-${item}`}
+              leftIcon={ENV_ICONS[item]}
+              title={ENV_LABELS[item]}
+              subtitle={
+                selectedEnv === item
+                  ? 'Currently selected'
+                  : `Switch to ${item} environment`
+              }
+              onPress={async () => {
+                setShowEnvModal(false);
+
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut,
+                );
+
+                requestAnimationFrame(async () => {
+                  await switchEnv(item);
+                });
+              }}
+              disabled={selectedEnv === item}
+              rightContent={
+                selectedEnv === item ? (
+                  <MaterialDesignIcons
+                    name="check-decagram"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                ) : null
+              }
+            />
+          ))}
+        </BottomSheetModal>
       </ScrollView>
     </>
   );

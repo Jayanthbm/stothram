@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import { API_URL, CACHED_DATA_KEYS } from './constants';
 // Constants for data thresholds
 export const DATA_THRESHOLDS = {
   HOME: 1 * 60 * 60 * 1000, // 1 hours in milliseconds
@@ -58,8 +59,15 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
     // Check if the device is connected to the internet
     const isConnected = await isInternetConnected();
 
+    const env = (await getItem(CACHED_DATA_KEYS.ENV)) || 'prod';
+    let newURL;
+    if (URL.includes('https://')) {
+      newURL = `${URL}?env=${env}`;
+    }else{
+      newURL = `${API_URL}${URL}?env=${env}`;
+    }
     if (isConnected) {
-      const response = await fetch(URL);
+      const response = await fetch(newURL);
       const data = await response.json();
 
       // Update local storage with the new data and timestamp
