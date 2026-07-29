@@ -2,42 +2,82 @@
 import React, { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MyText from './MyText';
+import { useTheme } from '../contexts/themeContext';
 
 /**
  * ReaderMeaning
- * Renders meanings for a paragraph if populated.
+ * Renders line-by-line or block-level meanings with distinct styling.
  */
-const ReaderMeaning = memo(({ meanings, language }) => {
-  if (!meanings) return null;
+const ReaderMeaning = memo(({ line, lines, font }) => {
+  const { theme } = useTheme();
+  const fontSize = font ? Math.max(12, parseInt(font) - 2) : 14;
 
-  const currentMeaningData = meanings[language] || meanings.en || meanings.kn;
-  const lines = currentMeaningData?.text || [];
-
-  if (!Array.isArray(lines) || lines.length === 0) {
-    return null;
-  }
-
-  return (
-    <View style={styles.container}>
-      {lines.map((line, index) => (
-        <MyText key={index} style={styles.meaningText}>
+  if (line) {
+    return (
+      <View style={styles.lineMeaningContainer}>
+        <MyText
+          numberOfLines={0}
+          ellipsizeMode="none"
+          style={[
+            styles.meaningText,
+            {
+              fontSize,
+              color: theme.colors.primary || '#333333',
+              lineHeight: fontSize + 6,
+            },
+          ]}
+        >
           {line}
         </MyText>
-      ))}
-    </View>
-  );
+      </View>
+    );
+  }
+
+  if (Array.isArray(lines) && lines.length > 0) {
+    return (
+      <View style={styles.blockMeaningContainer}>
+        {lines.map((itemLine, index) => (
+          <MyText
+            key={index}
+            numberOfLines={0}
+            ellipsizeMode="none"
+            style={[
+              styles.meaningText,
+              {
+                fontSize,
+                color: theme.colors.primary || '#333333',
+                lineHeight: fontSize + 6,
+              },
+            ]}
+          >
+            {itemLine}
+          </MyText>
+        ))}
+      </View>
+    );
+  }
+
+  return null;
 });
 
 const styles = StyleSheet.create({
-  container: {
+  lineMeaningContainer: {
+    marginTop: 2,
+    marginBottom: 6,
+    paddingLeft: 8,
+    borderLeftWidth: 2,
+    borderLeftColor: '#4b6b94',
+  },
+  blockMeaningContainer: {
     marginTop: 8,
-    paddingTop: 8,
+    paddingTop: 6,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#cccccc',
   },
   meaningText: {
     fontStyle: 'italic',
-    opacity: 0.8,
+    opacity: 0.85,
+    lineHeight: 20,
   },
 });
 

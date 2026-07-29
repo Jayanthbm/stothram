@@ -93,21 +93,21 @@ const ListScreen = ({ route }) => {
   }, [dataUrl]);
 
   // 🔹 Search filter
- const filteredData = useMemo(() => {
-   const query = searchValue.trim();
+  const filteredData = useMemo(() => {
+    const query = searchValue.trim();
 
-   if (!query) return list;
+    if (!query) return list;
 
-   // Numeric search by ID
-   if (/^\d+$/.test(query)) {
-     return list.filter(item => String(item?.id ?? '').includes(query));
-   }
+    // Numeric search by ID
+    if (/^\d+$/.test(query)) {
+      return list.filter(item => String(item?.id ?? '').includes(query));
+    }
 
-   // Original title search
-   return list.filter(item =>
-     item?.title?.toLowerCase().includes(query.toLowerCase()),
-   );
- }, [list, searchValue]);
+    // Original title search
+    return list.filter(item =>
+      item?.title?.toLowerCase().includes(query.toLowerCase()),
+    );
+  }, [list, searchValue]);
 
   const handleSearch = text => {
     setSearchValue(text);

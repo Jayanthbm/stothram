@@ -26,9 +26,16 @@ import ReaderParagraph from '../components/ReaderParagraph';
 import ReaderSubheading from '../components/ReaderSubheading';
 import ReaderAudioButton from '../components/ReaderAudioButton';
 import { dataHelper } from '../utils/dataUtils';
-import { getAvailableLanguages, getFontForLanguage } from '../utils/readerUtils';
+import {
+  getAvailableLanguages,
+  getAvailableMeaningLanguages,
+  getFontForLanguage,
+  hasMeaningsInContent,
+} from '../utils/readerUtils';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { stopAudioTrack } from '../services/audioService';
-import { SCREEN_NAMES } from '../utils/constants';
+import { CACHED_DATA_KEYS, SCREEN_NAMES } from '../utils/constants';
 
 import { useTheme } from '../contexts/themeContext';
 
@@ -66,18 +73,93 @@ const ReaderScreen = ({ route }) => {
     ]).start(() => setShowScrollIcon(false));
   };
 
-  // 🔹 Right AppBar icons (theme toggle + language modal)
+  const [showMeanings, setShowMeanings] = useState(false);
+  const [meaningLanguage, setMeaningLanguage] = useState(null);
+  const [showMeaningLanguageModal, setShowMeaningLanguageModal] =
+    useState(false);
+
+  // Load saved meaning language on mount
+  useEffect(() => {
+    const loadSavedMeaningLang = async () => {
+      try {
+        const savedLang = await AsyncStorage.getItem(
+          CACHED_DATA_KEYS.MEANING_LANGUAGE,
+        );
+        if (savedLang) {
+          setMeaningLanguage(savedLang);
+        }
+      } catch (err) {
+        console.error('Error loading saved meaning language:', err);
+      }
+    };
+    loadSavedMeaningLang();
+  }, []);
+
+  const handleSelectMeaningLanguage = async lang => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setMeaningLanguage(lang);
+    setShowMeaningLanguageModal(false);
+    try {
+      await AsyncStorage.setItem(CACHED_DATA_KEYS.MEANING_LANGUAGE, lang);
+    } catch (err) {
+      console.error('Error saving meaning language:', err);
+    }
+  };
+
+  // Check if reader data has meanings populated
+  const hasMeanings = useMemo(() => {
+    return hasMeaningsInContent(readerData);
+  }, [readerData]);
+
+  const [meaningLanguages, setMeaningLanguages] = useState([]);
+
+  // 🔹 Right AppBar icons (max 3 icons; hide theme toggle if Meaning, Meaning Language, and Translate are all present)
   const rightIcons = useMemo(() => {
     const icons = [];
-    if (showDarkSwitch)
+    const hasMeaningLangIcon = hasMeanings && meaningLanguages.length > 1;
+    const hasTranslateIcon = languages && languages.length > 1;
+
+    // Hide dark/light switch if all 3 feature icons (Meaning, Meaning Lang, Translate) are present
+    const hideThemeForThreeIcons =
+      hasMeanings && hasMeaningLangIcon && hasTranslateIcon;
+
+    if (showDarkSwitch && !hideThemeForThreeIcons) {
       icons.push({ iconName: 'theme-light-dark', onPress: toggleTheme });
-    if (languages && languages.length > 1)
+    }
+
+    if (hasMeanings) {
+      icons.push({
+        iconName: showMeanings ? 'book-open-variant' : 'book-outline',
+        onPress: () => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setShowMeanings(prev => !prev);
+        },
+      });
+      if (hasMeaningLangIcon) {
+        icons.push({
+          iconName: 'subtitles-outline',
+          onPress: () => setShowMeaningLanguageModal(true),
+        });
+      }
+    }
+
+    if (hasTranslateIcon) {
       icons.push({
         iconName: 'translate',
         onPress: () => setShowLanguageModal(true),
       });
-    return icons;
-  }, [showDarkSwitch, toggleTheme, languages]);
+    }
+
+    // Ensure maximum 3 icons strictly
+    return icons.slice(0, 3);
+  }, [
+    showDarkSwitch,
+    toggleTheme,
+    hasMeanings,
+    showMeanings,
+    meaningLanguages,
+    languages,
+  ]);
 
   // 🔹 Fetch reader data adhering ONLY to the new schema
   useEffect(() => {
@@ -90,13 +172,20 @@ const ReaderScreen = ({ route }) => {
         );
         if (fetchedData) {
           setReaderData(fetchedData);
-          setDisplayTitle(fetchedData.title || item?.displayTitle || item?.title);
+          setDisplayTitle(
+            fetchedData.title || item?.displayTitle || item?.title,
+          );
 
           const defaultLang = fetchedData.defaultLanguage || 'kn';
-          const availableLangs = getAvailableLanguages(fetchedData.supportedLanguages);
+          const availableLangs = getAvailableLanguages(
+            fetchedData.supportedLanguages,
+          );
+          const availableMeaningLangs =
+            getAvailableMeaningLanguages(fetchedData);
 
           setLanguages(availableLangs);
           setCurrentLanguage(defaultLang);
+          setMeaningLanguages(availableMeaningLangs);
         }
       } catch (error) {
         console.error('Error fetching reader data:', error);
@@ -163,7 +252,6 @@ const ReaderScreen = ({ route }) => {
     }, [navigation, type]),
   );
 
-
   // 🔹 Render item callback using modular components
   const renderItem = useCallback(
     ({ item: contentItem }) => {
@@ -182,6 +270,8 @@ const ReaderScreen = ({ route }) => {
             fontFamily={fontFamily}
             font={font}
             currentLanguage={currentLanguage}
+            showMeanings={showMeanings}
+            meaningLanguage={meaningLanguage}
           />
         );
       }
@@ -189,7 +279,7 @@ const ReaderScreen = ({ route }) => {
       if (contentType === 'subheading') {
         return (
           <ReaderSubheading
-            title={contentItem.title}
+            item={contentItem}
             fontFamily={fontFamily}
             font={font}
           />
@@ -198,7 +288,14 @@ const ReaderScreen = ({ route }) => {
 
       return null;
     },
-    [readerData?.fonts, readerData?.audio, currentLanguage, font],
+    [
+      readerData?.fonts,
+      readerData?.audio,
+      currentLanguage,
+      font,
+      showMeanings,
+      meaningLanguage,
+    ],
   );
 
   return (
@@ -212,7 +309,6 @@ const ReaderScreen = ({ route }) => {
         title={item?.title}
         displayTitle={displayTitle}
       />
-
 
       <MaterialSlider
         value={font}
@@ -284,13 +380,37 @@ const ReaderScreen = ({ route }) => {
           />
         ))}
       </BottomSheetModal>
+
+      {/* 🔹 Meaning Language Selector Modal */}
+      <BottomSheetModal
+        title={'Choose Meaning Language'}
+        visible={showMeaningLanguageModal}
+        closeModal={() => setShowMeaningLanguageModal(false)}
+      >
+        {meaningLanguages?.map(lang => (
+          <IconList
+            key={lang}
+            title={LANGUAGE_MAPPER[lang] || lang.toUpperCase()}
+            leftIcon="subtitles-outline"
+            subtitle={`Display meanings in ${LANGUAGE_MAPPER[lang] || lang}`}
+            onPress={() => handleSelectMeaningLanguage(lang)}
+            rightContent={
+              (meaningLanguage || currentLanguage) === lang ? (
+                <MaterialDesignIcons
+                  name="check-decagram"
+                  size={24}
+                  color={theme.colors.primary}
+                />
+              ) : null
+            }
+          />
+        ))}
+      </BottomSheetModal>
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
-
   topControlRow: {
     flexDirection: 'row',
     alignItems: 'center',

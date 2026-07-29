@@ -14,7 +14,12 @@ import {
   updateApiUrl,
   DEFAULT_DATA_THRESHOLDS,
 } from '../utils/dataUtils';
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES, API_URL } from '../utils/constants';
+import {
+  CACHED_DATA_KEYS,
+  DATA_URLS,
+  SCREEN_NAMES,
+  API_URL,
+} from '../utils/constants';
 import {
   Animated,
   Pressable,
@@ -81,7 +86,8 @@ const SettingsScreen = () => {
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [selectedEnv, setSelectedEnv] = useState('prod');
   const [thresholds, setThresholds] = useState(DEFAULT_DATA_THRESHOLDS);
-  const [selectedScreenForThreshold, setSelectedScreenForThreshold] = useState(null);
+  const [selectedScreenForThreshold, setSelectedScreenForThreshold] =
+    useState(null);
 
   const [apiEditMenu, setApiEditMenu] = useState(false);
   const [currentApiUrl, setCurrentApiUrl] = useState(API_URL);
@@ -110,7 +116,8 @@ const SettingsScreen = () => {
       const currentThresholds = await getCacheThresholds();
       setThresholds(currentThresholds);
 
-      const apiMenuValue = (await getItem(CACHED_DATA_KEYS.API_URL_EDIT_MENU)) || '0';
+      const apiMenuValue =
+        (await getItem(CACHED_DATA_KEYS.API_URL_EDIT_MENU)) || '0';
       setApiEditMenu(apiMenuValue === '1');
       const storedApi = await getApiUrl();
       setCurrentApiUrl(storedApi);
@@ -417,10 +424,7 @@ const SettingsScreen = () => {
               title="Dev Menu"
               subtitle="Enable or disable developer options"
               rightContent={
-                <MaterialSwitch
-                  value={devMenu}
-                  onValueChange={toggleDevMenu}
-                />
+                <MaterialSwitch value={devMenu} onValueChange={toggleDevMenu} />
               }
             />
 
@@ -615,7 +619,9 @@ const SettingsScreen = () => {
               <IconList
                 keyName={`cache-opt-${opt.value}`}
                 key={`cache-opt-${opt.value}`}
-                leftIcon={opt.value === 0 ? 'cloud-sync-outline' : 'clock-outline'}
+                leftIcon={
+                  opt.value === 0 ? 'cloud-sync-outline' : 'clock-outline'
+                }
                 title={opt.label}
                 subtitle={isSelected ? 'Currently active' : 'Tap to apply'}
                 disabled={isSelected}
@@ -670,7 +676,9 @@ const SettingsScreen = () => {
               autoCapitalize="none"
               autoCorrect={false}
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
               <Pressable
                 onPress={handleResetApiUrl}
                 style={{
@@ -680,7 +688,9 @@ const SettingsScreen = () => {
                   backgroundColor: theme.colors.surfaceVariant,
                 }}
               >
-                <MyText style={{ color: theme.colors.error, fontWeight: '600' }}>
+                <MyText
+                  style={{ color: theme.colors.error, fontWeight: '600' }}
+                >
                   Reset Default
                 </MyText>
               </Pressable>
@@ -693,7 +703,9 @@ const SettingsScreen = () => {
                   backgroundColor: theme.colors.primary,
                 }}
               >
-                <MyText style={{ color: theme.colors.onPrimary, fontWeight: '600' }}>
+                <MyText
+                  style={{ color: theme.colors.onPrimary, fontWeight: '600' }}
+                >
                   Save & Restart
                 </MyText>
               </Pressable>

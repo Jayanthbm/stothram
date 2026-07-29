@@ -123,7 +123,8 @@ export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
   try {
     SCREEN_TYPE = SCREEN_TYPE.toUpperCase();
     const thresholds = await getCacheThresholds();
-    const threshold = thresholds[SCREEN_TYPE] ?? DEFAULT_DATA_THRESHOLDS[SCREEN_TYPE];
+    const threshold =
+      thresholds[SCREEN_TYPE] ?? DEFAULT_DATA_THRESHOLDS[SCREEN_TYPE];
 
     // If threshold is 0 (No Cache), bypass reading from cache and directly fetch online
     if (threshold === 0) {

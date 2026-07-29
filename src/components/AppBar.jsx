@@ -72,17 +72,10 @@ const AppBar = ({ showBack = true, title = 'Stothram', rightIcons = [] }) => {
         </MyText>
       </View>
 
-      {/* RIGHT SECTION (fixed width) */}
-      <View style={[styles.rightSection, { width: RIGHT_WIDTH }]}>
-        {/* LEFT placeholders to push icons to the right */}
-        {Array(2 - rightIcons.length)
-          .fill(0)
-          .map((_, i) => (
-            <View key={`ph-left-${i}`} style={styles.iconButton} />
-          ))}
-
+      {/* RIGHT SECTION */}
+      <View style={styles.rightSection}>
         {/* Actual icons */}
-        {rightIcons.slice(0, 2).map((item, index) => (
+        {rightIcons.map((item, index) => (
           <Pressable
             key={item.iconName || index}
             onPress={item.onPress}

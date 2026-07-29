@@ -1,5 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
-import { LayoutAnimation, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  LayoutAnimation,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import Slider from '@react-native-community/slider';
 import NetInfo from '@react-native-community/netinfo';
@@ -12,8 +17,7 @@ import {
   subscribeAudioState,
 } from '../services/audioService';
 
-
-const formatTime = (seconds) => {
+const formatTime = seconds => {
   if (!seconds || isNaN(seconds) || seconds < 0) return '0:00';
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
@@ -48,11 +52,13 @@ const ReaderAudioButton = memo(
 
     useEffect(() => {
       // Subscribe to network connection state
-      const unsubscribeNetInfo = NetInfo.addEventListener((state) => {
-        setIsConnected(Boolean(state.isConnected && state.isInternetReachable !== false));
+      const unsubscribeNetInfo = NetInfo.addEventListener(state => {
+        setIsConnected(
+          Boolean(state.isConnected && state.isInternetReachable !== false),
+        );
       });
 
-      const unsubscribeAudio = subscribeAudioState((state) => {
+      const unsubscribeAudio = subscribeAudioState(state => {
         setAudioState(state);
       });
 
@@ -77,12 +83,13 @@ const ReaderAudioButton = memo(
       if (!hasUrl || !hasTimestamps) return null;
     }
 
-
     const isThisTrackLoaded =
       audioState.currentUrl === audioUrl &&
       (isTopPlayer
-        ? audioState.activeStartTimestamp === 0 && audioState.activeEndTimestamp === 0
-        : audioState.activeStartTimestamp === start && audioState.activeEndTimestamp === end);
+        ? audioState.activeStartTimestamp === 0 &&
+          audioState.activeEndTimestamp === 0
+        : audioState.activeStartTimestamp === start &&
+          audioState.activeEndTimestamp === end);
 
     const isThisPlaying = isThisTrackLoaded && audioState.isPlaying;
 
@@ -105,7 +112,7 @@ const ReaderAudioButton = memo(
       stopAudioTrack();
     };
 
-    const handleSlidingComplete = (value) => {
+    const handleSlidingComplete = value => {
       if (!isThisTrackLoaded) {
         // Start playback if not loaded yet
         playAudioTrack({
@@ -121,8 +128,11 @@ const ReaderAudioButton = memo(
 
     // Determine slider range
     const sliderMin = end > start ? start : 0;
-    const sliderMax = end > start ? end : (audioState.duration > 0 ? audioState.duration : 100);
-    const sliderValue = isThisTrackLoaded ? Math.min(sliderMax, Math.max(sliderMin, audioState.currentTime)) : sliderMin;
+    const sliderMax =
+      end > start ? end : audioState.duration > 0 ? audioState.duration : 100;
+    const sliderValue = isThisTrackLoaded
+      ? Math.min(sliderMax, Math.max(sliderMin, audioState.currentTime))
+      : sliderMin;
 
     // 🌟 Render Paragraph Segment Design (Compact Seekable Slider + Small Play/Pause Icon + Stop Icon)
     if (!isTopPlayer) {
@@ -168,8 +178,6 @@ const ReaderAudioButton = memo(
       );
     }
 
-
-
     // 🌟 Render Top Player Design:
     // Default: Small play icon on left (no background card, no timings, no stop button)
     // Active: Expands into full player card with animation
@@ -190,7 +198,6 @@ const ReaderAudioButton = memo(
         </View>
       );
     }
-
 
     return (
       <View style={styles.topContainer}>
@@ -260,9 +267,6 @@ const ReaderAudioButton = memo(
         </View>
       </View>
     );
-
-
-
   },
 );
 
@@ -276,7 +280,6 @@ const styles = StyleSheet.create({
   topIdlePlayBtn: {
     paddingVertical: 2,
   },
-
 
   topContainer: {
     width: '100%',
@@ -329,8 +332,5 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
 });
-
-
-
 
 export default ReaderAudioButton;

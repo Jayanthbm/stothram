@@ -28,7 +28,7 @@ const notifyListeners = () => {
   listeners.forEach(cb => cb(state));
 };
 
-export const subscribeAudioState = (callback) => {
+export const subscribeAudioState = callback => {
   listeners.add(callback);
   // Send immediate state
   callback({
@@ -44,12 +44,11 @@ export const subscribeAudioState = (callback) => {
   };
 };
 
-
 const startProgressTimer = () => {
   stopProgressTimer();
   progressInterval = setInterval(() => {
     if (currentSound && isPlaying) {
-      currentSound.getCurrentTime((seconds) => {
+      currentSound.getCurrentTime(seconds => {
         currentTime = seconds;
         notifyListeners();
 
@@ -57,14 +56,10 @@ const startProgressTimer = () => {
         if (activeEndTimestamp > 0 && seconds >= activeEndTimestamp) {
           stopAudioTrack();
         }
-
-
       });
     }
   }, 200);
 };
-
-
 
 const stopProgressTimer = () => {
   if (progressInterval) {
@@ -76,7 +71,12 @@ const stopProgressTimer = () => {
 /**
  * Plays or toggles audio track with optional segment start and end timestamps.
  */
-export const playAudioTrack = ({ url, title = 'Stothram', start = 0, end = 0 }) => {
+export const playAudioTrack = ({
+  url,
+  title = 'Stothram',
+  start = 0,
+  end = 0,
+}) => {
   if (!url) return;
 
   const targetStart = start || 0;
@@ -86,9 +86,10 @@ export const playAudioTrack = ({ url, title = 'Stothram', start = 0, end = 0 }) 
   if (currentSound && currentUrl === url) {
     // Check if tapping the EXACT same segment/stanza that was active
     const isSameSegment =
-      (targetStart === 0 && targetEnd === 0)
-        ? (activeStartTimestamp === 0 && activeEndTimestamp === 0)
-        : (activeStartTimestamp === targetStart && activeEndTimestamp === targetEnd);
+      targetStart === 0 && targetEnd === 0
+        ? activeStartTimestamp === 0 && activeEndTimestamp === 0
+        : activeStartTimestamp === targetStart &&
+          activeEndTimestamp === targetEnd;
 
     if (isSameSegment) {
       if (isPlaying) {
@@ -131,7 +132,6 @@ export const playAudioTrack = ({ url, title = 'Stothram', start = 0, end = 0 }) 
   activeEndTimestamp = targetEnd;
   currentTime = targetStart;
 
-
   currentSound = new Sound(url, '', error => {
     if (error) {
       console.error('Failed to load audio sound:', error);
@@ -152,8 +152,7 @@ export const playAudioTrack = ({ url, title = 'Stothram', start = 0, end = 0 }) 
   });
 };
 
-
-const onPlaybackFinish = (success) => {
+const onPlaybackFinish = success => {
   isPlaying = false;
   stopProgressTimer();
   if (!success) {
@@ -177,7 +176,7 @@ export const pauseAudioTrack = () => {
 /**
  * Seeks to position in seconds
  */
-export const seekAudioTrack = (seconds) => {
+export const seekAudioTrack = seconds => {
   if (currentSound) {
     currentSound.setCurrentTime(seconds);
     currentTime = seconds;
