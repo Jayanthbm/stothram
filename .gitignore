@@ -79,3 +79,6 @@ yarn-error.log
 /android/app/release/
 
 *.aab
+
+.claude
+.codegraph

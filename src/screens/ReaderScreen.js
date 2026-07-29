@@ -11,6 +11,7 @@ import {
   BackHandler,
   FlatList,
   LayoutAnimation,
+  StyleSheet,
   View,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -23,9 +24,12 @@ import MaterialSlider from '../components/MaterialSlider';
 import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
 import ReaderParagraph from '../components/ReaderParagraph';
 import ReaderSubheading from '../components/ReaderSubheading';
+import ReaderAudioButton from '../components/ReaderAudioButton';
 import { dataHelper } from '../utils/dataUtils';
 import { getAvailableLanguages, getFontForLanguage } from '../utils/readerUtils';
+import { stopAudioTrack } from '../services/audioService';
 import { SCREEN_NAMES } from '../utils/constants';
+
 import { useTheme } from '../contexts/themeContext';
 
 const LANGUAGE_MAPPER = { kn: 'Kannada', en: 'English' };
@@ -139,10 +143,11 @@ const ReaderScreen = ({ route }) => {
     }
   };
 
-  // ✅ Handle hardware back press cleanly
+  // ✅ Handle hardware back press cleanly & stop audio when leaving reader screen
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
+        stopAudioTrack();
         if (navigation.canGoBack()) navigation.goBack();
         else navigation.navigate(SCREEN_NAMES.LIST, { type });
         return true;
@@ -151,9 +156,13 @@ const ReaderScreen = ({ route }) => {
         'hardwareBackPress',
         onBackPress,
       );
-      return () => sub.remove();
+      return () => {
+        sub.remove();
+        stopAudioTrack();
+      };
     }, [navigation, type]),
   );
+
 
   // 🔹 Render item callback using modular components
   const renderItem = useCallback(
@@ -195,6 +204,16 @@ const ReaderScreen = ({ route }) => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <AppBar title={displayTitle} rightIcons={rightIcons} />
+
+      {/* 🎵 Top Audio Player (Full width) */}
+      <ReaderAudioButton
+        audioUrl={readerData?.audio?.url}
+        isTopPlayer={true}
+        title={item?.title}
+        displayTitle={displayTitle}
+      />
+
+
       <MaterialSlider
         value={font}
         onValueChange={updateFont}
@@ -268,5 +287,16 @@ const ReaderScreen = ({ route }) => {
     </View>
   );
 };
+
+
+const styles = StyleSheet.create({
+
+  topControlRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+});
 
 export default ReaderScreen;

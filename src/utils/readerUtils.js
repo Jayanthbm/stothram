@@ -24,19 +24,26 @@ export const getFontForLanguage = (fonts, language, type = 'paragraph') => {
 };
 
 /**
- * Resolves the effective audio URL for a paragraph.
- * Paragraph-level audio URL takes precedence over global audio URL.
+ * Resolves effective audio URL and timestamps for a paragraph.
+ * If paragraph audio object specifies url (even if null), it should NOT fall back to global audio URL.
  *
  * @param {object} globalAudio - Root audio object from JSON schema.
  * @param {object} paragraphAudio - Paragraph audio object.
- * @returns {object} { url, start, end }
+ * @returns {object} { url, start, end, paragraphHasOwnAudio }
  */
 export const resolveAudioData = (globalAudio, paragraphAudio) => {
-  const url = paragraphAudio?.url || globalAudio?.url || null;
+  const paragraphUrl = paragraphAudio?.url;
+  const globalUrl = globalAudio?.url;
+
+  // Use paragraphUrl if non-empty; if null/empty, fallback to globalUrl
+  const url = (paragraphUrl && paragraphUrl.trim().length > 0) ? paragraphUrl : (globalUrl || null);
   const start = paragraphAudio?.start || 0;
   const end = paragraphAudio?.end || 0;
+
   return { url, start, end };
 };
+
+
 
 /**
  * Resolves available language codes from supportedLanguages.

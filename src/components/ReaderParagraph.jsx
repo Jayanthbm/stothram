@@ -26,7 +26,7 @@ const ReaderParagraph = memo(({ item, globalAudio, fontFamily, font, currentLang
   const isTransliterationSelected = currentLanguage !== 'kn' && Array.isArray(transliteratedText) && transliteratedText.length > 0;
   const renderLines = isTransliterationSelected ? transliteratedText : primaryText;
 
-  // Effective Audio URL calculation
+  // Effective Audio URL and timestamps calculation
   const audioData = resolveAudioData(globalAudio, item.audio);
 
   return (
@@ -54,7 +54,7 @@ const ReaderParagraph = memo(({ item, globalAudio, fontFamily, font, currentLang
         <ReaderMeaning meanings={item.meanings} language={currentLanguage} />
       )}
 
-      {/* Render Audio placeholder button */}
+      {/* Render paragraph audio player when URL is not null or start/end is not 0 */}
       <ReaderAudioButton
         audioUrl={audioData.url}
         start={audioData.start}
@@ -62,6 +62,7 @@ const ReaderParagraph = memo(({ item, globalAudio, fontFamily, font, currentLang
       />
     </Card>
   );
+
 
 });
 
