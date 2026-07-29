@@ -10,7 +10,8 @@ import { useTheme } from '../contexts/themeContext';
  */
 const ReaderMeaning = memo(({ line, lines, font }) => {
   const { theme } = useTheme();
-  const fontSize = font ? Math.max(12, parseInt(font) - 2) : 14;
+  const fontSize = font ? Math.max(11, parseInt(font) - 4) : 13;
+
 
   if (line) {
     return (
