@@ -14,7 +14,7 @@ import SettingsScreen from './src/screens/SettingsScreen';
 
 // Constants & Utilities
 import { SCREEN_NAMES } from './src/utils/constants';
-import { initCacheThresholds } from './src/utils/dataUtils';
+import { initCacheThresholds, initApiUrlToStorage } from './src/utils/dataUtils';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +23,7 @@ function AppContent() {
 
   useEffect(() => {
     initCacheThresholds();
+    initApiUrlToStorage();
   }, []);
 
   const navigationTheme = useMemo(

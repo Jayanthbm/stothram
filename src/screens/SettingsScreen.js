@@ -1,5 +1,3 @@
-// src/screens/SettingsScreen.js
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AppBar from '../components/AppBar';
 import PageTitle from '../components/PageTitle';
@@ -8,13 +6,15 @@ import { useTheme } from '../contexts/themeContext';
 import MaterialSwitch from '../components/MaterialSwitch';
 import {
   dataHelper,
+  getApiUrl,
   getCacheThresholds,
   getItem,
   saveCacheThresholds,
   storeItem,
+  updateApiUrl,
   DEFAULT_DATA_THRESHOLDS,
 } from '../utils/dataUtils';
-import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
+import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES, API_URL } from '../utils/constants';
 import {
   Animated,
   Pressable,
@@ -26,6 +26,7 @@ import {
   LayoutAnimation,
   ToastAndroid,
   Platform,
+  TextInput,
 } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import Card from '../components/Card';
@@ -82,6 +83,11 @@ const SettingsScreen = () => {
   const [thresholds, setThresholds] = useState(DEFAULT_DATA_THRESHOLDS);
   const [selectedScreenForThreshold, setSelectedScreenForThreshold] = useState(null);
 
+  const [apiEditMenu, setApiEditMenu] = useState(false);
+  const [currentApiUrl, setCurrentApiUrl] = useState(API_URL);
+  const [inputApiUrl, setInputApiUrl] = useState(API_URL);
+  const [showApiModal, setShowApiModal] = useState(false);
+
   const fetchData = useCallback(async () => {
     try {
       const fetchedData = await dataHelper(
@@ -103,6 +109,12 @@ const SettingsScreen = () => {
       setSelectedEnv(env);
       const currentThresholds = await getCacheThresholds();
       setThresholds(currentThresholds);
+
+      const apiMenuValue = (await getItem(CACHED_DATA_KEYS.API_URL_EDIT_MENU)) || '0';
+      setApiEditMenu(apiMenuValue === '1');
+      const storedApi = await getApiUrl();
+      setCurrentApiUrl(storedApi);
+      setInputApiUrl(storedApi);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -173,6 +185,10 @@ const SettingsScreen = () => {
   const heartTapCount = useRef(0);
   const heartTapTimeout = useRef(null);
 
+  // 🇮🇳 Flag secret tap counter
+  const flagTapCount = useRef(0);
+  const flagTapTimeout = useRef(null);
+
   const clearLastFetchCache = async (force = false, shouldRestart = true) => {
     try {
       const keys = await AsyncStorage.getAllKeys();
@@ -181,6 +197,9 @@ const SettingsScreen = () => {
         CACHED_DATA_KEYS.DEVMENU,
         CACHED_DATA_KEYS.ENV,
         CACHED_DATA_KEYS.CACHE_THRESHOLDS,
+        CACHED_DATA_KEYS.API_URL,
+        CACHED_DATA_KEYS.API_URL_EDIT_MENU,
+        CACHED_DATA_KEYS.DATA_URLS,
       ];
 
       if (!force) {
@@ -229,6 +248,24 @@ const SettingsScreen = () => {
     }
   };
 
+  const toggleApiEditMenu = async () => {
+    let apiVal = apiEditMenu ? '0' : '1';
+    try {
+      if (flagTapTimeout.current) {
+        clearTimeout(flagTapTimeout.current);
+      }
+      await storeItem(CACHED_DATA_KEYS.API_URL_EDIT_MENU, apiVal);
+      if (apiVal === '0') {
+        await updateApiUrl(API_URL);
+        setCurrentApiUrl(API_URL);
+        setInputApiUrl(API_URL);
+        await clearLastFetchCache(true, true);
+      }
+    } finally {
+      setApiEditMenu(apiVal === '1');
+    }
+  };
+
   const switchEnv = async env => {
     if (env === selectedEnv) {
       return;
@@ -247,6 +284,25 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleSaveApiUrl = async () => {
+    if (!inputApiUrl || !inputApiUrl.trim()) {
+      Alert.alert('Invalid URL', 'Please enter a valid API URL');
+      return;
+    }
+    setShowApiModal(false);
+    await updateApiUrl(inputApiUrl);
+    setCurrentApiUrl(inputApiUrl);
+    await clearLastFetchCache(true, true);
+  };
+
+  const handleResetApiUrl = async () => {
+    setShowApiModal(false);
+    setInputApiUrl(API_URL);
+    setCurrentApiUrl(API_URL);
+    await updateApiUrl(API_URL);
+    await clearLastFetchCache(true, true);
+  };
+
   const onHeartPress = () => {
     heartTapCount.current += 1;
 
@@ -262,6 +318,23 @@ const SettingsScreen = () => {
     if (heartTapCount.current === 5) {
       heartTapCount.current = 0;
       toggleDevMenu();
+    }
+  };
+
+  const onFlagPress = () => {
+    flagTapCount.current += 1;
+
+    if (flagTapTimeout.current) {
+      clearTimeout(flagTapTimeout.current);
+    }
+
+    flagTapTimeout.current = setTimeout(() => {
+      flagTapCount.current = 0;
+    }, 2000); // 2 sec window
+
+    if (flagTapCount.current === 5) {
+      flagTapCount.current = 0;
+      toggleApiEditMenu();
     }
   };
 
@@ -350,6 +423,16 @@ const SettingsScreen = () => {
                 />
               }
             />
+
+            {apiEditMenu && (
+              <IconList
+                keyName="edit-api-url"
+                leftIcon="api"
+                title="Edit API URL"
+                subtitle={`Current: ${currentApiUrl}`}
+                onPress={() => setShowApiModal(true)}
+              />
+            )}
 
             <IconList
               keyName="environment"
@@ -464,15 +547,17 @@ const SettingsScreen = () => {
               </Animated.View>
             </Pressable>
 
-            <MyText
-              style={{
-                color: theme.colors.onSurfaceVariant,
-                fontSize: 16,
-                fontWeight: '600',
-              }}
-            >
-              in India 🇮🇳
-            </MyText>
+            <Pressable onPress={onFlagPress} hitSlop={10}>
+              <MyText
+                style={{
+                  color: theme.colors.onSurfaceVariant,
+                  fontSize: 16,
+                  fontWeight: '600',
+                }}
+              >
+                in India 🇮🇳
+              </MyText>
+            </Pressable>
           </View>
         </View>
 
@@ -558,6 +643,62 @@ const SettingsScreen = () => {
               />
             );
           })}
+        </BottomSheetModal>
+
+        <BottomSheetModal
+          title="Edit Base API URL"
+          visible={showApiModal}
+          closeModal={() => setShowApiModal(false)}
+        >
+          <View style={{ paddingVertical: 12, paddingHorizontal: 4 }}>
+            <TextInput
+              style={{
+                backgroundColor: theme.colors.surfaceVariant,
+                color: theme.colors.onSurface,
+                borderRadius: 12,
+                paddingHorizontal: 14,
+                paddingVertical: 12,
+                fontSize: 15,
+                borderWidth: 1,
+                borderColor: theme.colors.outline,
+                marginBottom: 16,
+              }}
+              value={inputApiUrl}
+              onChangeText={setInputApiUrl}
+              placeholder="https://your-api-endpoint.dev/api"
+              placeholderTextColor={theme.colors.onSurfaceVariant}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Pressable
+                onPress={handleResetApiUrl}
+                style={{
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderRadius: 12,
+                  backgroundColor: theme.colors.surfaceVariant,
+                }}
+              >
+                <MyText style={{ color: theme.colors.error, fontWeight: '600' }}>
+                  Reset Default
+                </MyText>
+              </Pressable>
+              <Pressable
+                onPress={handleSaveApiUrl}
+                style={{
+                  paddingVertical: 12,
+                  paddingHorizontal: 20,
+                  borderRadius: 12,
+                  backgroundColor: theme.colors.primary,
+                }}
+              >
+                <MyText style={{ color: theme.colors.onPrimary, fontWeight: '600' }}>
+                  Save & Restart
+                </MyText>
+              </Pressable>
+            </View>
+          </View>
         </BottomSheetModal>
       </ScrollView>
     </>

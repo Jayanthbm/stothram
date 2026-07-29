@@ -53,6 +53,66 @@ export const saveCacheThresholds = async thresholds => {
 };
 
 /**
+ * Initialize API_URL and DATA_URLS in AsyncStorage if not present
+ */
+export const initApiUrlToStorage = async () => {
+  try {
+    const existingApiUrl = await getItem(CACHED_DATA_KEYS.API_URL);
+    if (!existingApiUrl) {
+      await storeItem(CACHED_DATA_KEYS.API_URL, API_URL);
+      await storeJSON(CACHED_DATA_KEYS.DATA_URLS, DATA_URLS);
+    }
+  } catch (error) {
+    console.error('Error initializing API URL:', error);
+  }
+};
+
+/**
+ * Get current API_URL from AsyncStorage
+ */
+export const getApiUrl = async () => {
+  try {
+    const stored = await getItem(CACHED_DATA_KEYS.API_URL);
+    return stored || API_URL;
+  } catch (error) {
+    console.error('Error getting API URL:', error);
+    return API_URL;
+  }
+};
+
+/**
+ * Get dynamic DATA_URLS from AsyncStorage
+ */
+export const getDynamicDataUrls = async () => {
+  try {
+    const stored = await getJSON(CACHED_DATA_KEYS.DATA_URLS);
+    return stored || DATA_URLS;
+  } catch (error) {
+    console.error('Error getting dynamic DATA_URLS:', error);
+    return DATA_URLS;
+  }
+};
+
+/**
+ * Update API_URL in AsyncStorage and recalculate DATA_URLS
+ */
+export const updateApiUrl = async newApiUrl => {
+  try {
+    const baseUrl = newApiUrl.trim().replace(/\/+$/, '');
+    await storeItem(CACHED_DATA_KEYS.API_URL, baseUrl);
+    const updatedDataUrls = {
+      HOME: `${baseUrl}/home-screen-data`,
+      SETTINGS: `${baseUrl}/setting-screen-data`,
+    };
+    await storeJSON(CACHED_DATA_KEYS.DATA_URLS, updatedDataUrls);
+    return updatedDataUrls;
+  } catch (error) {
+    console.error('Error updating API URL:', error);
+    return DATA_URLS;
+  }
+};
+
+/**
  * Helper function to handle data fetching and caching.
  * @param {string} KEYNAME - The key under which data is stored.
  * @param {string} URL - The URL to fetch the data from.
@@ -114,11 +174,13 @@ export const fetchAndStoreData = async (KEYNAME, URL) => {
     const isConnected = await isInternetConnected();
 
     const env = (await getItem(CACHED_DATA_KEYS.ENV)) || 'prod';
+    const baseUrl = await getApiUrl();
     let newURL;
-    if (URL.includes('https://')) {
+    if (URL.includes('https://') || URL.includes('http://')) {
       newURL = `${URL}?env=${env}`;
-    }else{
-      newURL = `${API_URL}${URL}?env=${env}`;
+    } else {
+      const cleanUrl = URL.startsWith('/') ? URL : `/${URL}`;
+      newURL = `${baseUrl}${cleanUrl}?env=${env}`;
     }
     if (isConnected) {
       const response = await fetch(newURL);
