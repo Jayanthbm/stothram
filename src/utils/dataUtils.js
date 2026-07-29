@@ -1,12 +1,55 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { API_URL, CACHED_DATA_KEYS } from './constants';
-// Constants for data thresholds
-export const DATA_THRESHOLDS = {
-  HOME: 1 * 60 * 60 * 1000, // 1 hours in milliseconds
+// Default constants for data thresholds
+export const DEFAULT_DATA_THRESHOLDS = {
+  HOME: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
   LIST: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
   READER: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
   SETTING: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+};
+
+export const DATA_THRESHOLDS = { ...DEFAULT_DATA_THRESHOLDS };
+
+/**
+ * Initialize cache thresholds in AsyncStorage if not present
+ */
+export const initCacheThresholds = async () => {
+  try {
+    const existing = await getJSON(CACHED_DATA_KEYS.CACHE_THRESHOLDS);
+    if (!existing) {
+      await storeJSON(
+        CACHED_DATA_KEYS.CACHE_THRESHOLDS,
+        DEFAULT_DATA_THRESHOLDS,
+      );
+    }
+  } catch (error) {
+    console.error('Error initializing cache thresholds:', error);
+  }
+};
+
+/**
+ * Get dynamic cache thresholds from AsyncStorage
+ */
+export const getCacheThresholds = async () => {
+  try {
+    const custom = await getJSON(CACHED_DATA_KEYS.CACHE_THRESHOLDS);
+    return { ...DEFAULT_DATA_THRESHOLDS, ...(custom || {}) };
+  } catch (error) {
+    console.error('Error fetching cache thresholds:', error);
+    return DEFAULT_DATA_THRESHOLDS;
+  }
+};
+
+/**
+ * Save custom cache thresholds to AsyncStorage
+ */
+export const saveCacheThresholds = async thresholds => {
+  try {
+    await storeJSON(CACHED_DATA_KEYS.CACHE_THRESHOLDS, thresholds);
+  } catch (error) {
+    console.error('Error saving cache thresholds:', error);
+  }
 };
 
 /**
@@ -18,18 +61,29 @@ export const DATA_THRESHOLDS = {
  */
 export const dataHelper = async (KEYNAME, URL, SCREEN_TYPE) => {
   try {
+    SCREEN_TYPE = SCREEN_TYPE.toUpperCase();
+    const thresholds = await getCacheThresholds();
+    const threshold = thresholds[SCREEN_TYPE] ?? DEFAULT_DATA_THRESHOLDS[SCREEN_TYPE];
+
+    // If threshold is 0 (No Cache), bypass reading from cache and directly fetch online
+    if (threshold === 0) {
+      console.log(`No cache set for ${SCREEN_TYPE}. Fetching online directly.`);
+      const freshData = await fetchAndStoreData(KEYNAME, URL);
+      if (freshData) {
+        return freshData;
+      }
+    }
+
     const cachedData = await getJSON(KEYNAME);
     const lastFetchTime = await getItem(`${KEYNAME}_lastFetchTime`);
 
-    SCREEN_TYPE = SCREEN_TYPE.toUpperCase();
     if (cachedData) {
-      // console.log(`Fetching ${KEYNAME} data from cache`);
       // Check if it's time to fetch from online
       const currentTime = new Date().getTime();
       const shouldFetchFromOnline = compareTimeDifference(
         currentTime,
         lastFetchTime,
-        DATA_THRESHOLDS[SCREEN_TYPE],
+        threshold,
       );
       if (!lastFetchTime || shouldFetchFromOnline) {
         fetchAndStoreData(KEYNAME, URL);

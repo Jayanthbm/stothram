@@ -6,7 +6,14 @@ import PageTitle from '../components/PageTitle';
 import IconList from '../components/IconList';
 import { useTheme } from '../contexts/themeContext';
 import MaterialSwitch from '../components/MaterialSwitch';
-import { dataHelper, getItem, storeItem } from '../utils/dataUtils';
+import {
+  dataHelper,
+  getCacheThresholds,
+  getItem,
+  saveCacheThresholds,
+  storeItem,
+  DEFAULT_DATA_THRESHOLDS,
+} from '../utils/dataUtils';
 import { CACHED_DATA_KEYS, DATA_URLS, SCREEN_NAMES } from '../utils/constants';
 import {
   Animated,
@@ -41,6 +48,29 @@ const ENV_LABELS = {
   stage: 'Staging',
   prod: 'Production',
 };
+
+const CACHE_OPTIONS = [
+  { label: 'No Cache (Always fetch online)', value: 0 },
+  { label: '15 Minutes', value: 15 * 60 * 1000 },
+  { label: '1 Hour', value: 1 * 60 * 60 * 1000 },
+  { label: '2 Hours', value: 2 * 60 * 60 * 1000 },
+  { label: '6 Hours', value: 6 * 60 * 60 * 1000 },
+  { label: '12 Hours', value: 12 * 60 * 60 * 1000 },
+  { label: '1 Day', value: 24 * 60 * 60 * 1000 },
+  { label: '7 Days', value: 7 * 24 * 60 * 60 * 1000 },
+  { label: '15 Days', value: 15 * 24 * 60 * 60 * 1000 },
+];
+
+const formatCacheLabel = value => {
+  const match = CACHE_OPTIONS.find(opt => opt.value === value);
+  if (match) return match.label;
+  if (value === 0) return 'No Cache';
+  const hours = value / (1000 * 60 * 60);
+  if (hours < 24) return `${hours} Hours`;
+  const days = hours / 24;
+  return `${days} Days`;
+};
+
 const SettingsScreen = () => {
   const { theme, toggleTheme, showDarkSwitch, toggleDarkSwitch } = useTheme();
   const navigation = useNavigation();
@@ -49,6 +79,9 @@ const SettingsScreen = () => {
   const [devMenu, setDevMenu] = useState(false);
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [selectedEnv, setSelectedEnv] = useState('prod');
+  const [thresholds, setThresholds] = useState(DEFAULT_DATA_THRESHOLDS);
+  const [selectedScreenForThreshold, setSelectedScreenForThreshold] = useState(null);
+
   const fetchData = useCallback(async () => {
     try {
       const fetchedData = await dataHelper(
@@ -64,10 +97,12 @@ const SettingsScreen = () => {
             : [],
         );
       }
-      const devValue = await getItem(CACHED_DATA_KEYS.DEVMENU) || '0';
+      const devValue = (await getItem(CACHED_DATA_KEYS.DEVMENU)) || '0';
       setDevMenu(devValue === '1');
       const env = (await getItem(CACHED_DATA_KEYS.ENV)) || 'prod';
       setSelectedEnv(env);
+      const currentThresholds = await getCacheThresholds();
+      setThresholds(currentThresholds);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -145,6 +180,7 @@ const SettingsScreen = () => {
       let keysToPreserve = [
         CACHED_DATA_KEYS.DEVMENU,
         CACHED_DATA_KEYS.ENV,
+        CACHED_DATA_KEYS.CACHE_THRESHOLDS,
       ];
 
       if (!force) {
@@ -202,6 +238,15 @@ const SettingsScreen = () => {
     await clearLastFetchCache(true, true);
   };
 
+  const updateThresholdValue = async (screenType, newValue) => {
+    const updated = { ...thresholds, [screenType]: newValue };
+    setThresholds(updated);
+    await saveCacheThresholds(updated);
+    if (Platform.OS === 'android') {
+      ToastAndroid.show('Cache timing updated', ToastAndroid.SHORT);
+    }
+  };
+
   const onHeartPress = () => {
     heartTapCount.current += 1;
 
@@ -253,40 +298,58 @@ const SettingsScreen = () => {
           }
         />
 
-        <PageTitle title="Contributions" />
-        <Card keyName="contributors" disableRipple={true}>
-          {contributions?.map(({ name, role }, index) => (
-            <View key={index}>
-              <IconList
-                key={`${name}-${role}`}
-                disabled={false}
-                keyName={`contributions-${name}`}
-                leftIcon={
-                  role === 'Editor'
-                    ? 'pencil-outline'
-                    : role === 'Developer'
-                      ? 'code-tags'
-                      : 'account-outline'
-                }
-                title={name}
-                subtitle={role}
-              />
-              {index < contributions.length - 1 && (
-                <View
-                  style={{
-                    backgroundColor: theme.colors.skeletonBackground,
-                    width: '100%',
-                    height: 1,
-                  }}
-                />
-              )}
-            </View>
-          ))}
-        </Card>
+        {!devMenu && (
+          <>
+            <PageTitle title="Contributions" />
+            <Card keyName="contributors" disableRipple={true}>
+              {contributions?.map(({ name, role }, index) => (
+                <View key={index}>
+                  <IconList
+                    key={`${name}-${role}`}
+                    disabled={false}
+                    keyName={`contributions-${name}`}
+                    leftIcon={
+                      role === 'Editor'
+                        ? 'pencil-outline'
+                        : role === 'Developer'
+                          ? 'code-tags'
+                          : 'account-outline'
+                    }
+                    title={name}
+                    subtitle={role}
+                  />
+                  {index < contributions.length - 1 && (
+                    <View
+                      style={{
+                        backgroundColor: theme.colors.skeletonBackground,
+                        width: '100%',
+                        height: 1,
+                      }}
+                    />
+                  )}
+                </View>
+              ))}
+            </Card>
+          </>
+        )}
 
         {devMenu && (
           <>
             <PageTitle title="Dev Menu" />
+
+            <IconList
+              keyName="toggle-dev-menu"
+              onPress={toggleDevMenu}
+              leftIcon="code-json"
+              title="Dev Menu"
+              subtitle="Enable or disable developer options"
+              rightContent={
+                <MaterialSwitch
+                  value={devMenu}
+                  onValueChange={toggleDevMenu}
+                />
+              }
+            />
 
             <IconList
               keyName="environment"
@@ -303,7 +366,37 @@ const SettingsScreen = () => {
               leftIcon={'cached'}
               title={'Clear Cache'}
               subtitle={'Clear app cache'}
-              onPress={clearLastFetchCache}
+              onPress={() => clearLastFetchCache(false, true)}
+            />
+
+            <PageTitle title="Cache Timings" />
+            <IconList
+              keyName="cache-home"
+              leftIcon="home-clock-outline"
+              title="Home Screen Cache"
+              subtitle={`Current: ${formatCacheLabel(thresholds.HOME)}`}
+              onPress={() => setSelectedScreenForThreshold('HOME')}
+            />
+            <IconList
+              keyName="cache-list"
+              leftIcon="format-list-checks"
+              title="List Screen Cache"
+              subtitle={`Current: ${formatCacheLabel(thresholds.LIST)}`}
+              onPress={() => setSelectedScreenForThreshold('LIST')}
+            />
+            <IconList
+              keyName="cache-reader"
+              leftIcon="book-open-page-variant-outline"
+              title="Reader Screen Cache"
+              subtitle={`Current: ${formatCacheLabel(thresholds.READER)}`}
+              onPress={() => setSelectedScreenForThreshold('READER')}
+            />
+            <IconList
+              keyName="cache-setting"
+              leftIcon="cog-sync-outline"
+              title="Settings Screen Cache"
+              subtitle={`Current: ${formatCacheLabel(thresholds.SETTING)}`}
+              onPress={() => setSelectedScreenForThreshold('SETTING')}
             />
           </>
         )}
@@ -422,6 +515,49 @@ const SettingsScreen = () => {
               }
             />
           ))}
+        </BottomSheetModal>
+
+        <BottomSheetModal
+          title={`Select Cache Duration for ${selectedScreenForThreshold || ''}`}
+          visible={!!selectedScreenForThreshold}
+          closeModal={() => setSelectedScreenForThreshold(null)}
+        >
+          {CACHE_OPTIONS.map(opt => {
+            const isSelected =
+              selectedScreenForThreshold &&
+              thresholds[selectedScreenForThreshold] === opt.value;
+            return (
+              <IconList
+                keyName={`cache-opt-${opt.value}`}
+                key={`cache-opt-${opt.value}`}
+                leftIcon={opt.value === 0 ? 'cloud-sync-outline' : 'clock-outline'}
+                title={opt.label}
+                subtitle={isSelected ? 'Currently active' : 'Tap to apply'}
+                disabled={isSelected}
+                onPress={async () => {
+                  const screenKey = selectedScreenForThreshold;
+                  setSelectedScreenForThreshold(null);
+
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.Presets.easeInEaseOut,
+                  );
+
+                  requestAnimationFrame(async () => {
+                    await updateThresholdValue(screenKey, opt.value);
+                  });
+                }}
+                rightContent={
+                  isSelected ? (
+                    <MaterialDesignIcons
+                      name="check-decagram"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  ) : null
+                }
+              />
+            );
+          })}
         </BottomSheetModal>
       </ScrollView>
     </>
