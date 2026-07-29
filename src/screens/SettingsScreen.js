@@ -27,6 +27,7 @@ import MyText from '../components/MyText';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import BottomSheetModal from '../components/BottomSheetModal';
+import RNRestart from 'react-native-restart';
 
 const ENVS = ['dev', 'stage', 'prod'];
 const ENV_ICONS = {
@@ -137,19 +138,19 @@ const SettingsScreen = () => {
   const heartTapCount = useRef(0);
   const heartTapTimeout = useRef(null);
 
-  const clearLastFetchCache = async (force = false) => {
+  const clearLastFetchCache = async (force = false, shouldRestart = true) => {
     try {
       const keys = await AsyncStorage.getAllKeys();
 
       let keysToPreserve = [
         CACHED_DATA_KEYS.DEVMENU,
-        CACHED_DATA_KEYS.ENV
+        CACHED_DATA_KEYS.ENV,
       ];
 
-     if (!force) {
-       keysToPreserve.push(CACHED_DATA_KEYS.SETTINGS);
-       keysToPreserve.push(`${CACHED_DATA_KEYS.SETTINGS}_lastFetchTime`);
-     }
+      if (!force) {
+        keysToPreserve.push(CACHED_DATA_KEYS.SETTINGS);
+        keysToPreserve.push(`${CACHED_DATA_KEYS.SETTINGS}_lastFetchTime`);
+      }
       const keysToRemove = keys.filter(key => !keysToPreserve.includes(key));
 
       if (keysToRemove.length > 0) {
@@ -164,15 +165,18 @@ const SettingsScreen = () => {
         Alert.alert('Cache Cleared', message);
       }
 
-      
+      if (shouldRestart) {
+        setTimeout(() => {
+          RNRestart.restart();
+        }, 500);
+      }
     } catch (e) {
       console.error('Cache clear failed', e);
     }
   };
 
-
   const toggleDevMenu = async () => {
-     let devValue = devMenu ? '0' : '1';
+    let devValue = devMenu ? '0' : '1';
     try {
       if (heartTapTimeout.current) {
         clearTimeout(heartTapTimeout.current);
@@ -180,26 +184,23 @@ const SettingsScreen = () => {
       await storeItem(CACHED_DATA_KEYS.DEVMENU, devValue);
 
       // If dev. menu is disabled, clear cache and set the env to prod
-
       if (devValue === '0') {
         await storeItem(CACHED_DATA_KEYS.ENV, 'prod');
-        await clearLastFetchCache(true);
-        await fetchData();
+        await clearLastFetchCache(true, true);
       }
     } finally {
       setDevMenu(devValue === '1');
     }
   };
 
- const switchEnv = async env => {
-   if (env === selectedEnv) {
-     return;
-   }
-   await storeItem(CACHED_DATA_KEYS.ENV, env);
-   setSelectedEnv(env);
-   await clearLastFetchCache(true);
-   await fetchData();
- };
+  const switchEnv = async env => {
+    if (env === selectedEnv) {
+      return;
+    }
+    await storeItem(CACHED_DATA_KEYS.ENV, env);
+    setSelectedEnv(env);
+    await clearLastFetchCache(true, true);
+  };
 
   const onHeartPress = () => {
     heartTapCount.current += 1;

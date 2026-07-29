@@ -15,19 +15,19 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import AppBar from '../components/AppBar';
-import Card from '../components/Card';
 import BottomSheetModal from '../components/BottomSheetModal';
 import IconList from '../components/IconList';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import NoDataCard from '../components/NoDataCard';
 import MaterialSlider from '../components/MaterialSlider';
 import ScrolltoTopIcon from '../components/ScrolltoTopIcon';
+import ReaderParagraph from '../components/ReaderParagraph';
+import ReaderSubheading from '../components/ReaderSubheading';
 import { dataHelper } from '../utils/dataUtils';
+import { getAvailableLanguages, getFontForLanguage } from '../utils/readerUtils';
 import { SCREEN_NAMES } from '../utils/constants';
 import { useTheme } from '../contexts/themeContext';
-import MyText from '../components/MyText';
 
-const fontWeights = { brhknde: 600 };
 const LANGUAGE_MAPPER = { kn: 'Kannada', en: 'English' };
 
 const ReaderScreen = ({ route }) => {
@@ -35,12 +35,10 @@ const ReaderScreen = ({ route }) => {
   const navigation = useNavigation();
   const { theme, toggleTheme, showDarkSwitch, font, updateFont } = useTheme();
 
-  const [title, setTitle] = useState('');
   const [displayTitle, setDisplayTitle] = useState('');
   const [readerData, setReaderData] = useState(null);
-  const [languages, setLanguages] = useState(null);
-  const [currentLanguage, setCurrentLanguage] = useState(null);
-  const [fetchedData, setFetchedData] = useState(null);
+  const [languages, setLanguages] = useState([]);
+  const [currentLanguage, setCurrentLanguage] = useState('kn');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showScrollIcon, setShowScrollIcon] = useState(false);
 
@@ -64,7 +62,7 @@ const ReaderScreen = ({ route }) => {
     ]).start(() => setShowScrollIcon(false));
   };
 
-  // 🔹 Right icons (theme + toggle view)
+  // 🔹 Right AppBar icons (theme toggle + language modal)
   const rightIcons = useMemo(() => {
     const icons = [];
     if (showDarkSwitch)
@@ -77,7 +75,7 @@ const ReaderScreen = ({ route }) => {
     return icons;
   }, [showDarkSwitch, toggleTheme, languages]);
 
-  // 🔹 Fetch reader data
+  // 🔹 Fetch reader data adhering ONLY to the new schema
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -87,35 +85,25 @@ const ReaderScreen = ({ route }) => {
           SCREEN_NAMES.READER,
         );
         if (fetchedData) {
-          setFetchedData(fetchedData);
-          if (fetchedData.translations) {
-            const langs = Object.keys(fetchedData.translations);
-            setLanguages(langs);
-            setCurrentLanguage(langs[0]);
-          } else {
-            setReaderData(fetchedData);
-          }
+          setReaderData(fetchedData);
+          setDisplayTitle(fetchedData.title || item?.displayTitle || item?.title);
+
+          const defaultLang = fetchedData.defaultLanguage || 'kn';
+          const availableLangs = getAvailableLanguages(fetchedData.supportedLanguages);
+
+          setLanguages(availableLangs);
+          setCurrentLanguage(defaultLang);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching reader data:', error);
       }
     };
-    setDisplayTitle(item.displayTitle);
-    setTitle(item?.title);
+
+    setDisplayTitle(item?.displayTitle || item?.title);
     if (item?.dataUrl) fetchData();
   }, [item]);
 
-  // 🔹 Update when switching language
-  useEffect(() => {
-    if (currentLanguage && fetchedData?.translations) {
-      const nextData = fetchedData.translations[currentLanguage];
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setReaderData(nextData);
-      setDisplayTitle(nextData.title);
-    }
-  }, [currentLanguage]);
-
-  // ✅ Scroll listener for scroll-to-top button
+  // ✅ Scroll listener for floating scroll-to-top button
   const handleScroll = event => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const shouldShow = offsetY > 250;
@@ -151,7 +139,7 @@ const ReaderScreen = ({ route }) => {
     }
   };
 
-  // ✅ Handle hardware back only when screen focused
+  // ✅ Handle hardware back press cleanly
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -167,59 +155,42 @@ const ReaderScreen = ({ route }) => {
     }, [navigation, type]),
   );
 
-  const renderItem = ({ item, fonts }) => {
-    const fontFamily = item?.fontFamily ?? fonts?.[item.type];
-
-    if (item.type === 'paragraph') {
-      return (
-        <Card key={item.id} disableRipple={true}>
-          {item.lines.map((line, index) =>
-            line?.trim() ? (
-              <MyText
-                ellipsizeMode="none"
-                key={index}
-                style={{
-                  ...(fontFamily && { fontFamily }),
-                  lineHeight:
-                    fontFamily === 'brhknde'
-                      ? parseInt(font) + 17
-                      : parseInt(font) + 14,
-                  fontSize: fontFamily === 'brhknde' ? font + 2 : font,
-                }}
-              >
-                {line}
-              </MyText>
-            ) : (
-              <MyText key={`gap-${index}`} style={{ height: 8 }} />
-            ),
-          )}
-        </Card>
+  // 🔹 Render item callback using modular components
+  const renderItem = useCallback(
+    ({ item: contentItem }) => {
+      const contentType = contentItem.type || 'paragraph';
+      const fontFamily = getFontForLanguage(
+        readerData?.fonts,
+        currentLanguage,
+        contentType,
       );
-    }
 
-    if (item.type === 'subheading') {
-      return (
-        <Card
-          key={item.id}
-          style={{
-            backgroundColor: theme.colors.surfaceVariant,
-            padding: 2,
-          }}
-        >
-          <MyText
-            style={{
-              ...(fontFamily && { fontFamily }),
-              fontSize: font + 2,
-              textAlign: 'center',
-              fontWeight: '500',
-            }}
-          >
-            {item.title}
-          </MyText>
-        </Card>
-      );
-    }
-  };
+      if (contentType === 'paragraph') {
+        return (
+          <ReaderParagraph
+            item={contentItem}
+            globalAudio={readerData?.audio}
+            fontFamily={fontFamily}
+            font={font}
+            currentLanguage={currentLanguage}
+          />
+        );
+      }
+
+      if (contentType === 'subheading') {
+        return (
+          <ReaderSubheading
+            title={contentItem.title}
+            fontFamily={fontFamily}
+            font={font}
+          />
+        );
+      }
+
+      return null;
+    },
+    [readerData?.fonts, readerData?.audio, currentLanguage, font],
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -236,9 +207,7 @@ const ReaderScreen = ({ route }) => {
         ref={listRef}
         data={readerData?.content}
         keyExtractor={(_item, index) => index.toString()}
-        renderItem={({ item }) =>
-          renderItem({ item, fonts: readerData?.fonts })
-        }
+        renderItem={renderItem}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
         removeClippedSubviews
@@ -246,7 +215,7 @@ const ReaderScreen = ({ route }) => {
         windowSize={5}
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        key={`${title}-${currentLanguage}`}
+        key={`${item?.title}-${currentLanguage}`}
         ListEmptyComponent={<NoDataCard title="No content available" />}
       />
 
