@@ -1,6 +1,6 @@
 // App.jsx
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ThemeProvider, useTheme } from './src/contexts/themeContext';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,13 +12,19 @@ import ListScreen from './src/screens/ListScreen';
 import ReaderScreen from './src/screens/ReaderScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 
-// Constants
+// Constants & Utilities
 import { SCREEN_NAMES } from './src/utils/constants';
+import { initCacheThresholds, initApiUrlToStorage } from './src/utils/dataUtils';
 
 const Stack = createNativeStackNavigator();
 
 function AppContent() {
   const { theme } = useTheme();
+
+  useEffect(() => {
+    initCacheThresholds();
+    initApiUrlToStorage();
+  }, []);
 
   const navigationTheme = useMemo(
     () => ({
